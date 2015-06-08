@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{$meta_title}|接口管理平台</title>
+    <link href="__ROOT__/Public/favicon.ico" type="image/x-icon" rel="shortcut icon">
+    <link rel="stylesheet" type="text/css" href="__CSS__/base.css" media="all">
+     <!--[if lt IE 9]>
+    <script type="text/javascript" src="__STATIC__/jquery-1.10.2.min.js"></script>
+    <![endif]--><!--[if gte IE 9]><!-->
+    <script type="text/javascript" src="__STATIC__/jquery-2.0.3.min.js"></script>
+    <!--<![endif]-->
+    <block name="style"></block>
+    <style>
+        *{margin:0; padding:0px; list-style: none;}
+        body{font:normal 16px/1.5 '微软雅黑'; color:#444;}
+        a{text-decoration: none; color:#0088cc}
+        a:hover{text-decoration: underline;}
+        
+        .header{height:45px; line-height: 45px; color:#fff; background:#444;}
+        .header a{color:#fff;} 
+    </style>
+</head>
+<body>
+    <div class="header">
+        品森接口说明
+    </div>
+    <div style="height:35px; line-height: 35px; padding:0 10px; background: #ccc;">
+        <block name="position">
+            位置：
+        </block>
+    </div>
+    <div class="" style="float:left; width:200px;">
+        <ul>
+            <li><a href="">文章</a></li>
+            <li><a href="">视频</a></li>
+        </ul>
+    </div>
+    <div style="margin-left:250px;">
+        <block name="main_content">
+            主体内容区域
+        </block>
+    </div>
+</body>
+</html>

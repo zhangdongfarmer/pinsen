@@ -6,7 +6,7 @@
  * @author tangguosheng <tanggsh@163.com>
  */
 
-namespace Home\Controller;
+namespace Port\Controller;
 use \Think\Controller;
 
 abstract class AbstractBaseController extends Controller 
