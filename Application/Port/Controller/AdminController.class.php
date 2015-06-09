@@ -10,6 +10,15 @@ namespace Port\Controller;
 
 class AdminController extends AbstractBaseController
 {
+    
+    public function __construct() 
+    {
+        parent::__construct();
+        
+        $category = D('PortCategory')->getwork();
+        $this->assign('categorys', $category);
+    }
+    
     public function index()
     {
         echo 'fdfdf';
@@ -20,6 +29,11 @@ class AdminController extends AbstractBaseController
      */
     public function add()
     {
+        if($_POST){
+            var_dump($_POST);
+            $result = D('Port')->update();
+            var_dump($result);
+        }
         $this->display();
     }
 }

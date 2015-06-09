@@ -1,0 +1,42 @@
+/* 
+    Document   : public.css
+    Created on : 2015-6-9, 21:50:37
+    Author     : tanggsh
+    Description:
+        Purpose of the stylesheet follows.
+*/
+body, h1, h2, h3, h4, h5, ul, ol, dl, form{margin:0; padding:0px; list-style: none;}
+body{font:normal 12px/1.5em '微软雅黑'; color:#444; text-align: left;}
+a{text-decoration: none; color:#0088cc}
+a:hover{text-decoration: underline;}
+
+.mt{margin-top:10px;}
+.ml{margin-left:10px;}
+.mb{margin-bottom:10px;}
+.pl{padding-left: 10px;}
+.line_h_a{line-height:40px;}
+.wd_a{width:150px;}
+.wd_b{width:200px;}
+.bg_grey{background:#efefef;}
+.submit_btn{padding:5px 30px; color:#fff; font:bold 18px/1.5 '微软雅黑'; background:#019875; cursor:pointer; border:0 none; border-radius: 5px 5px 5px 5px;}
+.dl_btn{display:block; width:20px; height:20px; line-height:20px; text-align: center; border:1px solid #999; cursor:pointer;}
+
+.header{height:45px; line-height: 45px; color:#fff; background:#019875;}
+.header a{color:#fff;} 
+.font_a{font-size:22px;}
+.font_b{font-size:16px;}
+.l_menu li{margin-top:1px;}
+.l_menu li a{display:block; line-height: 30px; text-indent: 30px; background:#efefef;}
+.l_menu li a:hover{background:#e3e3e3;}
+.mina_u{float:left; margin-left:30px; height: 45px; line-height:45px;}
+.mina_u li{float:left;}
+.mina_u li a{display:block; padding:0px 10px; font-size:14px;}
+.bd_btm{border-bottom:3px solid #ccc}
+.fl{float:left;}
+.fr{float:right;}
+
+.aleft{text-align: left;}
+.aright{text-align: right;}
+.tabs{border-collapse: collapse;}
+.tabs td, .tabs th{padding:5px;} 
+
