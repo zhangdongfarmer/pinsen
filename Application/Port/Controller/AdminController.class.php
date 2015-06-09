@@ -8,11 +8,11 @@
 
 namespace Port\Controller;
 
-class ManageController extends AbstractBaseController 
+class AdminController extends AbstractBaseController
 {
     public function index()
     {
-        
+        echo 'fdfdf';
     }
     
     /**

@@ -13,30 +13,36 @@
     <block name="style"></block>
     <style>
         *{margin:0; padding:0px; list-style: none;}
-        body{font:normal 16px/1.5 '微软雅黑'; color:#444;}
+        body{font:normal 12px/1.5em '微软雅黑'; color:#444; text-align: left;}
         a{text-decoration: none; color:#0088cc}
         a:hover{text-decoration: underline;}
         
         .header{height:45px; line-height: 45px; color:#fff; background:#444;}
         .header a{color:#fff;} 
+        .t_h2{text-indent: 10px; font:400 16px/2.5em '微软雅黑'; color:#fff; background:#444;}
+        .l_menu li{margin-top:1px;}
+        .l_menu li a{display:block; line-height: 30px; text-indent: 30px; background:#efefef;}
+        .l_menu li a:hover{background:#e3e3e3;}
+        
+        .aleft{text-align: left;}
+        .aright{text-align: right;}
     </style>
 </head>
 <body>
     <div class="header">
-        品森接口说明
+        <h2 class="t_h2">接口说明</h2>
     </div>
-    <div style="height:35px; line-height: 35px; padding:0 10px; background: #ccc;">
-        <block name="position">
-            位置：
-        </block>
+    <div style="height:35px; line-height: 35px; padding:0 10px; border-bottom:1px solid #ccc;">
+        位置：<block name="position"><a href="{:U('?')}">首页</a></block>
     </div>
-    <div class="" style="float:left; width:200px;">
-        <ul>
+    <div class="" style="float:left; width:200px">
+         <h2 class="t_h2">接口分类</h2>
+        <ul class="l_menu">
             <li><a href="">文章</a></li>
             <li><a href="">视频</a></li>
         </ul>
     </div>
-    <div style="margin-left:250px;">
+    <div style="margin:20px 0 0 250px;">
         <block name="main_content">
             主体内容区域
         </block>
