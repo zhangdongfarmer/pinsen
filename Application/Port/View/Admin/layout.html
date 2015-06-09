@@ -17,32 +17,46 @@
         a{text-decoration: none; color:#0088cc}
         a:hover{text-decoration: underline;}
         
-        .header{height:45px; line-height: 45px; color:#fff; background:#444;}
+        .ml{margin-left:10px;}
+        .mb{margin-bottom:10px;}
+        
+        .header{height:45px; line-height: 45px; color:#fff; background:#019875;}
         .header a{color:#fff;} 
-        .t_h2{text-indent: 10px; font:400 16px/2.5em '微软雅黑'; color:#fff; background:#444;}
+        .t_h2{text-indent: 10px; font:400 16px/2.5em '微软雅黑';}
         .l_menu li{margin-top:1px;}
         .l_menu li a{display:block; line-height: 30px; text-indent: 30px; background:#efefef;}
         .l_menu li a:hover{background:#e3e3e3;}
+        .mina_u{float:left; margin-left:30px; height: 45px; line-height:45px;}
+        .mina_u li{float:left;}
+        .mina_u li a{display:block; padding:0px 20px; font-size:14px;}
+        .bd_btm{border-bottom:3px solid #ccc}
+        .fl{float:left;}
+        .fr{float:right;}
         
         .aleft{text-align: left;}
         .aright{text-align: right;}
+        .tabs{border-collapse: collapse;}
+        .tabs td, .tabs th{padding:5px;} 
     </style>
 </head>
 <body>
     <div class="header">
-        <h2 class="t_h2">接口说明</h2>
+        <h2 class="t_h2 fl">接口说明</h2>
+        <ul class="mina_u">
+            <li><a href="">视频</a></li>            
+            <li><a href="">活动</a></li>
+        </ul>
     </div>
-    <div style="height:35px; line-height: 35px; padding:0 10px; border-bottom:1px solid #ccc;">
+    <div style="height:35px; line-height: 35px; padding:0 10px;">
         位置：<block name="position"><a href="{:U('?')}">首页</a></block>
     </div>
-    <div class="" style="float:left; width:200px">
-         <h2 class="t_h2">接口分类</h2>
+    <div class="" style="float:left; display:inline; margin-left:10px; width:200px">
         <ul class="l_menu">
             <li><a href="">文章</a></li>
             <li><a href="">视频</a></li>
         </ul>
     </div>
-    <div style="margin:20px 0 0 250px;">
+    <div style="margin:0px 10px 0 220px;">
         <block name="main_content">
             主体内容区域
         </block>
