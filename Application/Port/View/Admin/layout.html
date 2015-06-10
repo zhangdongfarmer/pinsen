@@ -20,7 +20,7 @@
         <h2 class="font_a pl fl">接口说明</h2>
         <ul class="mina_u">
             <volist name="categorys" id="val">
-            <li><a href="{:U('port/cate', 'id='.$val.cate_id)}">{$val.cate_name}</a></li> 
+            <li><a href="{:U('port/cate', 'id='.$val['cate_id'])}">{$val.cate_name}</a></li> 
             </volist>
         </ul>
     </div>

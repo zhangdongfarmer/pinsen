@@ -18,7 +18,7 @@ class PortCategoryModel extends Model{
 //		array('title', 'require', '名称不能为空', self::MUST_VALIDATE , 'regex', self::MODEL_BOTH),
 //	);
 
-    public function getwork()
+    public function getLists()
     {
         return $this->order('cate_id desc')->select();
     }

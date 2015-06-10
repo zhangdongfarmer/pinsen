@@ -15,7 +15,7 @@ class AdminController extends AbstractBaseController
     {
         parent::__construct();
         
-        $category = D('PortCategory')->getwork();
+        $category = D('PortCategory')->getLists();
         $this->assign('categorys', $category);
     }
     
@@ -29,11 +29,42 @@ class AdminController extends AbstractBaseController
      */
     public function add()
     {
+        $errorMsg = '';
         if($_POST){
-            var_dump($_POST);
             $result = D('Port')->update();
-            var_dump($result);
+            if($result){
+                foreach($_POST['port_key'] as $key => $val){
+                    $data = array(
+                        'interface_id'  => intval($result),
+                        'port_key'      => $val,
+                        'port_value'    => $_POST['port_value'][$key],
+                        'port_name'     => $_POST['port_name'][$key],
+                        'is_must'       => $_POST['is_must'][$key],
+                    );  
+                    
+                    if($_POST['port_id'][$key]){
+                        $argResult = D('PortValue')->update($data);
+                    }else{
+                        $argResult = D('PortValue')->add($data);
+                    }
+                    if(!$argResult){
+                        $errorMsg .= $val.":".D('PortValue')->getError();
+                    }
+                }
+            }else{
+                $errorMsg .= D('Port')->getError();
+            }
         }
+        
+        $id = intval($_GET['id']);
+        //如果是编辑，获取数据
+        if($id){
+            $interface = D('Port')->where(array('interface_id'=>$id))->find();
+            $args = D('PortValue')->where(array('interface_id'=>$id))->select();
+            $this->assign('interface', $interface);
+            $this->assign('args', $args);
+        }
+        $this->assign('errorMsg', $errorMsg);
         $this->display();
     }
 }

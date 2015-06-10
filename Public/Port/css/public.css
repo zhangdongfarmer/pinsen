@@ -39,4 +39,5 @@ a:hover{text-decoration: underline;}
 .aright{text-align: right;}
 .tabs{border-collapse: collapse;}
 .tabs td, .tabs th{padding:5px;} 
+.error_msg{padding:5px; background:#ffd; border:1px solid #f60;}
 
