@@ -30,14 +30,14 @@ class PortValueModel extends Model{
      * @return boolean fasle 失败 ， int  成功 返回完整的数据
      * @author huajie <banhuajie@163.com>
      */
-    public function update($data, $port_id)
+    public function update($data)
     {
         /* 获取数据对象 */
         $data = $this->create($data);
         if(empty($data)){
             return false;
         }
-        $status = $this->save(); //更新基础内容
+        $status = $this->save($data); //更新基础内容
         return $status;
     }
 

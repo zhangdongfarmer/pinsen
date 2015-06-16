@@ -9,6 +9,8 @@
     <script type="text/javascript" src="__STATIC__/jquery-1.10.2.min.js"></script>
     <![endif]--><!--[if gte IE 9]><!-->
     <script type="text/javascript" src="__STATIC__/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="__STATIC__/thinkbox/jquery.thinkbox.js"></script>
+    <link href="__STATIC__/thinkbox/skin/default/style.css"  rel="stylesheet" />
     <!--<![endif]-->
     <block name="style"></block>
     <style>
@@ -38,5 +40,14 @@
             主体内容区域
         </block>
     </div>
+    <script>
+        var errorMsg = "{$_SESSION['tipError']}";
+        <php>$_SESSION['tipError'] = '';</php>
+        $(function(){
+            if(errorMsg){
+                $.thinkbox('<div>'+errorMsg+'</div>', {width:300, height:100, title:'提示'});
+            }
+        });
+    </script>
 </body>
 </html>
