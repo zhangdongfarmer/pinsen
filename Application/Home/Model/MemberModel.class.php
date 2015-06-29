@@ -93,5 +93,19 @@ class MemberModel extends Model{
         session('user_auth_sign', data_auth_sign($auth));
 
     }
+    
+    /**
+     * 获取个人信息
+     */
+    public function info($uid){
+    	if(!$uid){
+    		return false;
+    	}
+    	
+    	$map['uid'] = intval($uid);
+    	$map['status'] = 1;
+    	$info = $this->where($map)->find();
+    	return $info;
+    }
 
 }
