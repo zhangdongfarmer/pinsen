@@ -95,17 +95,30 @@ class MemberModel extends Model{
     }
     
     /**
-     * 获取个人信息
+     * 获取个人信息  by luochao
      */
-    public function info($uid){
+    public function info($uid,$field="*"){
     	if(!$uid){
     		return false;
     	}
     	
     	$map['uid'] = intval($uid);
     	$map['status'] = 1;
-    	$info = $this->where($map)->find();
+    	$info = $this->where($map)->field($field)->find();
     	return $info;
+    }
+    
+	/**
+     * 获取某个分店雇员数  by luochao
+     */
+    public function employeeNum($subbranch_id){
+    	if(!$subbranch_id){
+    		return false;
+    	}
+    	
+    	$map['subbranch_id'] = intval($subbranch_id);
+    	$count = $this->where($map)->count();
+    	return $count;
     }
 
 }

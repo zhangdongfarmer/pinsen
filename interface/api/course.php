@@ -8,21 +8,43 @@ class course extends base{
 	 * 培训列表
 	 */
 	public function lists($param){
+		
+		if(!$param['subbranch_id']){
+			$this->getResponse(array(),'999');
+			return false;
+		}
+		
+		//分店id
+		$map['subbranch_id'] = intval($param['subbranch_id']);
+		
 		//类型
 		if($param['type']){
 			$map['type'] = intval($param['type']);
 		}
 		//状态
 		if($param['status']){
-			
+			$wh['uid'] = intval($param['uid']);
+			$wh['status'] = intval($param['status']);
+			$course_record = M('course_record')->where($wh)->select();
+			if($course_record){
+				$course_ids = array();
+				foreach($course_record as $k=>$v){
+					$course_ids[] = intval($v['course_id']);
+				}
+				$map['id'] = array('in',implode(',',$course_ids));
+			}else{
+				$this->getResponse(array(),'0');
+				return false;
+			}
 		}
 		
 		$page = $param['page'] ? intval($param['page']) : 1;
 		$page_size = $param['page_size'] ? intval($param['page_size']) : 5;
-		$order_by = $param['order_by'] ? trim($param['order_by']) : 'create_time';
-		$order_seq = $param['order_seq'] ? trim($param['order_seq']) : 'desc';
-		$order = $order_by.' '.$order_seq;
-		$field = 'id,title,course_ico,comment_count,create_time';
+		$order_by = $param['order_by'] ? trim($param['order_by']) : 'time';
+		$order_map = array('time'=>'create_time','score'=>'comment_count','play'=>'play_count');
+		$order_seq = $param['order_seq'] == '2' ? 'asc' : 'desc';
+		$order = $order_map[$order_by].' '.$order_seq;
+		$field = 'id,title,course_ico,comment_count,play_count,create_time';
 		$data = M('course')->where($map)->field($field)->order($order)->page($page)->limit($page_size)->select();
 		if($data){
 			foreach($data as &$v){
@@ -62,6 +84,9 @@ class course extends base{
 				$course['status'] = $course_record['status'];
 			}
 			$course['status_name'] = $status_map[$course['status']];
+			$course_type = M('course_type')->where('id='.$course['type'])->field('name,level')->find();
+			$course['type_name'] = $course_type ? $course_type['name'] : '暂无';
+			$course['level'] = $course_type ? $course_type['level'] : 1;
 			
 			//查询课程评论数据
 			$wh['course_id'] = $course_id;
@@ -87,6 +112,7 @@ class course extends base{
 		if($param['course_id']){
 			$insert_array['uid'] = intval($param['uid']);
 			$insert_array['course_id'] = intval($param['course_id']);
+			$insert_array['course_level'] = intval($param['course_level']);
 			$insert_array['comment_time'] = time();
 			$insert_array['comment_score'] = intval($param['comment_score']);
 			$insert_array['comment_content'] = trim($param['comment_content']);
@@ -145,9 +171,43 @@ class course extends base{
 			}else{ //观看完视频后，进行考试并提交考试结果
 				$save['status'] = intval($param['status']);
 				$save['update_time'] = time();
+				
+				if($save['status'] == 3){
+					//加金币
+				}
+				
 				$res = $record_model->where($map)->save($save);
 				$this->getResponse('',$res?'0':'502');
 			}
+		}else{
+			$this->getResponse('','999');
+		}
+	}
+	
+	/**
+	 * 关注课程
+	 */
+	public function focus($param){
+		if($param['uid'] && $param['course_id']){
+			$add['uid'] = intval($param['uid']);
+			$add['course_id'] = intval($param['course_id']);
+			$add['focus_time'] = time();
+			$res = M('course_focus')->add($add);
+			$this->getResponse('', $res?'0':'504');
+		}else{
+			$this->getResponse('','999');
+		}
+	}
+	
+	/**
+	 * 删除课程关注
+	 */
+	public function blur($param){
+		if($param['uid'] && $param['course_id']){
+			$map['uid'] = intval($param['uid']);
+			$map['course_id'] = intval($param['course_id']);
+			$res = M('course_focus')->where($map)->delete();
+			$this->getResponse('', $res?'0':'505');
 		}else{
 			$this->getResponse('','999');
 		}
