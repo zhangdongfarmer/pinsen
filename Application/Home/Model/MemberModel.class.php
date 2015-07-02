@@ -93,5 +93,32 @@ class MemberModel extends Model{
         session('user_auth_sign', data_auth_sign($auth));
 
     }
+    
+    /**
+     * 获取个人信息  by luochao
+     */
+    public function info($uid,$field="*"){
+    	if(!$uid){
+    		return false;
+    	}
+    	
+    	$map['uid'] = intval($uid);
+    	$map['status'] = 1;
+    	$info = $this->where($map)->field($field)->find();
+    	return $info;
+    }
+    
+	/**
+     * 获取某个分店雇员数  by luochao
+     */
+    public function employeeNum($subbranch_id){
+    	if(!$subbranch_id){
+    		return false;
+    	}
+    	
+    	$map['subbranch_id'] = intval($subbranch_id);
+    	$count = $this->where($map)->count();
+    	return $count;
+    }
 
 }
