@@ -8,7 +8,7 @@ class activity extends base{
 	 * 活动列表
 	 */
 	public function lists($param){
-		if($param['subbranch_id']){
+		if(!$param['subbranch_id']){
 			$this->getResponse(array(),'999');
 		}else{
 			$subbranch_id = intval($param['subbranch_id']);

@@ -128,7 +128,7 @@ class course extends base{
 	 * status状态值：0，未看过；1，未考试；2，未通过；3，已通过
 	 */
 	public function track($param){
-		if($param['uid'] && $param['course_id'] && $param['type'] && isset($param['status'])){
+		if($param['uid'] && $param['course_id'] && $param['type'] && isset($param['status']) && $param['level']){
 			
 			$course_model = M('course');
 			$member_model = M('member');
@@ -137,7 +137,7 @@ class course extends base{
 			$map['uid'] = intval($param['uid']);
 			$map['course_id'] = intval($param['course_id']);
 			
-			
+			$level = intval($param['level']);
 			$type = intval($param['type']);
 			$status = intval($param['status']);
 			if($type == 1){	//点击【立即学习】
@@ -150,20 +150,23 @@ class course extends base{
 				}
 					
 				//更新点播数
-				$data['play_count'] = array('exp','play_count+1');
+				$data['play_count'] = array('exp','`play_count`+1');
 				$course_model->where(array('id'=>$map['course_id']))->save($data);
 				
 				if($status > 0){ //非第一次观看
 					$this->getResponse('','0');
 				}else{ //第一次观看
 					
-					//扣除金币
-					$update['gold'] = array('exp',"gold-{$course['gold']}");
-					$member_model->where(array('uid'=>$map['uid']))->save($update);
+					//消耗积分
+					if($level == PLATFORM){
+						$update['score'] = array('exp',"`score`-{$course['score']}");
+						$member_model->where(array('uid'=>$map['uid']))->save($update);
+					}
 					
 					$insert['uid'] = $map['uid'];
 					$insert['course_id'] = $map['course_id'];
 					$insert['status'] = 1;
+					$insert['level'] = $level;
 					$insert['update_time'] = time();
 					$res = $record_model->add($insert);
 					$this->getResponse('',$res?'0':'502');
@@ -173,7 +176,11 @@ class course extends base{
 				$save['update_time'] = time();
 				
 				if($save['status'] == 3){
-					//加金币
+					//奖励金币
+					if($level == ENTERPRISE){
+						$update['gold'] = array('exp',"`gold`+{$course['gold']}");
+						$member_model->where(array('uid'=>$map['uid']))->save($update);
+					}
 				}
 				
 				$res = $record_model->where($map)->save($save);
