@@ -31,7 +31,7 @@ class course extends base{
 				foreach($course_record as $k=>$v){
 					$course_ids[] = intval($v['course_id']);
 				}
-				$map['id'] = array('in',implode(',',$course_ids));
+				$map['id'] = array('in',$course_ids);
 			}else{
 				$this->getResponse(array(),'0');
 				return false;
@@ -117,6 +117,20 @@ class course extends base{
 			$insert_array['comment_score'] = intval($param['comment_score']);
 			$insert_array['comment_content'] = trim($param['comment_content']);
 			$res = M('course_comment')->add($insert_array);
+			
+			if($res){
+			    //评论加5积分
+			    $save['score'] = array('exp','`score`+5');
+			    M('member')->where('uid='.$insert_array['uid'])->save($save);
+			    
+			    //重新计算该课程的平均点评分数
+			    $sql = 'select count(*) as num,sum(comment_score) as total_score from '.C('DB_PREFIX').'course_comment where course_id='.$insert_array['course_id'];
+			    $comment = M()->query($sql);
+			    $map['id'] = $insert_array['course_id'];
+			    $upd['comment_score'] = ceil($comment['total_score']/$comment['num']);
+			    M('course')->where($map)->save($upd);
+			}
+			
 			$this->getResponse('',$res?'0':'501');
 		}else{
 			$this->getResponse('','999');
@@ -134,34 +148,38 @@ class course extends base{
 			$member_model = M('member');
 			$record_model = M('course_record');
 			
-			$map['uid'] = intval($param['uid']);
-			$map['course_id'] = intval($param['course_id']);
-			
+			$uid = intval($param['uid']);
+			$course_id = intval($param['course_id']);
 			$level = intval($param['level']);
 			$type = intval($param['type']);
 			$status = intval($param['status']);
+			
 			if($type == 1){	//点击【立即学习】
 				
-				$course = $course_model->where(array('id'=>$map['course_id']))->find();
-				$member = $member_model->where(array('id'=>$map['uid']))->find();
-				if($course['gold'] > $member['gold']){
-					$this->getResponse('','503');
-					return true;
-				}
-					
-				//更新点播数
+				//点播数+1
 				$data['play_count'] = array('exp','`play_count`+1');
-				$course_model->where(array('id'=>$map['course_id']))->save($data);
 				
 				if($status > 0){ //非第一次观看
+					//更新点播数
+					$course_model->where('course_id='.$course_id)->save($data);
 					$this->getResponse('','0');
 				}else{ //第一次观看
 					
 					//消耗积分
 					if($level == PLATFORM){
+						$course = $course_model->where('course_id='.$course_id)->find();
+						$member = $member_model->where('uid='.$uid)->find();
+						if($course['score'] > $member['score']){
+							$this->getResponse('','503');
+							return false;
+						}
+						
 						$update['score'] = array('exp',"`score`-{$course['score']}");
-						$member_model->where(array('uid'=>$map['uid']))->save($update);
+						$member_model->where('uid='.$uid)->save($update);
 					}
+					
+					//更新点播数
+					$course_model->where('course_id='.$course_id)->save($data);
 					
 					$insert['uid'] = $map['uid'];
 					$insert['course_id'] = $map['course_id'];
@@ -179,10 +197,12 @@ class course extends base{
 					//奖励金币
 					if($level == ENTERPRISE){
 						$update['gold'] = array('exp',"`gold`+{$course['gold']}");
-						$member_model->where(array('uid'=>$map['uid']))->save($update);
+						$member_model->where('uid='.$uid)->save($update);
 					}
 				}
 				
+				$map['uid'] = $uid;
+				$map['course_id'] = $course_id;
 				$res = $record_model->where($map)->save($save);
 				$this->getResponse('',$res?'0':'502');
 			}
@@ -215,6 +235,30 @@ class course extends base{
 			$map['course_id'] = intval($param['course_id']);
 			$res = M('course_focus')->where($map)->delete();
 			$this->getResponse('', $res?'0':'505');
+		}else{
+			$this->getResponse('','999');
+		}
+	}
+	
+	/**
+	 * 课程搜索
+	 */
+	public function search($param){
+	if(trim($param['keyword']) && $param['subbranch_id']){
+			$keyword = trim($param['keyword']);
+			$map['title'] = array('exp',"`title` like '%{$keyword}%'");
+			$map['subbranch_id'] = intval($param['subbranch_id']);
+			$field = 'id,title,course_ico,expire_time,play_cout';
+			$page = intval($param['page']) ? intval($param['page']) : 1;
+			$page_size = intval($param['page_size']) ? intval($param['page_size']) : 5;
+			$course = M('course')->where($map)->field($field)->order('play_count desc')->page($page)->limit($page_size)->select();
+			if($course){
+				foreach($course as &$v){
+					$v['expire_time'] = date('Y-m-d',$v['expire_time']);
+					$v['course_ico'] = $v['course_ico'];
+				}
+			}
+			$this->getResponse($course?$course:array(),'0');
 		}else{
 			$this->getResponse('','999');
 		}

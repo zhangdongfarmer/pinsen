@@ -5,6 +5,7 @@
 use User\Model\UcenterMemberModel;
 include 'base.php';
 include dirname(__FILE__).'/../../Application/User/Conf/config.php';
+include dirname(__FILE__).'/../../Application/User/Common/common.php';
 class user extends base{
 	public function __construct(){
 		$this->user_model = new UcenterMemberModel();
@@ -34,7 +35,7 @@ class user extends base{
 		            $this->getResponse('', '302');
 		            break;
 		        default:
-		            $info = D('Member')->info($result,'uid,subbranch_id,score,gold');
+		            $info = D('Member')->info($result,'uid,subbranch_id,score,gold,login_score');
 		            	
 		            //登录时积分奖励
 		            $uid = intval($info['uid']);
@@ -46,19 +47,25 @@ class user extends base{
 		                $detl_time = $current_time-$last_login_time;
 		                if($detl_time == 1){  //连续登陆
 		                    if($login_times == 4){
-		                        //+10
 		                        $mem['login_times'] = 0;
+		                        //积分+10
 		                        $mem['score'] = $info['score']+10;
+		                        $mem['login_score'] = $info['login_score']+10;
 		                    }else {
 		                        //+1
 		                        $mem['login_times'] = array('exp', '`login_times`+1');
+		                        //积分+1
 		                        $mem['score'] = $info['score']+1;
+		                        $mem['login_score'] = $info['login_score']+1;
 		                    }
 		                }else{  //非连续登陆
 		                    $mem['login_times'] = 1;
+		                    //积分+1
 		                    $mem['score'] = $info['score']+1;
+		                    $mem['login_score'] = $info['login_score']+1;
 		                }
 		            }
+		            unset($info['login_score']);
 		            $mem['last_login_time'] = $u_mem['last_login_time'] = time();
 		            $mem['last_login_ip'] = $u_mem['last_login_ip'] = get_client_ip(1);
 		            $mem['login'] = array('exp', '`login`+1');
@@ -100,7 +107,6 @@ class user extends base{
 			$field = 'a.uid,a.head,a.truename,b.phone,a.sex,a.job,a.subbranch_id';
 			$info = M()->table(C('DB_PREFIX').'member a')->join(C('DB_PREFIX').'ucenter_member b on a.uid=b.uid')
 			           ->field($field)->where('uid='.$uid)->find();
-			           //echo M()->getLastSql();
 			if($info){
 				$info['sex'] = $info['sex'] == '0' ? '女' : '男';
 				$info['head'] = $info['head'];
@@ -171,46 +177,24 @@ class user extends base{
 	public function gold($param){
 		if($param['uid']){
 			$uid = intval($param['uid']);
+			//获得金币记录：考试通过一类课程
 			$map['uid'] = $uid;
 			$map['level'] = ENTERPRISE;
 			$map['status'] = 3;
-			$record = M('course_record')->where($map)->field('course_id,update_time')->order('update_time desc')->select();
-			$in_record = array();
-			//获得金币记录
-			if($record){
-				foreach($record as $k=>$v){
-					$course = M('course')->where('id='.$v['course_id'])->field('title,gold')->find();
-					$in_record[$k]['desc'] = '通过-'.trim($course['title']);
-					$in_record[$k]['gold'] = intval($course['gold']);
-					$out_record[$k]['type'] = 1;
-					$in_record[$k]['time'] = intval($v['update_time']);
-				}
-			}
+			$course_record = M('course_record')->where($map)->field('course_id,update_time')->order('update_time desc')->select();
+			$course_record = $this->format_record($course_record,'pass',1);
 			
-			//消耗金币记录
+			//消耗金币记录：兑换礼品和金币
 			$map = array();
 			$map['uid'] = $uid;
 			$map['pay_type'] = 2;
-			$out_record = array();
-			$record = M('gift_record')->where($map)->field('oid,time,gold')->order('time desc')->select();
-			if($record){
-				foreach($record as $k=>$v){
-					$gift = M('order')->where('id='.$v['oid'])->field('name')->find();
-					$out_record[$k]['desc'] = '兑换礼品-'.trim($gift['name']);
-					$out_record[$k]['gold'] = intval($v['gold']);
-					$out_record[$k]['type'] = 2;
-					$out_record[$k]['time'] = intval($v['time']);
-				}
-			}
+			$gift_record = M('gift_record')->where($map)->field('oid,time,gold,score,gift_type,pay_type')->order('time desc')->select();
+			$gift_record = $this->format_record($gift_record,'gift',2);
 			
-			$data = array();
-			$merge_record = array_merge($in_record,$out_record);
-			/*if($merge_record){
-				foreach($merge_record as $k=>$v){
-					
-				}
-			}*/
-			$this->getResponse($merge_record, '0');		
+			$record = array_merge($course_record,$gift_record);
+			//根据时间倒序对数组重新排序
+			$data = $this->bubble_sort($record,'time');
+			$this->getResponse($data, '0');		
 		}else{
 			$this->getResponse('', '999');
 		}
@@ -220,7 +204,130 @@ class user extends base{
 	 * 我的积分
 	 */
 	public function score($param){
-		
+	    if($param['uid']){
+	        $uid = intval($param['uid']);
+	        
+	        /** 获得积分记录 **/
+	        //【登陆】
+	        $map['uid'] = $uid;
+	        $login_record = M('member')->where($map)->field('login_score,last_login_time')->select();
+	        $login_record = $this->format_record($login_record,'login');
+	        //【金币兑换】
+	        $map = array();
+	        $map['uid'] = $uid;
+	        $map['pay_type'] = 2;
+	        $map['gift_type'] = 2;
+	        $gold_record = M('gift_record')->where($map)->field('oid,time,gold,score,gift_type,pay_type')->order('time desc')->select();
+	        $gold_record = $this->format_record($gift_record,'gift',1);
+	        //【评论】
+	        $map = array();
+	        $map['uid'] = $uid;
+	        $comment_record = M('course_comment')->where($map)->field('course_id,comment_time')->order('comment_time desc')->select();
+	        $comment_record = $this->format_record($comment_record,'comment',1);
+	        
+	        /** 消耗积分 **/
+	        //【观看二类视频】
+	        $map = array();
+			$map['uid'] = $uid;
+			$map['level'] = PLATFORM;
+			$course_record = M('course_record')->where($map)->field('course_id,update_time')->order('update_time desc')->select();
+			$course_record = $this->format_record($course_record,'watch',2);
+			//【兑换礼品】
+			$map = array();
+			$map['uid'] = $uid;
+			$map['pay_type'] = 1;
+			$map['gift_type'] = 1;
+			$gift_record = M('gift_record')->where($map)->field('oid,time,gold,score,gift_type,pay_type')->order('time desc')->select();
+			$gift_record = $this->format_record($gift_record,'gift',2);
+			
+			$record = array_merge($login_record,$gold_record,$comment_record,$course_record,$gift_record);
+			//根据时间倒序对数组重新排序
+			$data = $this->bubble_sort($record,'time');
+			$this->getResponse($data, '0');
+	    }else{
+	        $this->getResponse('', '999');
+	    }
+	}
+	
+	/**
+	 * 私有方法-格式化金币积分记录统一方法
+	 */
+	private function format_record($data,$type,$plus){
+	    $format_data = array();
+	    if($data){
+	        switch($type){
+	            //通过一类课程
+	            case 'pass':
+	                foreach($data as $k=>$v){
+	                    $course = M('course')->where('id='.$v['course_id'])->field('title,gold')->find();
+	                    $format_data[$k]['desc'] = '通过-'.trim($course['title']);
+	                    $format_data[$k]['gold'] = intval($course['gold']);
+	                    $format_data[$k]['type'] = $plus;
+	                    $format_data[$k]['time'] = date('Y-m-d H:i:s',$v['update_time']);
+	                }
+	            break;
+	            //兑换
+	            case 'gift':
+	                foreach($data as $k=>$v){
+	                    $gift = M('order')->where('id='.$v['oid'])->field('name')->find();
+	                    $gift_type = $v['gift_type'] == 1 ? '普通' : '金币';
+	                    $format_data[$k]['desc'] = "兑换{$gift_type}礼品-".trim($gift['name']);
+	                    $format_data[$k]['gold'] = $v['pay_type'] == 1 ? intval($v['score']) : intval($v['gold']);
+	                    $format_data[$k]['type'] = $plus;
+	                    $format_data[$k]['time'] = date('Y-m-d H:i:s',$v['time']);
+	                }
+	            break;
+	            //观看二类课程
+	            case 'watch':
+	                foreach($data as $k=>$v){
+	                    $course = M('course')->where('id='.$v['course_id'])->field('title,score')->find();
+	                    $format_data[$k]['desc'] = '通过-'.trim($course['title']);
+	                    $format_data[$k]['gold'] = intval($course['score']);
+	                    $format_data[$k]['type'] = $plus;
+	                    $format_data[$k]['time'] = date('Y-m-d H:i:s',$v['update_time']);
+	                }
+	            break;
+	            //登陆
+	            case 'login':
+	                foreach($data as $k=>$v){
+	                    $format_data[$k]['desc'] = '登录签到';
+	                    $format_data[$k]['gold'] = intval($v['login_score']);
+	                    $format_data[$k]['type'] = $plus;
+	                    $format_data[$k]['time'] = date('Y-m-d H:i:s',$v['last_login_time']);
+	                }
+	            break;
+	            //评论
+	            case 'comment':
+	                foreach($data as $k=>$v){
+	                    $course = M('course')->where('id='.$v['course_id'])->field('title')->find();
+	                    $format_data[$k]['desc'] = '评论-'.trim($course['title']);
+	                    $format_data[$k]['gold'] = 5;
+	                    $format_data[$k]['type'] = $plus;
+	                    $format_data[$k]['time'] = date('Y-m-d H:i:s',$v['comment_time']);
+	                }
+	            break;
+	        }
+	    }
+	    return $format_data;
+	}
+	
+	/**
+	 * 私有方法-冒泡排序
+	 */
+	private function bubble_sort($data,$key){
+		if($data){
+			$count = count($data);
+			for($i=0;$i<$count;$i++){
+				for($j=$i+1;$j<$count;$j++){
+					if($data[$i][$key] < $data[$j][$key]){
+						$min = $data[$i];
+						$data[$i] = $data[$j];
+						$data[$j] = $min;
+					}
+				}
+			}
+		}
+		return $data;
 	}
 	
 	/**

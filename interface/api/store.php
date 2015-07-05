@@ -79,4 +79,21 @@ class store extends base{
 		}
 	}
 	
+	/**
+	 * 搜索店员
+	 */
+	public function search($param){
+		if(trim($param['keyword']) && $param['subbranch_id']){
+			$keyword = trim($param['keyword']);
+			$subbranch_id = intval($param['subbranch_id']);
+			
+			//$map['']
+			$field = 'a.uid,a.head,a.job,a.truename';
+			$data = M()->table(C('DB_PREFIX').'member a')->join(C('DB_PREFIX').'ucenter_member b on a.uid=b.uid')
+			           ->field($field)->where($map)->select();
+		}else{
+			$this->getResponse('','999');
+		}
+	}
+	
 }
