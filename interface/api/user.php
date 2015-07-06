@@ -152,17 +152,33 @@ class user extends base{
 	public function focus($param){
 		if($param['uid']){
 			$uid = intval($param['uid']);
-			$map['a.uid'] = $uid;
+			$map['uid'] = $uid;
 			
-			$field = 'a.course_id,a.focus_time,b.title,b.type,b,b.course_ico,b.video_url';
+			/*$field = 'a.course_id,a.focus_time,b.title,b.type,b,b.course_ico,b.video_url';
 			$list = M()->table(C('DB_PREFIX').'course_focus a')->join(C('DB_PREFIX').'course b on a.course_id=b.course_id')
-			           ->field($field)->where($map)->order('a.focus_time desc')->select();
-			           
+			           ->field($field)->where($map)->order('a.focus_time desc')->select();*/
+			
+			$field = 'item_id,focus_time,focus_type';
+			$list = M('user_focus')->where($map)->order('focus_time desc')->select();
 			if($list){
-				foreach($list as $k=>$v){
-					$type = M('course_type')->where('id='.$v['type'])->find();
-					$list[$k]['type'] = $type['name'];
-					$list[$k]['focus_time'] = date('Y-m-d',$v['focus_time']);
+				foreach($list as $k=>&$v){
+					$focus_type = intval($v['focus_type']);
+					if($focus_type == 1){
+						$couse = M('course')->where('id='.$v['item_id'])->field('title,type,course_ico,video_url')->find();
+						$type = M('course_type')->where('id='.$couse['type'])->find();
+						$v['course_type'] = $type['name'];
+						$v['item_title'] = $couse['title'];
+						$v['item_ico'] = $couse['course_ico'];
+						$v['item_url'] = $couse['video_url'];
+					}else{
+						$act = M('activity')->where('id='.$v['item_id'])->field('title,act_ico,wap_link')->find();
+						$type = M('course_type')->where('id='.$couse['type'])->find();
+						$v['course_type'] = '';
+						$v['item_title'] = $act['title'];
+						$v['item_ico'] = $act['act_ico'];
+						$v['item_url'] = $act['wap_link'];
+					}
+					$v['focus_time'] = date('Y-m-d',$v['focus_time']);
 				}
 			}
 			$this->getResponse($list?$list:array(), '0');
