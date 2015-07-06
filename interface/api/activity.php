@@ -17,7 +17,7 @@ class activity extends base{
 			
 			$where['store_id'] = intval($store['store_id']);
 			$order = 'id desc';
-			$field = 'id,title,act_ico';
+			$field = 'id,title,sub_title,act_ico,wap_link';
 			$page = $param['page'] ? intval($param['page']) : 1;
 			$page_size = $param['page_size'] ? intval($param['page_size']) : 5;
 			$act_list = M('activity')->where($where)->field($field)->order($order)->page($page)->limit($page_size)->select();
@@ -31,7 +31,7 @@ class activity extends base{
 	}
 	
 	/**
-	 * 活动详情
+	 * 活动详情-废弃
 	 */
 	public function detail($param){
 		if($param['act_id']){

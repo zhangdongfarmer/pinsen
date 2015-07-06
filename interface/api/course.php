@@ -44,7 +44,7 @@ class course extends base{
 		$order_map = array('time'=>'create_time','score'=>'comment_count','play'=>'play_count');
 		$order_seq = $param['order_seq'] == '2' ? 'asc' : 'desc';
 		$order = $order_map[$order_by].' '.$order_seq;
-		$field = 'id,title,course_ico,comment_count,play_count,create_time';
+		$field = 'id,title,course_ico,comment_count,play_count,create_time,is_recom';
 		$data = M('course')->where($map)->field($field)->order($order)->page($page)->limit($page_size)->select();
 		if($data){
 			foreach($data as &$v){
@@ -215,11 +215,12 @@ class course extends base{
 	 * 关注课程
 	 */
 	public function focus($param){
-		if($param['uid'] && $param['course_id']){
+		if($param['uid'] && $param['item_id'] && $param['type']){
 			$add['uid'] = intval($param['uid']);
-			$add['course_id'] = intval($param['course_id']);
+			$add['item_id'] = intval($param['item_id']);
+			$add['focus_type'] = intval($param['type']);
 			$add['focus_time'] = time();
-			$res = M('course_focus')->add($add);
+			$res = M('user_focus')->add($add);
 			$this->getResponse('', $res?'0':'504');
 		}else{
 			$this->getResponse('','999');
@@ -230,10 +231,10 @@ class course extends base{
 	 * 删除课程关注
 	 */
 	public function blur($param){
-		if($param['uid'] && $param['course_id']){
+		if($param['uid'] && $param['item_id']){
 			$map['uid'] = intval($param['uid']);
-			$map['course_id'] = intval($param['course_id']);
-			$res = M('course_focus')->where($map)->delete();
+			$map['item_id'] = intval($param['item_id']);
+			$res = M('user_focus')->where($map)->delete();
 			$this->getResponse('', $res?'0':'505');
 		}else{
 			$this->getResponse('','999');
@@ -246,9 +247,9 @@ class course extends base{
 	public function search($param){
 	if(trim($param['keyword']) && $param['subbranch_id']){
 			$keyword = trim($param['keyword']);
-			$map['title'] = array('exp',"`title` like '%{$keyword}%'");
+			$map['title'] = array('like',"%{$keyword}%");
 			$map['subbranch_id'] = intval($param['subbranch_id']);
-			$field = 'id,title,course_ico,expire_time,play_cout';
+			$field = 'id,title,course_ico,expire_time,play_cout,is_recom';
 			$page = intval($param['page']) ? intval($param['page']) : 1;
 			$page_size = intval($param['page_size']) ? intval($param['page_size']) : 5;
 			$course = M('course')->where($map)->field($field)->order('play_count desc')->page($page)->limit($page_size)->select();

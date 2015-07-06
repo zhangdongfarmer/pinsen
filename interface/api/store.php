@@ -87,10 +87,15 @@ class store extends base{
 			$keyword = trim($param['keyword']);
 			$subbranch_id = intval($param['subbranch_id']);
 			
-			//$map['']
+			$store = M('subbranch')->where('id='.$subbranch_id)->field('store_id')->find();
+			$store_id = intval($store['store_id']);
+			$subbrabch_ids = D('Subbranch')->getSubbranchIds($store_id);
+			
+			$map['subbranch_id'] = array('in',$subbrabch_ids);
+			$map['truename'] = array('like',"{%$keyword%}");
 			$field = 'a.uid,a.head,a.job,a.truename';
-			$data = M()->table(C('DB_PREFIX').'member a')->join(C('DB_PREFIX').'ucenter_member b on a.uid=b.uid')
-			           ->field($field)->where($map)->select();
+			$data = M('member')->where($map)->field($field)->order('uid desc')->select();
+			$this->getResponse($data,'0');
 		}else{
 			$this->getResponse('','999');
 		}
