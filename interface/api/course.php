@@ -23,25 +23,30 @@ class course extends base{
 		}
 		//状态
 		if($param['status']){
+			$status = intval($param['status'])-1;
+			if($status > 0){
+				$wh['status'] = $status;
+			}
 			$wh['uid'] = intval($param['uid']);
-			$wh['status'] = intval($param['status']);
 			$course_record = M('course_record')->where($wh)->select();
 			if($course_record){
 				$course_ids = array();
 				foreach($course_record as $k=>$v){
 					$course_ids[] = intval($v['course_id']);
 				}
-				$map['id'] = array('in',$course_ids);
+				$map['id'] = $status > 0 ? array('in',$course_ids) : array('not in',$course_ids);
 			}else{
-				$this->getResponse(array(),'0');
-				return false;
+				if($status > 0){
+					$this->getResponse(array(),'0');
+					return false;
+				}
 			}
 		}
 		
 		$page = $param['page'] ? intval($param['page']) : 1;
 		$page_size = $param['page_size'] ? intval($param['page_size']) : 5;
-		$order_by = $param['order_by'] ? trim($param['order_by']) : 'time';
-		$order_map = array('time'=>'create_time','score'=>'comment_count','play'=>'play_count');
+		$order_by = $param['order_by'] ? trim($param['order_by']) : 'default';
+		$order_map = array('default'=>'id','time'=>'create_time','score'=>'comment_count','play'=>'play_count');
 		$order_seq = $param['order_seq'] == '2' ? 'asc' : 'desc';
 		$order = $order_map[$order_by].' '.$order_seq;
 		$field = 'id,title,course_ico,comment_count,play_count,create_time,is_recom';
@@ -138,11 +143,11 @@ class course extends base{
 	}
 	
 	/**
-	 * 培训视频学习状态跟踪
+	 * 培训视频学习状态跟踪（点击立即学习）
 	 * status状态值：0，未看过；1，未考试；2，未通过；3，已通过
 	 */
 	public function track($param){
-		if($param['uid'] && $param['course_id'] && $param['type'] && isset($param['status']) && $param['level']){
+		if($param['uid'] && $param['course_id'] && isset($param['status']) && $param['level']){
 			
 			$course_model = M('course');
 			$member_model = M('member');
@@ -151,10 +156,10 @@ class course extends base{
 			$uid = intval($param['uid']);
 			$course_id = intval($param['course_id']);
 			$level = intval($param['level']);
-			$type = intval($param['type']);
+			//$type = intval($param['type']);
 			$status = intval($param['status']);
 			
-			if($type == 1){	//点击【立即学习】
+			//if($type == 1){	//点击【立即学习】
 				
 				//点播数+1
 				$data['play_count'] = array('exp','`play_count`+1');
@@ -189,7 +194,7 @@ class course extends base{
 					$res = $record_model->add($insert);
 					$this->getResponse('',$res?'0':'502');
 				}
-			}else{ //观看完视频后，进行考试并提交考试结果
+			/*}else{ //观看完视频后，进行考试并提交考试结果
 				$save['status'] = intval($param['status']);
 				$save['update_time'] = time();
 				
@@ -205,7 +210,7 @@ class course extends base{
 				$map['course_id'] = $course_id;
 				$res = $record_model->where($map)->save($save);
 				$this->getResponse('',$res?'0':'502');
-			}
+			}*/
 		}else{
 			$this->getResponse('','999');
 		}

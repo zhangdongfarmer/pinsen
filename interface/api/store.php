@@ -101,4 +101,11 @@ class store extends base{
 		}
 	}
 	
+	/**
+	 * 扫一扫
+	 */
+	public function scan($param){
+		
+	}
+	
 }
