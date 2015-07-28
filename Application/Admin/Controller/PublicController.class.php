@@ -21,12 +21,14 @@ class PublicController extends \Think\Controller {
      * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function login($username = null, $password = null, $verify = null){
+        //$User = new UserApi;
+       // echo think_ucenter_md5("123123", '!AytOj^6.kwd@M`Nepv1XgH:q*(VrZIbS9o$GscB');
+         
         if(IS_POST){
             /* 检测验证码 TODO: */
             if(!check_verify($verify)){
                 $this->error('验证码输入错误！');
             }
-
             /* 调用UC登录接口登录 */
             $User = new UserApi;
             $uid = $User->login($username, $password);
