@@ -8,7 +8,11 @@ class exam extends base{
 	 * 试题概要
 	 */
 	public function outline($param){
-		
+		if($param['course_id']){
+			$course_id = intval($param['course_id']);
+		}else{
+			
+		}
 	}
 	
 	/**
