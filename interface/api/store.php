@@ -79,4 +79,33 @@ class store extends base{
 		}
 	}
 	
+	/**
+	 * 搜索店员
+	 */
+	public function search($param){
+		if(trim($param['keyword']) && $param['subbranch_id']){
+			$keyword = trim($param['keyword']);
+			$subbranch_id = intval($param['subbranch_id']);
+			
+			$store = M('subbranch')->where('id='.$subbranch_id)->field('store_id')->find();
+			$store_id = intval($store['store_id']);
+			$subbrabch_ids = D('Subbranch')->getSubbranchIds($store_id);
+			
+			$map['subbranch_id'] = array('in',$subbrabch_ids);
+			$map['truename'] = array('like',"{%$keyword%}");
+			$field = 'a.uid,a.head,a.job,a.truename';
+			$data = M('member')->where($map)->field($field)->order('uid desc')->select();
+			$this->getResponse($data,'0');
+		}else{
+			$this->getResponse('','999');
+		}
+	}
+	
+	/**
+	 * 扫一扫
+	 */
+	public function scan($param){
+		
+	}
+	
 }
