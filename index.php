@@ -13,7 +13,7 @@ define('dfdf', true);
  * 系统调试设置
  * 项目正式部署后请设置为false
  */
-define ( 'APP_DEBUG', true ); 
+define ( 'APP_DEBUG', true );
 
 /**
  * 应用目录设置
