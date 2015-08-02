@@ -86,13 +86,13 @@
             <div class="form-item cf">
                 <label class="item-label">发布日期：<span class="check-tips"></span></label>
                 <div class="controls">
-                    <input type="text" class="text input-large" name="create_time" value="{$create_time}">
+                    <input type="text" class="text input-large time" placeholder="请选择时间" name="create_time" value="{$create_time}">
                 </div>
             </div>
             <div class="form-item cf">
                 <label class="item-label">有效日期：<span class="check-tips"></span></label>
                 <div class="controls">
-                    <input type="text" class="text input-large" name="expire_time" value="{$expire_time|default=date('Y-m-d')}">
+                    <input type="text" class="text input-large time" placeholder="请选择时间" name="expire_time" value="{$expire_time|default=date('Y-m-d H:i:s')}">
                 </div>
             </div>
             <div class="form-item cf">

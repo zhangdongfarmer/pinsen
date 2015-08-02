@@ -15,7 +15,7 @@ use Think\Page;
  * @author guopan <243334464@qq.com>
  * @date 2015-06-14
  */
-class CourseController extends AdminController {
+class CourseController extends \Admin\Controller\AdminController {
     
     private $course_types = [
         1 => '企业产品培训',
