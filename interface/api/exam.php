@@ -8,12 +8,13 @@ class exam extends base{
 	 * 试题概要
 	 */
 	public function outline($param){
-		if($param['course_id']){
+		if($param['course_id'] && $param['uid']){
+			$uid = intval($param['uid']);
 			$course_id = intval($param['course_id']);
 			$map['a.id'] = $course_id;
 			$map['b.state'] = 1;
-			$field = 'a.title as course_title,a.type,a.gold,a.rate,b.exam_id,b.title as exam_title,b.e_time';
-			$data = M()->table(C('DB_PREFIX').'course a')->join(C('DB_PREFIX').'exam b on a.uid=b.cat_id')
+			$field = 'a.title as course_title,a.type,a.gold,b.rate,b.exam_id,b.title as exam_title,b.e_time';
+			$data = M()->table(C('DB_PREFIX').'course a')->join(C('DB_PREFIX').'exam b on a.id=b.cat_id')
 			           ->field($field)->where($map)->find();
 			if(!empty($data)){
 				$data['course_level'] = $data['type'] == 1 ? ENTERPRISE : PLATFORM;
@@ -26,6 +27,11 @@ class exam extends base{
 				$data['total_value'] = intval($question_data['total_value']);
 				$rate = intval($data['rate']);
 				$data['pass_value'] = $data['total_value']*$rate/10;
+				
+				$wh['uid'] = $uid;
+				$wh['course_id'] = $course_id;
+				$course_record = M('course_record')->where($wh)->find();
+				$data['status'] = intval($course_record['status']) < 3 ? 1: 2;
 				$this->getResponse($data,'0');
 			}else{
 				$this->getResponse('','601');
