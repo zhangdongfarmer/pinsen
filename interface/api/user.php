@@ -2,13 +2,11 @@
 /**
  * 用户相关接口文件
  */
-use User\Model\UcenterMemberModel;
 include 'base.php';
-include dirname(__FILE__).'/../../Application/User/Conf/config.php';
 include dirname(__FILE__).'/../../Application/User/Common/common.php';
 class user extends base{
 	public function __construct(){
-		$this->user_model = new UcenterMemberModel();
+		define('UC_AUTH_KEY', '!AytOj^6.kwd@M`Nepv1XgH:q*(VrZIbS9o$GscB');
 	}
 	
 	/**
