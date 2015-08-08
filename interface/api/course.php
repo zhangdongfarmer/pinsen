@@ -89,9 +89,10 @@ class course extends base{
 				$course['status'] = $course_record['status'];
 			}
 			$course['status_name'] = $status_map[$course['status']];
-			$course_type = M('course_type')->where('id='.$course['type'])->field('name,level')->find();
-			$course['type_name'] = $course_type ? $course_type['name'] : '暂无';
-			$course['level'] = $course_type ? $course_type['level'] : 1;
+			//$course_type = M('course_type')->where('id='.$course['type'])->field('name,level')->find();
+			//$course['type_name'] = $course_type ? $course_type['name'] : '暂无';
+			$course['type_name'] = $this->course_types[$course['type']];
+			$course['level'] = $course['type'] == 1 ? ENTERPRISE : PLATFORM;
 			
 			//查询课程评论数据
 			$wh['course_id'] = $course_id;
