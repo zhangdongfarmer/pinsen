@@ -1,0 +1,114 @@
+<extend name="Public/base"/>
+
+<block name="body">
+    <div class="main-title">
+        <h2>编辑药店</h2>
+    </div>
+    <form action="__SELF__" method="post" class="form-horizontal">
+        <div class="form-item">
+            <label class="item-label">名称</label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="name" value="{$_data.name}">
+            </div>
+        </div>
+
+		<div class="form-item">
+            <label class="item-label">地区</label>
+            <div class="controls">
+                <select name='province_id'>
+					<option value=''>请选择省</option>
+				</select>
+				 <select name='city_id'>
+					<option value=''>请选择市</option>
+				</select>
+				<select name='area_id'>
+					<option value=''>请选择区</option>
+				</select>
+            </div>
+        </div>
+
+       <div class="form-item">
+            <label class="item-label">地址</label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="address" value="{$_data.address}">
+            </div>
+        </div>
+
+		<div class="form-item">
+            <label class="item-label">联系人</label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="linkman" value="{$_data.linkman}">
+            </div>
+        </div>
+
+		<div class="form-item">
+            <label class="item-label">邮箱</label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="email" value="{$_data.email}">
+            </div>
+        </div>
+
+		<div class="form-item">
+            <label class="item-label">联系电话</label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="phone" value="{$_data.phone}">
+            </div>
+        </div>
+
+		<div class="form-item">
+            <label class="item-label">门店数量</label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="md_number" value="{$_data.md_number}">
+            </div>
+        </div>
+
+		<div class="form-item">
+            <label class="item-label">员工数量</label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="yg_number" value="{$_data.yg_number}">
+            </div>
+        </div>
+        <div class="form-item">
+            <input class="btn submit-btn ajax-post" id="submit" type="submit" value='确 定'  target-form="form-horizontal">
+            <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+        </div>
+    </form>
+</block>
+
+<block name="script">
+<link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" type="text/css">
+<php>if(C('COLOR_STYLE')=='blue_color') echo '<link href="__STATIC__/datetimepicker/css/datetimepicker_blue.css" rel="stylesheet" type="text/css">';</php>
+<link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+    <script type="text/javascript">
+        // Think.setValue("type", {$info.type|default=0});
+        // Think.setValue("group", {$info.group|default=0});
+        //导航高亮
+        $('.side-sub-menu').find('a[href="{:U('User/index')}"]').closest('li').addClass('current');
+
+$(function(){
+	
+    $('#time-start').datetimepicker({
+        format: 'yyyy-mm-dd',
+        language:"zh-CN",
+	    minView:2,
+	    autoclose:true
+    });
+	$('#time-end').datetimepicker({
+        format: 'yyyy-mm-dd',
+        language:"zh-CN",
+	    minView:2,
+	    autoclose:true
+    });
+    $('#datetimepicker').datetimepicker({
+       format: 'yyyy-mm-dd',
+        language:"zh-CN",
+        minView:2,
+        autoclose:true,
+        pickerPosition:'bottom-left'
+    })
+    
+})
+    </script>
+</block>
