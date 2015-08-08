@@ -11,6 +11,7 @@ class exam extends base{
 		if($param['course_id'] && $param['uid']){
 			$uid = intval($param['uid']);
 			$course_id = intval($param['course_id']);
+			
 			$map['a.id'] = $course_id;
 			$map['b.state'] = 1;
 			$field = 'a.title as course_title,a.type,a.gold,b.rate,b.exam_id,b.title as exam_title,b.e_time';
@@ -28,10 +29,12 @@ class exam extends base{
 				$rate = intval($data['rate']);
 				$data['pass_value'] = $data['total_value']*$rate/10;
 				
+				//状态
 				$wh['uid'] = $uid;
 				$wh['course_id'] = $course_id;
-				$course_record = M('course_record')->where($wh)->find();
-				$data['status'] = intval($course_record['status']) < 3 ? 1: 2;
+				$record = M('course_record')->where($wh)->field('status')->find();
+				$data['status'] = intval($record['status']) < 3 ? 1 : 2;
+				
 				$this->getResponse($data,'0');
 			}else{
 				$this->getResponse('','601');
@@ -56,7 +59,7 @@ class exam extends base{
 				$data[$k]['title'] = trim($v['title']);
 				$data[$k]['quest_type'] = intval($v['quest_type']);
 				$data[$k]['max_value'] = intval($v['max_value']);
-				$options = M('exam_options')->where('quest_id='.$quest_id)->field('opt_id,opt_name,opt_value')->order('sort asc,opt_id desc')->select();
+				$options = M('exam_options')->where('quest_id='.$quest_id)->field('opt_id,opt_name,opt_value')->order('sort_no asc,opt_id desc')->select();
 				$data[$k]['options'] = $options ? $options : array();
 			}
 			$this->getResponse($data,'0');
