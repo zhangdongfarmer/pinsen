@@ -1,0 +1,298 @@
+<extend name="Public/base" />
+
+<!-- 子导航 -->
+<block name="sidebar">
+    <include file="sidemenu" />
+</block>
+
+<block name="body">
+    <script type="text/javascript" src="__STATIC__/uploadify/jquery.uploadify.min.js"></script>
+    <div class="main-title cf">
+        <h2>
+            新增课件
+        </h2>
+    </div>
+    <!-- 标签页导航 -->
+<div class="tab-wrap">
+    <ul class="tab-nav nav">
+        <li data-tab="tab1" class="current"><a href="javascript:void(0);">详情</a></li>
+        <li data-tab="tab2" ><a href="javascript:void(0);">试题</a></li>
+    </ul>
+    <div class="tab-content">
+    <!-- 表单 -->
+    <form id="form" action="{:U('doAdd')}" method="post" class="form-horizontal">
+        <!-- 基础文档模型 -->
+        <div id="tab1" class="tab-pane in tab1">
+            <div class="form-item cf">
+                <label class="item-label">标题：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <input type="text" class="text input-large" name="title" value="{$title}">
+                </div>
+            </div>
+            <div class="form-item cf">
+                <label class="item-label">类型：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <select name="type">
+                        <volist name="course_type" key="key" id="vo">
+                            <option value="{$key}" <eq name="key" value="$type">selected</eq>>{$vo}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+            <div class="form-item cf">
+                <label class="item-label">活动药厂：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <select name="pharma_id">
+                        <volist name="pharma_list" key="key" id="vo">
+                            <option value="{$key}" <eq name="key" value="$pharma_id">selected</eq>>{$vo}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+            <div class="form-item cf">
+                <label class="item-label">药品：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <select name="drug_id">
+                        <volist name="drug_list" key="key" id="vo">
+                            <option value="{$key}" <eq name="key" value="$drug_id">selected</eq>>{$vo}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+            <div class="form-item cf">
+                <label class="item-label">奖励金币：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <input type="text" class="text input-large" name="gold" value="{$gold}">
+                </div>
+            </div>
+            <div class="form-item cf">
+                <label class="item-label">消耗积分：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <input type="text" class="text input-large" name="score" value="{$score}">
+                </div>
+            </div>
+            <div class="form-item cf">
+                <label class="item-label">点播次数：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <input type="text" class="text input-large" name="play_count" value="{$play_count}">
+                </div>
+            </div>
+            <div class="form-item cf">
+                <label class="item-label">点评分数：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <input type="text" class="text input-large" name="comment_count" value="{$comment_count}">
+                </div>
+            </div>
+            <div class="form-item cf">
+                <label class="item-label">发布日期：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <input type="text" class="text input-large" name="create_time" value="{$create_time}">
+                </div>
+            </div>
+            <div class="form-item cf">
+                <label class="item-label">有效日期：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <input type="text" class="text input-large" name="expire_time" value="{$expire_time|default=date('Y-m-d')}">
+                </div>
+            </div>
+            <div class="form-item cf">
+                <label class="item-label">顺序：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <input type="text" class="text input-large" name="sort" value="{$sort|default=0}">
+                </div>
+            </div>
+            <div class="form-item cf">
+                <label class="item-label">图标：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <input type="file" id="upload_picture_course_ico">
+                    <input type="hidden" name="course_ico" id="cover_id_course_ico" value="{$course_ico|default=''}"/>
+                    <div class="upload-img-box">
+                    <notempty name="course_ico">
+                        <div class="upload-pre-item"><img src="{$course_ico|get_cover='path'}"/></div>
+                    </notempty>
+                </div>
+                <script type="text/javascript">
+                    //上传图片
+                    /* 初始化上传插件 */
+                    $("#upload_picture_course_ico").uploadify({
+                        "height"          : 30,
+                        "swf"             : "__STATIC__/uploadify/uploadify.swf",
+                        "fileObjName"     : "download",
+                        "buttonText"      : "上传图片",
+                        "uploader"        : "{:U('File/uploadPicture',array('session_id'=>session_id()))}",
+                        "width"           : 120,
+                        'removeTimeout'	  : 1,
+                        'fileTypeExts'	  : '*.jpg; *.png; *.gif;',
+                        "onUploadSuccess" : uploadPictureFile
+                    });
+                    function uploadPictureFile(file, data){
+                        var data = $.parseJSON(data);
+                        var src = '';
+                        if(data.status){
+                            $("#cover_id_course_ico").val(data.id);
+                            src = data.url || '__ROOT__' + data.path
+                            $("#cover_id_course_ico").parent().find('.upload-img-box').html(
+                                '<div class="upload-pre-item"><img src="__ROOT__' + src + '"/></div>'
+                            );
+                        } else {
+                            updateAlert(data.info);
+                            setTimeout(function(){
+                                $('#top-alert').find('button').click();
+                                $(that).removeClass('disabled').prop('disabled',false);
+                            },1500);
+                        }
+                    }
+                </script>
+            </div>
+            <div class="form-item cf">
+                <label class="item-label">视频：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <input type="file" id="upload_file_video_url">
+                    <input type="hidden" name="video_url" value="{$video_url|default=''}"/>
+                    <div class="upload-img-box">
+                        <present name="$video_url">
+                            <div class="upload-pre-file"><span class="upload_icon_all"></span>{$video_url|default=''}</div>
+                        </present>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    //上传图片
+                    /* 初始化上传插件 */
+                    $("#upload_file_video_url").uploadify({
+                        "height"          : 30,
+                        "swf"             : "__STATIC__/uploadify/uploadify.swf",
+                        "fileObjName"     : "download",
+                        "buttonText"      : "上传视频",
+                        "uploader"        : "{:U('File/upload',array('session_id'=>session_id()))}",
+                        "width"           : 120,
+                        'removeTimeout'	  : 1,
+                        'fileTypeExts'	  : '*.flv; *.mp4; *.rmvb; *.rm; *.avi; *.swf;',
+                        "onUploadSuccess" : uploadVideoFile
+                    });
+                    function uploadVideoFile(file, data){
+                        var data = $.parseJSON(data);
+                        if(data.status){
+                            var name = "video_url";
+                            $("input[name="+name+"]").val(data.data);
+                            $("input[name="+name+"]").parent().find('.upload-img-box').html(
+                                "<div class=\"upload-pre-file\"><span class=\"upload_icon_all\"></span>" + data.info + "</div>"
+                            );
+                        } else {
+                            updateAlert(data.info);
+                            setTimeout(function(){
+                                $('#top-alert').find('button').click();
+                                $(that).removeClass('disabled').prop('disabled',false);
+                            },1500);
+                        }
+                    }
+                </script>
+            </div>
+            <div class="form-item cf">
+                <label class="item-label">简介：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <label class="textarea input-large">
+                    <textarea name="describe">{$describe|default=''}</textarea>
+                    </label>
+                </div>
+            </div>
+            <div class="form-item cf">
+                <label class="item-label">药店：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <volist name="drug_store_list" key="key" id="vo">
+                        <input name="drug_store_id" type="checkbox" value="{$key}" <if condition="in_array($key, $drug_store_id)">checked</if>> {$vo}
+                    </volist>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-item cf">
+            <button class="btn submit-btn ajax-post hidden" id="submit" type="submit" target-form="form-horizontal">确 定</button>
+            <a class="btn btn-return" href="{:U('article/index?cate_id='.$cate_id)}">返 回</a>
+            <input type="hidden" name="id" value="{$id|default=''}"/>
+        </div>
+    </form>
+    </div>
+</div>
+</block>
+
+<block name="script">
+<link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" type="text/css">
+<php>if(C('COLOR_STYLE')=='blue_color') echo '<link href="__STATIC__/datetimepicker/css/datetimepicker_blue.css" rel="stylesheet" type="text/css">';</php>
+<link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script type="text/javascript">
+
+Think.setValue("type", {$info.type|default='""'});
+Think.setValue("display", {$info.display|default=0});
+
+$('#submit').click(function(){
+	$('#form').submit();
+});
+
+$(function(){
+    $('.time').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        language:"zh-CN",
+        minView:2,
+        autoclose:true
+    });
+    showTab();
+
+	<if condition="C('OPEN_DRAFTBOX') and (ACTION_NAME eq 'add' or $info['status'] eq 3)">
+	//保存草稿
+	var interval;
+	$('#autoSave').click(function(){
+        var target_form = $(this).attr('target-form');
+        var target = $(this).attr('url')
+        var form = $('.'+target_form);
+        var query = form.serialize();
+        var that = this;
+
+        $(that).addClass('disabled').attr('autocomplete','off').prop('disabled',true);
+        $.post(target,query).success(function(data){
+            if (data.status==1) {
+                updateAlert(data.info ,'alert-success');
+                $('input[name=id]').val(data.data.id);
+            }else{
+                updateAlert(data.info);
+            }
+            setTimeout(function(){
+                $('#top-alert').find('button').click();
+                $(that).removeClass('disabled').prop('disabled',false);
+            },1500);
+        })
+
+        //重新开始定时器
+        clearInterval(interval);
+        autoSaveDraft();
+        return false;
+    });
+
+	//Ctrl+S保存草稿
+	$('body').keydown(function(e){
+		if(e.ctrlKey && e.which == 83){
+			$('#autoSave').click();
+			return false;
+		}
+	});
+
+	//每隔一段时间保存草稿
+	function autoSaveDraft(){
+		interval = setInterval(function(){
+			//只有基础信息填写了，才会触发
+			var title = $('input[name=title]').val();
+			var name = $('input[name=name]').val();
+			var des = $('textarea[name=description]').val();
+			if(title != '' || name != '' || des != ''){
+				$('#autoSave').click();
+			}
+		}, 1000*parseInt({:C('AOTUSAVE_DRAFT')}));
+	}
+	autoSaveDraft();
+
+	</if>
+
+});
+</script>
+</block>

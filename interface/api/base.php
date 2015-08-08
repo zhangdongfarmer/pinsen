@@ -3,6 +3,14 @@
  * 接口基类
  */
 class base{
+	
+	public $course_types = array(
+        1 => '企业产品培训',
+        2 => '医药养生保健',
+        3 => '药师备考培训',
+        4 => '连锁内部提高',
+    );
+	
 	/**
 	 * 接口返回数据输出
 	 * @param arrsy $data 返回数据

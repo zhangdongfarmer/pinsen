@@ -23,28 +23,33 @@ class course extends base{
 		}
 		//状态
 		if($param['status']){
+			$status = intval($param['status'])-1;
+			if($status > 0){
+				$wh['status'] = $status;
+			}
 			$wh['uid'] = intval($param['uid']);
-			$wh['status'] = intval($param['status']);
 			$course_record = M('course_record')->where($wh)->select();
 			if($course_record){
 				$course_ids = array();
 				foreach($course_record as $k=>$v){
 					$course_ids[] = intval($v['course_id']);
 				}
-				$map['id'] = array('in',implode(',',$course_ids));
+				$map['id'] = $status > 0 ? array('in',$course_ids) : array('not in',$course_ids);
 			}else{
-				$this->getResponse(array(),'0');
-				return false;
+				if($status > 0){
+					$this->getResponse(array(),'0');
+					return false;
+				}
 			}
 		}
 		
 		$page = $param['page'] ? intval($param['page']) : 1;
 		$page_size = $param['page_size'] ? intval($param['page_size']) : 5;
-		$order_by = $param['order_by'] ? trim($param['order_by']) : 'time';
-		$order_map = array('time'=>'create_time','score'=>'comment_count','play'=>'play_count');
+		$order_by = $param['order_by'] ? trim($param['order_by']) : 'default';
+		$order_map = array('default'=>'id','time'=>'create_time','score'=>'comment_count','play'=>'play_count');
 		$order_seq = $param['order_seq'] == '2' ? 'asc' : 'desc';
 		$order = $order_map[$order_by].' '.$order_seq;
-		$field = 'id,title,course_ico,comment_count,play_count,create_time';
+		$field = 'id,title,course_ico,comment_count,play_count,create_time,is_recom';
 		$data = M('course')->where($map)->field($field)->order($order)->page($page)->limit($page_size)->select();
 		if($data){
 			foreach($data as &$v){
@@ -84,9 +89,10 @@ class course extends base{
 				$course['status'] = $course_record['status'];
 			}
 			$course['status_name'] = $status_map[$course['status']];
-			$course_type = M('course_type')->where('id='.$course['type'])->field('name,level')->find();
-			$course['type_name'] = $course_type ? $course_type['name'] : '暂无';
-			$course['level'] = $course_type ? $course_type['level'] : 1;
+			//$course_type = M('course_type')->where('id='.$course['type'])->field('name,level')->find();
+			//$course['type_name'] = $course_type ? $course_type['name'] : '暂无';
+			$course['type_name'] = $this->course_types[$course['type']];
+			$course['level'] = $course['type'] == 1 ? ENTERPRISE : PLATFORM;
 			
 			//查询课程评论数据
 			$wh['course_id'] = $course_id;
@@ -117,6 +123,20 @@ class course extends base{
 			$insert_array['comment_score'] = intval($param['comment_score']);
 			$insert_array['comment_content'] = trim($param['comment_content']);
 			$res = M('course_comment')->add($insert_array);
+			
+			if($res){
+			    //评论加5积分
+			    $save['score'] = array('exp','`score`+5');
+			    M('member')->where('uid='.$insert_array['uid'])->save($save);
+			    
+			    //重新计算该课程的平均点评分数
+			    $sql = 'select count(*) as num,sum(comment_score) as total_score from '.C('DB_PREFIX').'course_comment where course_id='.$insert_array['course_id'];
+			    $comment = M()->query($sql);
+			    $map['id'] = $insert_array['course_id'];
+			    $upd['comment_score'] = ceil($comment[0]['total_score']/$comment[0]['num']);
+			    M('course')->where($map)->save($upd);
+			}
+			
 			$this->getResponse('',$res?'0':'501');
 		}else{
 			$this->getResponse('','999');
@@ -124,61 +144,74 @@ class course extends base{
 	}
 	
 	/**
-	 * 培训视频学习状态跟踪
+	 * 培训视频学习状态跟踪（点击立即学习）
 	 * status状态值：0，未看过；1，未考试；2，未通过；3，已通过
 	 */
 	public function track($param){
-		if($param['uid'] && $param['course_id'] && $param['type'] && isset($param['status'])){
+		if($param['uid'] && $param['course_id'] && isset($param['status']) && $param['level']){
 			
 			$course_model = M('course');
 			$member_model = M('member');
 			$record_model = M('course_record');
 			
-			$map['uid'] = intval($param['uid']);
-			$map['course_id'] = intval($param['course_id']);
-			
-			
-			$type = intval($param['type']);
+			$uid = intval($param['uid']);
+			$course_id = intval($param['course_id']);
+			$level = intval($param['level']);
+			//$type = intval($param['type']);
 			$status = intval($param['status']);
-			if($type == 1){	//点击【立即学习】
+			
+			//if($type == 1){	//点击【立即学习】
 				
-				$course = $course_model->where(array('id'=>$map['course_id']))->find();
-				$member = $member_model->where(array('id'=>$map['uid']))->find();
-				if($course['gold'] > $member['gold']){
-					$this->getResponse('','503');
-					return true;
-				}
-					
-				//更新点播数
-				$data['play_count'] = array('exp','play_count+1');
-				$course_model->where(array('id'=>$map['course_id']))->save($data);
+				//点播数+1
+				$data['play_count'] = array('exp','`play_count`+1');
 				
 				if($status > 0){ //非第一次观看
+					//更新点播数
+					$course_model->where('course_id='.$course_id)->save($data);
 					$this->getResponse('','0');
 				}else{ //第一次观看
 					
-					//扣除金币
-					$update['gold'] = array('exp',"gold-{$course['gold']}");
-					$member_model->where(array('uid'=>$map['uid']))->save($update);
+					//消耗积分
+					if($level == PLATFORM){
+						$course = $course_model->where('course_id='.$course_id)->find();
+						$member = $member_model->where('uid='.$uid)->find();
+						if($course['score'] > $member['score']){
+							$this->getResponse('','503');
+							return false;
+						}
+						
+						$update['score'] = array('exp',"`score`-{$course['score']}");
+						$member_model->where('uid='.$uid)->save($update);
+					}
+					
+					//更新点播数
+					$course_model->where('course_id='.$course_id)->save($data);
 					
 					$insert['uid'] = $map['uid'];
 					$insert['course_id'] = $map['course_id'];
 					$insert['status'] = 1;
+					$insert['level'] = $level;
 					$insert['update_time'] = time();
 					$res = $record_model->add($insert);
 					$this->getResponse('',$res?'0':'502');
 				}
-			}else{ //观看完视频后，进行考试并提交考试结果
+			/*}else{ //观看完视频后，进行考试并提交考试结果
 				$save['status'] = intval($param['status']);
 				$save['update_time'] = time();
 				
 				if($save['status'] == 3){
-					//加金币
+					//奖励金币
+					if($level == ENTERPRISE){
+						$update['gold'] = array('exp',"`gold`+{$course['gold']}");
+						$member_model->where('uid='.$uid)->save($update);
+					}
 				}
 				
+				$map['uid'] = $uid;
+				$map['course_id'] = $course_id;
 				$res = $record_model->where($map)->save($save);
 				$this->getResponse('',$res?'0':'502');
-			}
+			}*/
 		}else{
 			$this->getResponse('','999');
 		}
@@ -188,11 +221,12 @@ class course extends base{
 	 * 关注课程
 	 */
 	public function focus($param){
-		if($param['uid'] && $param['course_id']){
+		if($param['uid'] && $param['item_id'] && $param['type']){
 			$add['uid'] = intval($param['uid']);
-			$add['course_id'] = intval($param['course_id']);
+			$add['item_id'] = intval($param['item_id']);
+			$add['focus_type'] = intval($param['type']);
 			$add['focus_time'] = time();
-			$res = M('course_focus')->add($add);
+			$res = M('user_focus')->add($add);
 			$this->getResponse('', $res?'0':'504');
 		}else{
 			$this->getResponse('','999');
@@ -203,11 +237,35 @@ class course extends base{
 	 * 删除课程关注
 	 */
 	public function blur($param){
-		if($param['uid'] && $param['course_id']){
+		if($param['uid'] && $param['item_id']){
 			$map['uid'] = intval($param['uid']);
-			$map['course_id'] = intval($param['course_id']);
-			$res = M('course_focus')->where($map)->delete();
+			$map['item_id'] = intval($param['item_id']);
+			$res = M('user_focus')->where($map)->delete();
 			$this->getResponse('', $res?'0':'505');
+		}else{
+			$this->getResponse('','999');
+		}
+	}
+	
+	/**
+	 * 课程搜索
+	 */
+	public function search($param){
+	if(trim($param['keyword']) && $param['subbranch_id']){
+			$keyword = trim($param['keyword']);
+			$map['title'] = array('like',"%{$keyword}%");
+			$map['subbranch_id'] = intval($param['subbranch_id']);
+			$field = 'id,title,course_ico,expire_time,play_cout,is_recom';
+			$page = intval($param['page']) ? intval($param['page']) : 1;
+			$page_size = intval($param['page_size']) ? intval($param['page_size']) : 5;
+			$course = M('course')->where($map)->field($field)->order('play_count desc')->page($page)->limit($page_size)->select();
+			if($course){
+				foreach($course as &$v){
+					$v['expire_time'] = date('Y-m-d',$v['expire_time']);
+					$v['course_ico'] = $v['course_ico'];
+				}
+			}
+			$this->getResponse($course?$course:array(),'0');
 		}else{
 			$this->getResponse('','999');
 		}
