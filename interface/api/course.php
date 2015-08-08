@@ -133,7 +133,7 @@ class course extends base{
 			    $sql = 'select count(*) as num,sum(comment_score) as total_score from '.C('DB_PREFIX').'course_comment where course_id='.$insert_array['course_id'];
 			    $comment = M()->query($sql);
 			    $map['id'] = $insert_array['course_id'];
-			    $upd['comment_score'] = ceil($comment['total_score']/$comment['num']);
+			    $upd['comment_score'] = ceil($comment[0]['total_score']/$comment[0]['num']);
 			    M('course')->where($map)->save($upd);
 			}
 			

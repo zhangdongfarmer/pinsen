@@ -1,0 +1,105 @@
+<extend name="Public/base"/>
+
+<block name="body">
+    <div class="main-title">
+        <h2>新增考题</h2>
+    </div>
+    <form action="__SELF__" method="post" class="form-horizontal">
+	<input type="hidden" class="text input-large" name="exam_id" value="{$exam_id}">
+        <div class="form-item">
+            <label class="item-label">考题名称</label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="title" value="{$_data.title}">
+            </div>
+        </div>
+
+		<div class="form-item">
+            <label class="item-label">考题类型</label>
+            <div class="controls">
+                <select name="questtype">
+					<option value='1' <if condition="$_data.quest_type eq 1"> selected</if>>单选</option>
+					<option value='2' <if condition="$_data.quest_type eq 2"> selected</if>>多选</option>
+				</select>
+            </div>
+        </div>
+
+       <div class="form-item">
+            <label class="item-label">分值</label>
+            <div class="controls">
+                <input type="text" class="text input-2x" name="max_value" value="{$_data.max_value}">
+            </div>
+        </div>
+
+ <div class="form-item">
+ <label class="item-label">选项{$_data['opt']['data'][0].opt_id}</label>
+				<table id="xuanxiang">
+					<tbody>
+					<tr>
+						<th class='input-mid ' style="text-align: left;">排序</th>
+						<th class='input-4x' style="text-align: left;">名称</th>
+						<th class='input-mid' style="text-align: left;">分值</th>
+					</tr>
+					<if condition="$_data.opt.code eq 1">
+					<volist name="_data.opt.data" id="vo" key="i">
+					<tr>
+						<td><input class='input-mini' type='text' name="opt[sort][]" value='{$vo.sort_no}'></td>
+						<td><input class='input-mid  ' type='text' name="opt[name][]" value='{$vo.opt_name}'></td>
+						<td><input class='input-mini' type='text' name="opt[value][]" value='{$vo.opt_value}'> &nbsp;&nbsp; <span id='jia'>+</span> </td>
+					</tr>
+					</volist>
+					<else/>
+					<tr>
+						<td><input class='input-mini' type='text' name="opt[sort][]" value=''></td>
+						<td><input class='input-mid  ' type='text' name="opt[name][]" value=''></td>
+						<td><input class='input-mini' type='text' name="opt[value][]" value=''> &nbsp;&nbsp; <span id='jia'>+</span> </td>
+					</tr>
+					</if>
+					
+				</tbody></table>
+</div>
+
+        <div class="form-item">
+            
+            <input class="btn submit-btn ajax-post" id="submit" type="submit" value='确 定'  target-form="form-horizontal">
+            <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+        </div>
+    </form>
+</block>
+
+<block name="script">
+<link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" type="text/css">
+<php>if(C('COLOR_STYLE')=='blue_color') echo '<link href="__STATIC__/datetimepicker/css/datetimepicker_blue.css" rel="stylesheet" type="text/css">';</php>
+<link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+    <script type="text/javascript">
+        // Think.setValue("type", {$info.type|default=0});
+        // Think.setValue("group", {$info.group|default=0});
+        //导航高亮
+        $('.side-sub-menu').find('a[href="{:U('User/index')}"]').closest('li').addClass('current');
+
+$(function(){
+	
+    $('#jia').click(function(){
+		var str = "<tr><td><input class='input-mini' type='text' name=\"opt[sort][]\" value=''></td><td><input class='input-mid  ' type='text' name=\"opt[name][]\" value=''></td><td><input class='input-mini' type='text' name=\"opt[value][]\" value=''> &nbsp;&nbsp; <span id='jia'>+</span> </td></tr>";
+
+		$("#xuanxiang").append(str);
+
+	});
+	$('#time-end').datetimepicker({
+        format: 'yyyy-mm-dd',
+        language:"zh-CN",
+	    minView:2,
+	    autoclose:true
+    });
+    $('#datetimepicker').datetimepicker({
+       format: 'yyyy-mm-dd',
+        language:"zh-CN",
+        minView:2,
+        autoclose:true,
+        pickerPosition:'bottom-left'
+    })
+    
+})
+    </script>
+</block>
