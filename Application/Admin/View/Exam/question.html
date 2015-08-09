@@ -1,5 +1,8 @@
 <extend name="Public/base"/>
-
+<!-- 子导航 -->
+<block name="sidebar">
+    <include file="sidemenu" />
+</block>
 <!-- 子导航 -->
 <block name="sidebar">
     <include file="sidemenu" />
@@ -39,8 +42,8 @@
 		<if condition="$_data.state gt '0'">
 			<volist name="_data.data" id="vo" key="i">
 			<tr>
-				<td>{$i}&nbsp;</td>
-				<td><input type="text" class='input-mini' value="{$vo.sort_no}" name="sort_no[{$vo.quest_id}]">&nbsp;</td>
+				<td>{$vo.quest_id}&nbsp;</td>
+				<td>{$vo.sort_no}</td>
 				<td>{$vo.title}</td>
 				<td>{$vo.type}</td>
 				<td>{$vo.max_value}</td>

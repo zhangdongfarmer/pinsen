@@ -16,5 +16,7 @@ class CourseModel extends Model{
         array('uid', 'is_login', self::MODEL_INSERT, 'function'),
         array('title', 'htmlspecialchars', self::MODEL_BOTH, 'function'),
         array('describe', 'htmlspecialchars', self::MODEL_BOTH, 'function'),
+        array('create_time', 'strtotime', self::MODEL_BOTH, 'function'),
+        array('expire_time', 'strtotime', self::MODEL_BOTH, 'function'),
     );
 }

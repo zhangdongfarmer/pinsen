@@ -98,7 +98,7 @@ class Cx extends TagLib {
         $parseStr .= 'else: ';
         $parseStr .= 'foreach($__LIST__ as $key=>$'.$id.'): ';
         $parseStr .= '$mod = ($'.$key.' % '.$mod.' );';
-        $parseStr .= '++$'.$key.';?>';
+        $parseStr .= '$'.$key.';?>';
         $parseStr .= $this->tpl->parse($content);
         $parseStr .= '<?php endforeach; endif; else: echo "'.$empty.'" ;endif; ?>';
         $_iterateParseCache[$cacheIterateId] = $parseStr;
