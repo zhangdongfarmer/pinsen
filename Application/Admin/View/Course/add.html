@@ -53,8 +53,8 @@
                 <label class="item-label">药品：<span class="check-tips"></span></label>
                 <div class="controls">
                     <select name="drug_id">
-                        <volist name="drug_list" key="key" id="vo">
-                            <option value="{$key}" <eq name="key" value="$drug_id">selected</eq>>{$vo}</option>
+                        <volist name="drug_list[$pharma_id]"  id="vo">
+                            <option value="{$vo.id}" <eq name="$vo.id" value="$drug_id">selected</eq>>{$vo.title}</option>
                         </volist>
                     </select>
                 </div>
@@ -86,13 +86,13 @@
             <div class="form-item cf">
                 <label class="item-label">发布日期：<span class="check-tips"></span></label>
                 <div class="controls">
-                    <input type="text" class="text input-large time" placeholder="请选择时间" name="create_time" value="{$create_time}">
+                    <input type="text" class="text input-large time" placeholder="请选择时间" name="create_time" value="{$create_time|default=date('Y-m-d H:i:s')}">
                 </div>
             </div>
             <div class="form-item cf">
                 <label class="item-label">有效日期：<span class="check-tips"></span></label>
                 <div class="controls">
-                    <input type="text" class="text input-large time" placeholder="请选择时间" name="expire_time" value="{$expire_time|default=date('Y-m-d H:i:s')}">
+                    <input type="text" class="text input-large time" placeholder="请选择时间" name="expire_time" value="{$expire_time}">
                 </div>
             </div>
             <div class="form-item cf">
@@ -110,6 +110,7 @@
                     <notempty name="course_ico">
                         <div class="upload-pre-item"><img src="{$course_ico|get_cover='path'}"/></div>
                     </notempty>
+                    </div>
                 </div>
                 <script type="text/javascript">
                     //上传图片
@@ -204,10 +205,23 @@
                 </div>
             </div>
         </div>
+        
+        <div id="tab2" class="tab-pane in tab2 hide">
+            <div class="form-item cf">
+                <label class="item-label">添加试题：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <select name="exam_id">
+                        <volist name="exam_list" key="key" id="vo">
+                            <option value="{$key}" <eq name="key" value="$exam_id">selected</eq>>{$vo}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+        </div>
 
         <div class="form-item cf">
             <button class="btn submit-btn ajax-post hidden" id="submit" type="submit" target-form="form-horizontal">确 定</button>
-            <a class="btn btn-return" href="{:U('article/index?cate_id='.$cate_id)}">返 回</a>
+            <a class="btn btn-return" href="{:U('Course/index')}">返 回</a>
             <input type="hidden" name="id" value="{$id|default=''}"/>
         </div>
     </form>
@@ -292,7 +306,30 @@ $(function(){
 	autoSaveDraft();
 
 	</if>
-
+    var drug_list = {$drug_list|json_encode};
+    $("select[name='pharma_id']").change(function(){
+        var drug_html = '';
+        var pharma_id = $(this).val();
+        for(var one in drug_list[pharma_id]){
+            drug_html += '<option value="' + drug_list[pharma_id][one].id + '">' + drug_list[pharma_id][one].title + '</option>'
+        }
+        $("select[name='drug_id']").html(drug_html);
+    });
+    
+    
 });
+
+//function getQuestion(q_id){
+//    var data = new Array();
+//    if(q_id)  data[q_id] = q_id;
+//    $.get("{:U('Exam/addQuest')}", data, function(res){
+//        artDialog({
+//            content:res,
+//            title:'添加试题',
+//            width:500,
+//            height:400
+//        });
+//    });
+//}
 </script>
 </block>

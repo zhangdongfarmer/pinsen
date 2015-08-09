@@ -8,7 +8,6 @@
 // +----------------------------------------------------------------------
 namespace Admin\Controller;
 use Admin\Model\AuthGroupModel;
-use Think\Page;
 
 /**
  * 课件管理
@@ -35,7 +34,7 @@ class CourseController extends \Admin\Controller\AdminController {
     public function index(){
         $this->assign('course_type', $this->course_types);
         $list = $this->lists('Course');
-        $this->assign($list);
+        $this->assign('list', $list);
         $this->meta_title = '课件管理';
         $this->display();
     }
@@ -48,13 +47,25 @@ class CourseController extends \Admin\Controller\AdminController {
         $drug_store_list = M('drug_store')->getField('id,name');
         $this->assign('drug_store_list', $drug_store_list);
         
+        $drugs = M('drug')->field('id,pharma_id,title')->select();
+        $drug_list = array();
+        foreach ($drugs as $drug) {
+            $drug_list[$drug['pharma_id']][] = $drug;
+        }
+        $this->assign('drug_list', $drug_list);
+        
+        $this->assign('pharma_id', key($pharma_list));
+        
+        $exam_list = M('Exam')->getField('exam_id, title');
+        $this->assign('exam_list', $exam_list);
+        
         if($id){
             $course_info = D('Course')->find($id);
             $course_info['drug_store_id'] = explode(',', $course_info['drug_store_id']);
+            $course_info['create_time'] = date('Y-m-d H:i', $course_info['create_time']);
+            $course_info['expire_time'] = date('Y-m-d H:i', $course_info['expire_time']);
             $this->assign($course_info);
             
-            $drug_list = M('drug')->where('pharma_id='.$course_info['pharma_id'])->getField('id,title');
-            $this->assign('drug_list', $drug_list);
             $this->meta_title = '修改课件';
         }else{
             
@@ -97,6 +108,30 @@ class CourseController extends \Admin\Controller\AdminController {
             $jumpUrl = U('Admin/Course/index');
             $this->success('删除成功！', $jumpUrl);
         }
+    }
+    
+    public function addExam(){
+        $id = I('get.exam_id','');
+        
+        $this->assign('course_type', $this->course_types);
+        $pharma_list = M('pharma')->getField('id,title');
+        $this->assign('pharma_list', $pharma_list);
+        $drug_store_list = M('drug_store')->getField('id,name');
+        $this->assign('drug_store_list', $drug_store_list);
+        
+        if($id){
+            $course_info = D('Course')->find($id);
+            $course_info['drug_store_id'] = explode(',', $course_info['drug_store_id']);
+            $this->assign($course_info);
+            
+            $drug_list = M('drug')->where('pharma_id='.$course_info['pharma_id'])->getField('id,title');
+            $this->assign('drug_list', $drug_list);
+            $this->meta_title = '修改课件';
+        }else{
+            
+            $this->meta_title = '新增课件';
+        }
+        $this->display();
     }
     
     /**
@@ -156,8 +191,8 @@ class CourseController extends \Admin\Controller\AdminController {
                             $value['current']   =   true;
                             $va['current']      =   true;
                         }else{
-                        	$value['current'] 	= 	false;
-                        	$va['current']      =   false;
+                            $value['current']   =  false;
+                            $va['current']      =  false;
                         }
                     }else{
                     	$va['current']      =   false;

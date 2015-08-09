@@ -8,8 +8,7 @@
 // +----------------------------------------------------------------------
 
 namespace Admin\Controller;
-use User\Api\UserApi;
-use Admin\Model\ExamModel;
+use Admin\Model\AuthGroupModel;
 
 /**
  * 后台课件控制器
@@ -24,6 +23,10 @@ class ExamController extends AdminController {
         '3'=>'药师备考培训',
         '4'=>'连锁内部提高'
     );
+    public function _initialize() {
+        parent::_initialize();
+        $this->getMenu();
+    }
     /**
      * 考卷列表
      * 
@@ -218,39 +221,47 @@ class ExamController extends AdminController {
      * 试题添加
      */
     public function addQuest(){
-        $exam_id        =   I('get.exam_id');
-        $quest_id        =   I('get.quest_id');
+        $exam_id        =   I('exam_id');
+        $quest_id        =   I('quest_id');
+        
         if(IS_POST){
             $args['quest_type'] =  I('post.questtype',1);
             $args['title']      =   I('post.title');
             $args['max_value']     =   I('post.max_value',0);
-            $rs = D('Exam')->addQuestion( $args, $exam_id );
+            $args['exam_id'] = $exam_id;
+            $rs = D('Exam')->addQuestion( $args, $exam_id, $quest_id );
             
-            if( $rs['code'] >0 ){
+            if($quest_id){
+                D('ExamOptions')->where('quest_id='.$quest_id)->delete();
+            }else{
+                $quest_id = $rs['id'];
+            }
+            
+            if( $quest_id ){
                 $opt = I('post.opt');
-                $questId = $rs['id'];
                
                 foreach($opt['sort'] as $key=>$one){
+                    $data['quest_id'] = $quest_id;
                     $data['sort_no'] = $one;
                     $data['opt_name'] = $opt['name'][$key];
                     $data['opt_value'] = $opt['value'][$key];
-                    D('Exam')->addOptions( $data, $exam_id, $questId );
+                    D('ExamOptions')->add($data);
                 }
-            }
-            
-            if( $rs['code'] > 0 ){
-                $this->success('添加成功！',U('Exam/question'));
-            } else {
-                $this->error('添加失败！');
+                $this->success('保存成功！',U('Exam/question', ['exam_id'=>$exam_id]));
+            }else{
+                $this->error('保存失败！');
             }
         }else{
-            $data = D('Exam')->examQuestOpt( $exam_id, $quest_id );
-          
-            $this->assign('exam_id', $exam_id);
-            $this->assign('_data', $data[0]);
+            if($quest_id){
+                $question = D('ExamQuestion')->find($quest_id);
+                $question['opt'] = D('ExamOptions')->where('quest_id='.$quest_id)->select();
+
+                $this->assign($question);
+            }
             $this->display();
         }
     }
+    
     public function delExam( ){
         $examId  =  I('get.exam_id');
         if( !$examId ){
@@ -276,6 +287,87 @@ class ExamController extends AdminController {
         $this->assign('_yc',$yc['data']);
         
         $this->display();
+    }
+    
+    /**
+     * 显示左边菜单，进行权限控制
+     * @author huajie <banhuajie@163.com>
+     */
+    protected function getMenu(){
+        //获取动态分类
+        $cate_auth  =   AuthGroupModel::getAuthCategories(UID);	//获取当前用户所有的内容权限节点
+        $cate_auth  =	$cate_auth == null ? array() : $cate_auth;
+        $cate       =   M('Category')->where(array('status'=>1))->field('id,title,pid,allow_publish')->order('pid,sort')->select();
+
+        //没有权限的分类则不显示
+        if(!IS_ROOT){
+            foreach ($cate as $key=>$value){
+                if(!in_array($value['id'], $cate_auth)){
+                    unset($cate[$key]);
+                }
+            }
+        }
+
+        $cate           =   list_to_tree($cate);	//生成分类树
+
+        //获取分类id
+        $cate_id        =   I('param.cate_id');
+        $this->cate_id  =   $cate_id;
+
+        //是否展开分类
+        $hide_cate = false;
+        if(ACTION_NAME != 'recycle' && ACTION_NAME != 'draftbox' && ACTION_NAME != 'mydocument'){
+            $hide_cate  =   true;
+        }
+
+        //生成每个分类的url
+        foreach ($cate as $key=>&$value){
+            $value['url']   =   'Article/index?cate_id='.$value['id'];
+            if($cate_id == $value['id'] && $hide_cate){
+                $value['current'] = true;
+            }else{
+            	$value['current'] = false;
+            }
+            if(!empty($value['_child'])){
+            	$is_child = false;
+                foreach ($value['_child'] as $ka=>&$va){
+                    $va['url']      =   'Article/index?cate_id='.$va['id'];
+                    if(!empty($va['_child'])){
+                        foreach ($va['_child'] as $k=>&$v){
+                            $v['url']   =   'Article/index?cate_id='.$v['id'];
+                            $v['pid']   =   $va['id'];
+                            $is_child = $v['id'] == $cate_id ? true : false;
+                        }
+                    }
+                    //展开子分类的父分类
+                    if($va['id'] == $cate_id || $is_child){
+                        $is_child = false;
+                        if($hide_cate){
+                            $value['current']   =   true;
+                            $va['current']      =   true;
+                        }else{
+                            $value['current']   =  false;
+                            $va['current']      =  false;
+                        }
+                    }else{
+                    	$va['current']      =   false;
+                    }
+                }
+            }
+        }
+        $this->assign('nodes',      $cate);
+        $this->assign('cate_id',    $this->cate_id);
+
+        //获取面包屑信息
+        $nav = get_parent_category($cate_id);
+        $this->assign('rightNav',   $nav);
+
+        //获取回收站权限
+        $show_recycle = $this->checkRule('Admin/article/recycle');
+        $this->assign('show_recycle', IS_ROOT || $show_recycle);
+        //获取草稿箱权限
+        $show_draftbox = C('OPEN_DRAFTBOX');
+        $this->assign('show_draftbox', IS_ROOT || $show_draftbox);
     }
     
 }

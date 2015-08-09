@@ -1,15 +1,25 @@
 <extend name="Public/base"/>
-
+<!-- 子导航 -->
+<block name="sidebar">
+    <include file="sidemenu" />
+</block>
 <block name="body">
     <div class="main-title">
         <h2>新增考题</h2>
     </div>
     <form action="__SELF__" method="post" class="form-horizontal">
 	<input type="hidden" class="text input-large" name="exam_id" value="{$exam_id}">
+        <input type="hidden" class="text input-large" name="quest_id" value="{$quest_id}">
         <div class="form-item">
             <label class="item-label">考题名称</label>
             <div class="controls">
-                <input type="text" class="text input-large" name="title" value="{$_data.title}">
+                <input type="text" class="text input-large" name="title" value="{$title}">
+            </div>
+        </div>
+        <div class="form-item">
+            <label class="item-label">排序</label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="sort_no" value="{$sort_no}">
             </div>
         </div>
 
@@ -17,8 +27,8 @@
             <label class="item-label">考题类型</label>
             <div class="controls">
                 <select name="questtype">
-					<option value='1' <if condition="$_data.quest_type eq 1"> selected</if>>单选</option>
-					<option value='2' <if condition="$_data.quest_type eq 2"> selected</if>>多选</option>
+					<option value='1' <if condition="$quest_type eq 1"> selected</if>>单选</option>
+					<option value='2' <if condition="$quest_type eq 2"> selected</if>>多选</option>
 				</select>
             </div>
         </div>
@@ -26,7 +36,7 @@
        <div class="form-item">
             <label class="item-label">分值</label>
             <div class="controls">
-                <input type="text" class="text input-2x" name="max_value" value="{$_data.max_value}">
+                <input type="text" class="text input-2x" name="max_value" value="{$max_value}">
             </div>
         </div>
 
@@ -39,21 +49,22 @@
 						<th class='input-4x' style="text-align: left;">名称</th>
 						<th class='input-mid' style="text-align: left;">分值</th>
 					</tr>
-					<if condition="$_data.opt.code eq 1">
-					<volist name="_data.opt.data" id="vo" key="i">
+					<if condition="$opt">
+					<volist name="opt" id="vo" key="i">
 					<tr>
 						<td><input class='input-mini' type='text' name="opt[sort][]" value='{$vo.sort_no}'></td>
 						<td><input class='input-mid  ' type='text' name="opt[name][]" value='{$vo.opt_name}'></td>
-						<td><input class='input-mini' type='text' name="opt[value][]" value='{$vo.opt_value}'> &nbsp;&nbsp; <span id='jia'>+</span> </td>
+						<td><input class='input-mini' type='text' name="opt[value][]" value='{$vo.opt_value}'> <span class="del_this">×</span> </td>
 					</tr>
 					</volist>
 					<else/>
 					<tr>
 						<td><input class='input-mini' type='text' name="opt[sort][]" value=''></td>
 						<td><input class='input-mid  ' type='text' name="opt[name][]" value=''></td>
-						<td><input class='input-mini' type='text' name="opt[value][]" value=''> &nbsp;&nbsp; <span id='jia'>+</span> </td>
+                                                <td><input class='input-mini' type='text' name="opt[value][]" value=''> <span class="del_this">×</span> </td>
 					</tr>
 					</if>
+                                        <tr><td><span id='jia'>+添加</span></td></tr>
 					
 				</tbody></table>
 </div>
@@ -81,11 +92,13 @@
 $(function(){
 	
     $('#jia').click(function(){
-		var str = "<tr><td><input class='input-mini' type='text' name=\"opt[sort][]\" value=''></td><td><input class='input-mid  ' type='text' name=\"opt[name][]\" value=''></td><td><input class='input-mini' type='text' name=\"opt[value][]\" value=''> &nbsp;&nbsp; <span id='jia'>+</span> </td></tr>";
-
-		$("#xuanxiang").append(str);
+		var str = "<tr><td><input class='input-mini' type='text' name=\"opt[sort][]\" value=''></td><td><input class='input-mid  ' type='text' name=\"opt[name][]\" value=''></td><td><input class='input-mini' type='text' name=\"opt[value][]\" value=''> <span class='del_this'>×</span> </td></tr>";
+		$("#xuanxiang").find('tr').eq(-2).after(str);
 
 	});
+        $(".form-item").on('click', '.del_this', function(){
+            $(this).parent().parent().remove();
+        });
 	$('#time-end').datetimepicker({
         format: 'yyyy-mm-dd',
         language:"zh-CN",

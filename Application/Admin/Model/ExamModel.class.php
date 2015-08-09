@@ -244,7 +244,7 @@ class ExamModel extends Model {
         if( empty($args['opt_value']) ) $args['opt_value'] = 0;
         
         $opt = M( self::EXAM_OPTIONS );
-        self::_create($args, $opt);
+        $questId ? self::_update($args, $opt, 'quest_id='.$questId) : self::_create($args, $opt);
     }
     
     public function addSurvey( $args ){
