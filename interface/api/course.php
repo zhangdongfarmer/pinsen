@@ -7,8 +7,7 @@ class course extends base{
 	/**
 	 * 培训列表
 	 */
-	public function lists($param){
-		
+	public function lists($param){		
 		if(!$param['subbranch_id']){
 			$this->getResponse(array(),'999');
 			return false;
@@ -102,9 +101,12 @@ class course extends base{
 			
 			//查询课程评论数据
 			$wh['course_id'] = $course_id;
-			$comments = $comment_model->where($wh)->order('comment_time desc')->select();
+			$comments = $comment_model->where($wh)->field('uid,comment_score,comment_content,comment_time')->order('comment_time desc')->select();
 			if($comments){
 				foreach($comments as &$v){
+					$user = M('member')->where('uid='.$uid)->find();
+					$v['name'] = $user['truename'];
+					unset($v['uid']);
 					$v['comment_time'] = date('Y-m-d H:i:s',$v['comment_time']);
 				}
 			}

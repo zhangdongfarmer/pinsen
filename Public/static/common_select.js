@@ -1,5 +1,5 @@
 /* 
- * 地区选择函数
+ * 省市区三级联动
  */
 
 function regionInit(divId){
@@ -51,8 +51,8 @@ if(typeof(regionChange) != 'function'){//检测是否已经被定义过，防止
 	    }
 	    $(".area_name").val(name);
 	    $(".area_names").val(names.join("\t"));
-	    $("#drug_province_id").val(id_arr[0]);
-	    $("#drug_city_id").val(id_arr[1]);
+	    $("#_province_id").val(id_arr[0]);
+	    $("#_city_id").val(id_arr[1]);
 	    
 	    if (this.value > 0){//下级地区
 	        var area_id = this.value;
