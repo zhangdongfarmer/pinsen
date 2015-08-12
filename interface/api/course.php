@@ -93,6 +93,7 @@ class course extends base{
 			$course['type_name'] = $this->course_types[$course['type']];
 			$course['level'] = $course['type'] == 1 ? ENTERPRISE : PLATFORM;
 			
+			//是否收藏
 			$con['uid'] = $uid;
 			$con['item_id'] = $course_id;
 			$con['focus_type'] = 1;
