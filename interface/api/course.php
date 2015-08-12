@@ -7,8 +7,7 @@ class course extends base{
 	/**
 	 * 培训列表
 	 */
-	public function lists($param){
-		
+	public function lists($param){		
 		if(!$param['subbranch_id']){
 			$this->getResponse(array(),'999');
 			return false;
@@ -73,7 +72,7 @@ class course extends base{
 			$uid = intval($param['uid']);
 			$course_id = intval($param['course_id']);
 			$map['id'] = $course_id;
-			$field = 'id,title,type,course_ico,comment_count,play_count,create_time,expire_time,describe,gold,video_url';
+			$field = 'id,title,type,course_ico,comment_count,play_count,create_time,expire_time,describe,score,gold,video_url';
 			$course = $course_model->where($map)->field($field)->find();
 			$course['create_time'] = date('Y-m-d',$course['create_time']);
 			$course['expire_time'] = date('Y-m-d',$course['expire_time']);
@@ -94,11 +93,21 @@ class course extends base{
 			$course['type_name'] = $this->course_types[$course['type']];
 			$course['level'] = $course['type'] == 1 ? ENTERPRISE : PLATFORM;
 			
+			//是否收藏
+			$con['uid'] = $uid;
+			$con['item_id'] = $course_id;
+			$con['focus_type'] = 1;
+			$focus = M('user_focus')->where($con)->find();
+			$course['is_focus'] = $focus ? 1 : 0;
+			
 			//查询课程评论数据
 			$wh['course_id'] = $course_id;
-			$comments = $comment_model->where($wh)->order('comment_time desc')->select();
+			$comments = $comment_model->where($wh)->field('uid,comment_score,comment_content,comment_time')->order('comment_time desc')->select();
 			if($comments){
 				foreach($comments as &$v){
+					$user = M('member')->where('uid='.$uid)->find();
+					$v['name'] = $user['truename'];
+					unset($v['uid']);
 					$v['comment_time'] = date('Y-m-d H:i:s',$v['comment_time']);
 				}
 			}

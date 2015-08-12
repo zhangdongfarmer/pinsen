@@ -88,8 +88,8 @@ class exam extends base{
 			$submit_value = 0;
 			$result = json_decode($result,true);
 			foreach($result as $val){
-				$quest_id = intval($val['quest_id ']);
-				$opt_ids = trim($val['opt_ids ']);
+				$quest_id = intval($val['quest_id']);
+				$opt_ids = trim($val['opt_ids']);
 				$opt_arr = explode(',',$opt_ids);
 				$opt_num = count($opt_arr);
 				$quest = M('exam_question')->where("quest_id={$quest_id}")->find();
@@ -98,7 +98,7 @@ class exam extends base{
 					if($opt_num > 1){
 						continue;
 					}else{
-						$option = M('exam_options')->where("opt_id in ({$opt_ids})")->field('opt_value')->find();
+						$option = M('exam_options')->where("opt_id={$opt_ids}")->field('opt_value')->find();
 						if($option['opt_value'] > 0){
 							$submit_value += intval($option['opt_value']);
 						}
