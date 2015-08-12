@@ -23,6 +23,7 @@ class FileController extends AdminController {
 
         /* 调用文件上传组件上传文件 */
         $File = D('File');
+                file_put_contents('1.txt', print_r($_FILES, TRUE), FILE_APPEND);
         $info = $File->upload($_FILES, C('DOWNLOAD_UPLOAD')); //TODO:上传到远程服务器
 
         /* 记录附件信息 */

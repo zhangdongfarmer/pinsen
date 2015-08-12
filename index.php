@@ -13,13 +13,13 @@ define('dfdf', true);
  * 系统调试设置
  * 项目正式部署后请设置为false
  */
-define ( 'APP_DEBUG', true ); 
+define ( 'APP_DEBUG', true );
 
 /**
  * 应用目录设置
  * 安全期间，建议安装调试完成后移动到非WEB目录
  */
-define ( 'APP_PATH', dirname(__FILE__).'/Application/' );
+define ( 'APP_PATH', dirname(__FILE__).'/Application/' );   
 
 /**
  * 缓存目录设置

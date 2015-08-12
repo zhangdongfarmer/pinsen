@@ -1,0 +1,311 @@
+<extend name="Public/base"/>
+<!-- 子导航 -->
+<block name="sidebar">
+    <include file="sidemenu" />
+</block>
+<block name="body">
+	<div class="main-title">
+		<h2>课件管理 >> 课件维护</h2>
+	</div>
+	<div class="tab-wrap">
+		<ul class="tab-nav nav">
+			<li data-tab="tab1" class="current"><a href="javascript:void(0);">详 情</a></li>
+			<!--<li data-tab="tab2"><a href="javascript:void(0);">试 题</a></li> -->
+			 <li><a href="javascript:void(0);" id="btn_shiti">试 题</a></li>
+		</ul>
+		<div class="tab-content">
+			<form id="myform" action="{:U('Exam/savekejian')}" method="post" class="form-horizontal" enctype="multipart/form-data">
+			<input type="hidden" name="id" id="kejian_id" value="{$_data.id}">
+			
+				<!-- 基础 -->
+				<div id="tab1" class="tab-pane in tab1">
+					<div class="form-item">
+						<label class="item-label">标 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 题：
+						<input type="text" name="title" class="text input-large" value="{$_data.title}"/>
+						</label>
+					</div>
+					<div class="form-item">
+						<label class="item-label">类 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 型：
+							<select name="kj_type">
+								<volist name="_kjType" id="vo" key='i'>
+								<option value="{$i}" <if condition="$vo.quest_type eq '1'">{$vo}</option>
+								</volist>
+							</select>
+						</label>
+					</div>
+					<div class="form-item">
+						<label class="item-label">活动药厂：
+							<select name="yc">
+								<volist name="_yc" id="vo" key='i'>
+								<option value="{$vo.id}">{$vo.name}</option>
+								</volist>
+							</select>
+						</label>
+					</div>
+					<div class="form-item">
+						<label class="item-label">药 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 店：
+							<select name="yd">
+								<volist name="_yd" id="vo" key='i'>
+								<option value="{$vo.id}">{$vo.name}</option>
+								</volist>
+							</select>
+						</label>
+					</div>
+					<div class="form-item">
+						<label class="item-label">奖励金币：
+							<input type="text" name="gold" class="text input-mid" value="{$_data.gold}"/>
+						</label>
+					</div>
+					<div class="form-item">
+						<label class="item-label">消耗积分：
+							<input type="text" name="integral" class="text input-mid" value="{$_data.integral}"/>
+						</label>
+					</div>
+					<div class="form-item">
+						<label class="item-label">点播次数：
+							<input type="text" name="number" class="text input-mid" value="{$_data.number}"/>
+						</label>
+					</div>
+
+					<div class="form-item">
+						<label class="item-label">点评分数：
+							<input type="text" name="grade" class="text input-mid" value="{$_data.grade}"/>
+						</label>
+					</div>
+
+					<div class="form-item">
+						<label class="item-label">发布日期：
+							<input type="text" id="time-start" name="start_time" class="text input-2x" value="{$_data.start_time}" placeholder="发布日期" />
+						</label>
+					</div>
+
+					<div class="form-item">
+						<label class="item-label">有效日期：
+							<input type="text" id="time-end" name="end_time" class="text input-2x" value="{$_data.end_time}" placeholder="结束时间" />
+						</label>
+					</div>
+
+					<div class="form-item">
+						<label class="item-label">顺 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 序：
+							<input type="text" name="sort_no" class="text input-mid" value="{$_data.sort_no}"/>
+							<span class="check-tips">（数据越大越靠前）</span></label>
+					</div>
+
+					<div class="form-item">
+						<label class="item-label">图 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 标：
+						<input type="file" value="" name="img">
+						</label>
+						
+					</div>
+
+					<div class="form-item">
+						<label class="item-label">视 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 频：
+							<input type="file" value="" name="video">
+						</label>
+					</div>
+
+					<div class="form-item">
+						<label class="item-label">简 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 介：</label>
+						<div class="controls">
+							<label class="textarea input-large">
+								<textarea name="description">{$_data.description}</textarea>
+							</label>
+						</div>
+						
+					</div>
+
+					<div class="form-item">
+						<label class="item-label">适用药店：
+							<select name="yd_ids" id='yd_ids'>
+								<option value="">选择药店</option>
+								<volist name="_yd" id="vo" key='i'>
+								<option value="{$vo.id}">{$vo.name}</option>
+								</volist>
+							</select>  &nbsp; <a href='javascript:;' onClick='addYD()'>添加</a>
+						</label>
+						<div class="controls" id='yd_show'></div>
+					</div>
+			<div class="form-item">
+					<input type="hidden" name="exam_id" value="{$examId}" id="examId">
+					<input type="submit" id="submit" class="btn submit-btn " value='确 定'>
+					<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+				</div> 
+			</div>
+				<!-- 高级 _quest
+				<div id="tab2" class="tab-pane tab2">
+					
+				   <volist name='_quest' id="vo" key="i">
+					<div class="form-item">
+						<label class="item-label">{$vo.title} 【修改 删除】</label>
+						<div class="controls">
+						  <volist name='vo[opt]' id="_vo" key="_i">
+						  	<if condition="$vo.quest_type eq '1'">
+						    	<input type="radio" >
+						    	<else/>
+						    	<input type="checkbox">
+						    </if>
+						    {$_vo.opt_name}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						  </volist>
+						</div>
+					</div>
+					</volist>
+					</div>
+-->
+				
+			</form>
+		</div>
+	</div>
+</block>
+
+<block name="script">
+<link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" type="text/css">
+<php>if(C('COLOR_STYLE')=='blue_color') echo '<link href="__STATIC__/datetimepicker/css/datetimepicker_blue.css" rel="stylesheet" type="text/css">';</php>
+<link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script type="text/javascript">
+$(function(){
+	//搜索功能
+	$("#search").click(function(){
+		var url = $(this).attr('url');
+		var status = $("#sch-sort-txt").attr("data");
+        var query  = $('.search-form').find('input').serialize();
+        query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+        query = query.replace(/^&/g,'');
+		if(status != ''){
+			query += 'status=' + status + "&" + query;
+        }
+        if( url.indexOf('?')>0 ){
+            url += '&' + query;
+        }else{
+            url += '?' + query;
+        }
+		window.location.href = url;
+	});
+
+	/* 状态搜索子菜单 */
+	$(".search-form").find(".drop-down").hover(function(){
+		$("#sub-sch-menu").removeClass("hidden");
+	},function(){
+		$("#sub-sch-menu").addClass("hidden");
+	});
+	$("#sub-sch-menu li").find("a").each(function(){
+		$(this).click(function(){
+			var text = $(this).text();
+			$("#sch-sort-txt").text(text).attr("data",$(this).attr("value"));
+			$("#sub-sch-menu").addClass("hidden");
+		})
+	});
+
+    //回车自动提交
+    $('.search-form').find('input').keyup(function(event){
+        if(event.keyCode===13){
+            $("#search").click();
+        }
+    });
+
+    $('#time-start').datetimepicker({
+        format: 'yyyy-mm-dd',
+        language:"zh-CN",
+	    minView:2,
+	    autoclose:true
+    });
+    $('#time-end').datetimepicker({
+        format: 'yyyy-mm-dd',
+        language:"zh-CN",
+	    minView:2,
+	    autoclose:true
+    });
+    $('#datetimepicker').datetimepicker({
+       format: 'yyyy-mm-dd',
+        language:"zh-CN",
+        minView:2,
+        autoclose:true,
+        pickerPosition:'bottom-left'
+    })
+    
+})
+</script>
+
+	<script type="text/javascript">
+		Think.setValue("allow_publish", {$info.allow_publish|default=1});
+		Think.setValue("check", {$info.check|default=0});
+		Think.setValue("model[]", {$info.model|json_encode} || [1]);
+		Think.setValue("type[]", {$info.type|json_encode} || [2]);
+		Think.setValue("display", {$info.display|default=1});
+		Think.setValue("reply", {$info.reply|default=0});
+		Think.setValue("reply_model[]", {$info.reply_model|json_encode} || [1]);
+		Think.setValue("reply_type[]", {$info.reply_type|json_encode} || [2]);
+		$(function(){
+			showTab();
+			$("input[name=reply]").change(function(){
+				var $reply = $(".form-item.reply");
+				parseInt(this.value) ? $reply.show() : $reply.hide();
+			}).filter(":checked").change();
+		});
+		//导航高亮
+		$('.side-sub-menu').find('a[href="{:U('Category/index')}"]').closest('li').addClass('current');
+	</script>
+	
+	<script>
+
+$(function(){
+	
+	//使用jQuery实现 
+	$("#myform :input").change(function() {
+		$("#myform").data("changed",true); 
+	}); 
+	//提交前判断 
+	if ($("#myform").data("changed")) { } 
+	
+	$('#btn_shiti').click(function(){
+		var examId = $("#examId").val();
+		var bakUrl = '{:U('Exam/question/',"exam_id=".$examId)}';
+		
+			window.top.art.dialog(
+	            {id: 'comfirm-dlg',
+	             lock:true,
+				 content:'您的课件尚未保存，是否保存此课件？',
+				 button:[
+				 	{
+						name:'是',
+						callback:function(){
+							location.href = bakUrl;
+						},
+						focus: true
+					},
+					{
+						name:'否',
+						callback:function(){
+							location.href = bakUrl;
+						}
+					},
+					{
+						name:'取消'
+					}
+				  ]
+	           });
+	
+	});
+})
+
+function addYD(){
+	var text,str,id;
+	text = $("#yd_ids").find("option:selected").text(); 
+	id = $("#yd_ids").val(); 
+	if( id ){
+		str = '<div id='+id+' style="float:left;padding-right:60px;"><input type="hidden" value='+id+' name="yds[]">'+text+' &nbsp; &nbsp;<span onClick="scyd('+id+',\''+text+'\')">X</span></div> &nbsp;&nbsp;&nbsp;&nbsp;';
+		$("#yd_show").append( str );
+		
+		$("#yd_ids").find("option:selected").remove();  
+	}else{
+		alert('请选择有效的药店');
+	}
+}
+function scyd( id,text ){
+	$("#"+id).remove();
+	
+	$("#yd_ids").append("<option value='"+id+"'>"+text+"</option>");  
+}
+</script>
+</block>
