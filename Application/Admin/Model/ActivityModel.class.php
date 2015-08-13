@@ -9,10 +9,11 @@ use Think\Model;
  * @date 2015-06-14
  */
 
-class DrugStoreModel extends Model{
+class ActivityModel extends Model{
     /* 自动完成规则 */
     protected $_auto = array(
-        array('create_time', 'strtotime', self::MODEL_BOTH, 'function'),
+        array('start_time', 'strtotime', self::MODEL_BOTH, 'function'),
+        array('end_time', 'strtotime', self::MODEL_BOTH, 'function'),
     );
     
 }

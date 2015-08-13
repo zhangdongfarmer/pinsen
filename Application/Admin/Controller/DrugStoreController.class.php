@@ -36,6 +36,7 @@ class DrugStoreController extends \Admin\Controller\AdminController {
         
         if($id){
             $course_info = D('DrugStore')->find($id);
+            $pharma_info['region'] = explode(',', $pharma_info['region']);
             $course_info['create_time'] = date('Y-m-d H:i', $course_info['create_time']);
             $course_info['update_time'] = date('Y-m-d H:i', $course_info['update_time']);
             $this->assign($course_info);
@@ -49,19 +50,24 @@ class DrugStoreController extends \Admin\Controller\AdminController {
     }
     public function doadd(){
          /* 获取数据对象 */
-        $data = D('DrugStore')->create($data);
+        $drug_store = D('DrugStore');
+        $data = $drug_store->create($data);
+        I('post.province','') && $data['region'] = I('post.province','');
+        I('post.city','') && $data['region'] .= ',' . I('post.city','');
+        I('post.district','') && $data['region'] .= ',' . I('post.district','');
+        I('post.community','') && $data['region'] .= ',' . I('post.community','');
         if(empty($data)){
             return false;
         }
 
         /* 添加或新增基础内容 */
         if(empty($data['id'])){ //新增数据
-            $id = D('DrugStore')->add(); //添加基础内容
+            $id = $drug_store->add($data); //添加基础内容
             if(!$id){
                 $this->error('新增药店出错！');
             }
         } else { //更新数据
-            $status = D('DrugStore')->save(); //更新基础内容
+            $status = $drug_store->save($data); //更新基础内容
             if(false === $status){
                 $this->error('更新药店出错！');
             }

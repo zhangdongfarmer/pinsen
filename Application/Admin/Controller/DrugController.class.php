@@ -33,11 +33,11 @@ class DrugController extends \Admin\Controller\AdminController {
     }
     public function add(){
         $id = I('get.id','');
-        
+        $pharma_list = D('Pharma')->getField('id, title');
+        $this->assign('pharma_list', $pharma_list);
         if($id){
             $drug_info = D('Drug')->find($id);
             $drug_info['create_time'] = date('Y-m-d H:i', $drug_info['create_time']);
-            $drug_info['update_time'] = date('Y-m-d H:i', $drug_info['update_time']);
             $this->assign($drug_info);
             
             $this->meta_title = '修改药品';
@@ -49,19 +49,20 @@ class DrugController extends \Admin\Controller\AdminController {
     }
     public function doadd(){
          /* 获取数据对象 */
-        $data = D('Drug')->create($data);
+        $drug = D('Drug');
+        $data = $drug->create();
         if(empty($data)){
             return false;
         }
 
         /* 添加或新增基础内容 */
         if(empty($data['id'])){ //新增数据
-            $id = D('Drug')->add(); //添加基础内容
+            $id = $drug->add($data); //添加基础内容
             if(!$id){
                 $this->error('新增药品出错！');
             }
         } else { //更新数据
-            $status = D('Drug')->save(); //更新基础内容
+            $status = $drug->save($data); //更新基础内容
             if(false === $status){
                 $this->error('更新药品出错！');
             }

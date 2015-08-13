@@ -9,7 +9,7 @@
     <script type="text/javascript" src="__STATIC__/uploadify/jquery.uploadify.min.js"></script>
     <div class="main-title cf">
         <h2>
-            新增药品
+            新增广告
         </h2>
     </div>
     <!-- 标签页导航 -->
@@ -22,26 +22,81 @@
     <form id="form" action="{:U('doAdd')}" method="post" class="form-horizontal">
         <!-- 基础文档模型 -->
         <div id="tab1" class="tab-pane in tab1">
-            <div class="form-item cf">
-                <label class="item-label">药品名：<span class="check-tips"></span></label>
+          <div class="form-item cf">
+              <label class="item-label">广告名：<span class="check-tips"></span></label>
+              <div class="controls">
+                  <input type="text" class="text input-large" name="title" value="{$title}">
+              </div>
+          </div>
+
+          <div class="form-item cf">
+              <label class="item-label">是否首页：<span class="check-tips"></span></label>
+              <div class="controls">
+                <input type="checkbox" name="is_index" value="1">
+              </div>
+          </div>
+          <div class="form-item cf">
+              <label class="item-label">广告图标：<span class="check-tips"></span></label>
+              <div class="controls">
+                  <input type="file" id="upload_picture_ad_ico">
+                  <input type="hidden" name="ad_ico" id="cover_id_ad_ico" value="{$ad_ico|default=''}"/>
+                  <div class="upload-img-box">
+                  <notempty name="ad_ico">
+                      <div class="upload-pre-item"><img src="{$ad_ico|get_cover='path'}"/></div>
+                  </notempty>
+                  </div>
+              </div>
+              <script type="text/javascript">
+                  //上传图片
+                  /* 初始化上传插件 */
+                  $("#upload_picture_ad_ico").uploadify({
+                      "height"          : 30,
+                      "swf"             : "__STATIC__/uploadify/uploadify.swf",
+                      "fileObjName"     : "download",
+                      "buttonText"      : "上传图片",
+                      "uploader"        : "{:U('File/uploadPicture',array('session_id'=>session_id()))}",
+                      "width"           : 120,
+                      'removeTimeout'	  : 1,
+                      'fileTypeExts'	  : '*.jpg; *.png; *.gif;',
+                      "onUploadSuccess" : uploadPictureFile
+                  });
+                  function uploadPictureFile(file, data){
+                      var data = $.parseJSON(data);
+                      var src = '';
+                      if(data.status){
+                          $("#cover_id_ad_ico").val(data.id);
+                          src = data.url || '__ROOT__' + data.path
+                          $("#cover_id_ad_ico").parent().find('.upload-img-box').html(
+                              '<div class="upload-pre-item"><img src="__ROOT__' + src + '"/></div>'
+                          );
+                      } else {
+                          updateAlert(data.info);
+                          setTimeout(function(){
+                              $('#top-alert').find('button').click();
+                              $(that).removeClass('disabled').prop('disabled',false);
+                          },1500);
+                      }
+                  }
+              </script>
+          </div>
+          <div class="form-item cf">
+              <label class="item-label">顺序：<span class="check-tips"></span></label>
+              <div class="controls">
+                  <input type="text" class="text input-large" name="sort" value="{$sort|default=0}">
+              </div>
+          </div>
+          <div class="form-item cf">
+              <label class="item-label">广告内容：<span class="check-tips"></span></label>
+              <div class="controls">
+                  <label class="textarea input-large">
+                  <textarea name="content">{$content|default=''}</textarea>
+                  </label>
+              </div>
+          </div>
+          <div class="form-item cf">
+                <label class="item-label">创建日期：<span class="check-tips"></span></label>
                 <div class="controls">
-                    <input type="text" class="text input-large" name="title" value="{$title}">
-                </div>
-            </div>
-            <div class="form-item cf">
-                <label class="item-label">药厂：<span class="check-tips"></span></label>
-                <div class="controls">
-                    <select name="pharma_id">
-                        <volist name="pharma_list" key="key" id="vo">
-                            <option value="{$key}" <eq name="key" value="$pharma_id">selected</eq>>{$vo}</option>
-                        </volist>
-                    </select>
-                </div>
-            </div>
-            <div class="form-item cf">
-                <label class="item-label">条形码：<span class="check-tips"></span></label>
-                <div class="controls">
-                    <input type="text" class="text input-large" name="bar_code" value="{$bar_code}">
+                  <input type="text" class="text input-large time" style="width:180px;" placeholder="请选择时间" name="create_time" value="{$create_time|default=date('Y-m-d H:i:s')}">
                 </div>
             </div>
         </div>

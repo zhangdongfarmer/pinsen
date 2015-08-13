@@ -19,7 +19,7 @@
 			<div class="btn-group">
 				<eq name="allow" value="1">
                                     <a class="btn" href="{:U('Course/add')}">新 增</a>
-				</if>
+				</eq>
 			</div>
             <button class="btn ajax-post" target-form="ids" url="{:U("Article/setStatus",array("status"=>1))}">启 用</button>
 			<button class="btn ajax-post" target-form="ids" url="{:U("Article/setStatus",array("status"=>0))}">禁 用</button>
@@ -88,9 +88,10 @@
                         <td>{$data['is_hide'] ? '否' : '是'}</td>
                         <td>{$data['sort']}</td>
                         <td>
+                            <a href="{:U('add', array('id'=>$data['id']))}">修改</a> 
                             <a href="{:U('delete', array('id'=>$data['id']))}">删除</a>  
-                            <a href="{:U('add', array('id'=>$data['id']))}">修改</a>  
-                            <a href="{:U('delete', array('id'=>$data['id']))}">下线</a>
+<!--                            <a href="{:U('add', array('id'=>$data['id']))}">修改</a>  
+                            <a href="{:U('delete', array('id'=>$data['id']))}">下线</a>-->
                         </td>
                     </tr>
                 </volist>
