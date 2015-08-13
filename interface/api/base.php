@@ -28,6 +28,6 @@ class base{
 			$response['msg'] = $state;
 		}
 		$response['data'] = $data;
-		echo json_encode($response);
+		exit(json_encode($response));
 	}
 }

@@ -196,8 +196,8 @@ class course extends base{
 					//更新点播数
 					$course_model->where('course_id='.$course_id)->save($data);
 					
-					$insert['uid'] = $map['uid'];
-					$insert['course_id'] = $map['course_id'];
+					$insert['uid'] = $uid;
+					$insert['course_id'] = $course_id;
 					$insert['status'] = 1;
 					$insert['level'] = $level;
 					$insert['update_time'] = time();
