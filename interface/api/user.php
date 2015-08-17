@@ -102,8 +102,8 @@ class user extends base{
 	public function info($param){
 		if($param['uid']){
 			$uid = intval($param['uid']);
-			$field = 'a.uid,a.head,a.truename,b.phone,a.sex,a.job,a.subbranch_id';
-			$info = M()->table(C('DB_PREFIX').'member a')->join(C('DB_PREFIX').'ucenter_member b on a.uid=b.uid')
+			$field = 'a.uid,a.head,a.truename,b.mobile as phone,a.sex,a.job,a.subbranch_id';
+			$info = M()->table(C('DB_PREFIX').'member a')->join(C('DB_PREFIX').'ucenter_member b on a.uid=b.id')
 			           ->field($field)->where('uid='.$uid)->find();
 			if($info){
 				$info['sex'] = $info['sex'] == '0' ? '女' : '男';
@@ -125,16 +125,16 @@ class user extends base{
 		if($param['uid']){
 			$uid = intval($param['uid']);
 			$map['a.uid'] = $uid;
-			$field = 'a.course_id,a.status,b.title,b.type,b,a.update_time,b.course_ico,b.video_url,b.gold';
-			$records = M()->table(C('DB_PREFIX').'course_record a')->join(C('DB_PREFIX').'course b on a.course_id=b.course_id')
+			$field = 'a.course_id,a.status,b.title,b.type,a.update_time,b.course_ico,b.video_url,b.gold';
+			$records = M()->table(C('DB_PREFIX').'course_record a')->join(C('DB_PREFIX').'course b on a.course_id=b.id')
 			           ->field($field)->where($map)->order('a.update_time desc')->select();
 
 			if($records){
 				$status_map = array(1=>'未考试',2=>'未通过',3=>'已通过');
 				foreach($records as $k=>$v){
 					$records[$k]['status'] = $status_map[$v['status']];
-					$type = M('course_type')->where('id='.$v['type'])->find();
-					$records[$k]['type'] = $type['name'];
+					//$type = M('course_type')->where('id='.$v['type'])->find();
+					$records[$k]['type'] = $this->course_types[$v['type']];
 					$records[$k]['update_time'] = date('Y-m-d',$v['update_time']);
 				}
 			}
@@ -163,14 +163,13 @@ class user extends base{
 					$focus_type = intval($v['focus_type']);
 					if($focus_type == 1){
 						$couse = M('course')->where('id='.$v['item_id'])->field('title,type,course_ico,video_url')->find();
-						$type = M('course_type')->where('id='.$couse['type'])->find();
-						$v['course_type'] = $type['name'];
+						//$type = M('course_type')->where('id='.$couse['type'])->find();
+						$v['course_type'] = $this->course_types[$couse['type']];
 						$v['item_title'] = $couse['title'];
 						$v['item_ico'] = $couse['course_ico'];
 						$v['item_url'] = $couse['video_url'];
 					}else{
 						$act = M('activity')->where('id='.$v['item_id'])->field('title,act_ico,wap_link')->find();
-						$type = M('course_type')->where('id='.$couse['type'])->find();
 						$v['course_type'] = '';
 						$v['item_title'] = $act['title'];
 						$v['item_ico'] = $act['act_ico'];
@@ -349,7 +348,7 @@ class user extends base{
 	 */
 	public function shop($param){
 		$map['is_hide'] = 0;
-		$order = 'sort desc';
+		$order = 'sort asc,id desc';
 		$field = 'id,name,type,score,order_ico';
 		$page = intval($param['page']) ? intval($param['page']) : 1;
 		$page_size = intval($param['page_size']) ? intval($param['page_size']) : 5;

@@ -83,10 +83,10 @@
                     <tr>
                         <td><input class="ids" type="checkbox" value="{$data['id']}" name="ids[]"></td>
                         <td>{$data['id']}</td>
-                        <td>{$course_type[$data['id']]}</td>
-                        <td>{$data['title']}</td>
-                        <td>{$data['is_hide'] ? '否' : '是'}</td>
-                        <td>{$data['sort']}</td>
+                        <td>{$data['name']}</td>
+                        <td>{$data['store']}</td>
+                        <td>{$data['region']}</td>
+                        <td>{$data['address']}</td>
                         <td>
                             <a href="{:U('delete', array('id'=>$data['id']))}">删除</a>  
                             <a href="{:U('add', array('id'=>$data['id']))}">修改</a>  
