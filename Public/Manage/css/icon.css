@@ -1,0 +1,21 @@
+/*
+===============COPYRIGHT=============
+Author:Janda.Lau;
+Contact:
+	QQ:210465;
+	E-Mail:ifanny@qq.com;
+	Phone:132-65556566;
+Thank you for your support!
+*/
+
+.icon,.val{
+	display: inline-block;
+	vertical-align: middle;
+	margin: 0 3px;
+	margin-top: -3px;
+	background-image: url(../img/global-icon.png);
+	background-repeat: no-repeat;
+	overflow: hidden;
+	*display: inline;
+	*zoom:1;
+}

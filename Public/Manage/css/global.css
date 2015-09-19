@@ -1,0 +1,88 @@
+/*
+===============COPYRIGHT=============
+Author:Janda.Lau;
+Contact:
+	QQ:210465;
+	E-Mail:ifanny@qq.com;
+	Phone:132-65556566;
+Thank you for your support!
+*/
+@charset "utf-8";
+/*整体布局*/
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}audio,canvas,video{display:inline-block}audio:not([controls]){display:none;height:0}[hidden]{display:none}html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;font-size:14px;color:#636363}body{margin:0;background:#fff}a{text-decoration:none;color:#636363}a:focus{outline:thin dotted}a:active,a:hover{outline:0}h1{margin:0.67em 0;font-size:2em}h2,h3,h4,h5,h6,p{margin:0;line-height:1.5}abbr[title]{border-bottom:1px dotted}b,strong{font-weight:bold}dfn{font-style:italic}hr{height:0;-moz-box-sizing:content-box;box-sizing:content-box}mark{color:#000;background:#ff0}code,kbd,pre,samp{font-family:monospace,serif;font-size:1em}pre{white-space:pre-wrap}q{quotes:"\201C""\201D""\2018""\2019"}small{font-size:80%}sub,sup{position:relative;font-size:75%;line-height:0;vertical-align:baseline}sup{top:-0.5em}sub{bottom:-0.25em}img{border:0;max-width:100%;-webkit-transition:-webkit-transform 1s,opacity 1s}svg:not(:root){overflow:hidden}figure{margin:0}fieldset{padding:0.35em 0.625em 0.75em;margin:0 2px;border:1px solid#c0c0c0}legend{padding:0;border:0}button,input,select,textarea{margin:0;font-family:inherit;font-size:100%;outline:none}button,input{line-height:normal}button,select{text-transform:none}button,html input[type="button"],input[type="reset"],input[type="submit"]{cursor:pointer;-webkit-appearance:button}button[disabled],html input[disabled]{cursor:default}input[type="checkbox"],input[type="radio"]{padding:0;box-sizing:border-box}input[type="search"]{-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;-webkit-appearance:textfield}input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance:none}button::-moz-focus-inner,input::-moz-focus-inner{padding:0;border:0}textarea{overflow:auto;vertical-align:top}table{border-collapse:collapse;border-spacing:0}ul,ol,li,p{list-style-type:none;margin:0;padding:0}html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,img,dd,dt,dl,i,em,strong{padding:0;margin:0;border:none;font-style:normal;font-weight:400;font-family:"Microsoft YaHei","微软雅黑";}th,td,strong{font-weight:normal;}
+
+/*浮动与浮动清除*/
+header,main,footer{ width:100%; clear:both;}
+h1,h2,h3,h4,h5,h6
+{font-family:"Microsoft YaHei","微软雅黑";font-weight: 400;}
+
+
+.fs12 {font-size:12px;}
+.fs14 {font-size:14px;}
+.fs16 {font-size:16px;}
+.fs18 {font-size:18px;}
+.fs20 {font-size:20px;}
+.fs22 {font-size:22px;}
+.fs24 {font-size:24px;}
+.fs24h{font-size:24px;font-family:Helvetica ;}
+.fs26 {font-size:26px;}
+.fs28 {font-size:28px;}
+.fs30 {font-size:30px;}
+.fs36 {font-size:36px;}
+.fs38 {font-size:38px;font-family:Helvetica ;font-weight: 700;}
+.cf00{color: #f00!important;}
+.cff0{color: #ff0!important;}
+.cf90{color: #f90!important;}
+.cf60{color: #f60!important;}
+.cccc{color: #ccc!important;}
+.c333{color: #333!important;}
+.c666{color: #666!important;}
+.c999{color: #999!important;}
+.cgre{color: #a6d03d!important;}
+.l21{line-height: 21px;}
+.l24{line-height: 24px;}
+
+.w100{width: 100%;}
+.a-10 { margin: 10px;}
+.m-10 { margin:0 10px 10px;}
+.t-10 { margin-top:10px !important;}
+.t-20 { margin-top:20px !important;}
+.t-30 { margin-top:30px !important;}
+.t-40 { margin-top:40px !important;}
+.b-10 { margin-bottom:10px !important;}
+.b-20 { margin-bottom:20px !important;}
+.b-40 { margin-bottom:40px !important;}
+.b-80 { margin-bottom:80px !important;}
+.r-5 {margin-right:5px !important;}
+.r-15 {margin-right:15px !important;}
+.l0{left: 0;}.r0{right: 0;}
+.pt5{padding-top: 5px;}
+.pt10{padding-top: 10px;}
+.pt15{padding-top: 15px;}
+.tc{text-align: center;}
+.fix20{background: url("../img/fix20.png") repeat;}
+.fix30{background: url("../img/fix30.png") repeat;}
+.fix70{background: url("../img/fix70.png") repeat;}
+.fix80{background: url("../img/fix80.png") repeat;}
+.fix3x{background: url("../img/fix3x.png") repeat;}
+.fix8x{background: url("../img/fix8x.png") repeat;}
+.no-b{border: 0 none !important;}
+.fl{ float:left;}.fr{ float:right; }
+.none{display: none;}.block{display: block;}
+.posa{position: absolute;}.posr{position: relative;}
+.z9{z-index: 9;}.z8{z-index: 8;}.z7{z-index: 7;}.z6{z-index: 6;}.z5{z-index: 5;}.z4{z-index: 4;}.z3{z-index: 3;}.z2{z-index: 2;}.z1{z-index: 1;}
+
+.clear { clear: both; height: 0; width: 100%; }
+.clearfix:after,.content:after,.area:after,.iWrap:after,.layout:after
+{ visibility: hidden; display: block; font-size: 0; content: " "; clear: both; height: 0; }
+.clearfix,.content,.area,.iWrap,.layout
+{ zoom: 1; clear: both; }
+
+.iWrap { width:100%;zoom:1;margin:0 auto;}
+.content,.area {position: relative;width:1000px;margin:0 auto; }
+
+
+body{font-family:"\5FAE\8F6F\96C5\9ED1","Microsoft YaHei";}
+
+
+/*公用头、底部样式*/
