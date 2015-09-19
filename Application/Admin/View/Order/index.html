@@ -18,12 +18,12 @@
 		<div class="fl">
 			<div class="btn-group">
 				<eq name="allow" value="1">
-                                    <a class="btn" href="{:U('SubStore/add')}">新 增</a>
+                                    <a class="btn" href="{:U('Order/add')}">新 增</a>
 				</if>
 			</div>
-            <button class="btn ajax-post" target-form="ids" url="{:U("SubStore/setStatus",array("status"=>1))}">启 用</button>
-			<button class="btn ajax-post" target-form="ids" url="{:U("SubStore/setStatus",array("status"=>0))}">禁 用</button>
-			<button class="btn ajax-post confirm" target-form="ids" url="{:U("SubStore/setStatus",array("status"=>-1))}">删 除</button>
+            <button class="btn ajax-post" target-form="ids" url="{:U("Order/setStatus",array("status"=>1))}">启 用</button>
+			<button class="btn ajax-post" target-form="ids" url="{:U("Order/setStatus",array("status"=>0))}">禁 用</button>
+			<button class="btn ajax-post confirm" target-form="ids" url="{:U("Order/setStatus",array("status"=>-1))}">删 除</button>
 		</div>
 
 		<!-- 高级搜索 -->
@@ -70,9 +70,11 @@
                     </th>
                     <th>ID</th>
                     <th>名称</th>
-                    <th>总店</th>
-                    <th>区域</th>
-                    <th>地址</th>
+                    <th>积分</th>
+                    <th>图片</th>
+                    <th>类型</th>
+                    <th>排序</th>
+                    <th>状态</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -84,9 +86,11 @@
                         <td><input class="ids" type="checkbox" value="{$data['id']}" name="ids[]"></td>
                         <td>{$data['id']}</td>
                         <td>{$data['name']}</td>
-                        <td>{$data['store']}</td>
-                        <td>{$data['region']}</td>
-                        <td>{$data['address']}</td>
+                        <td>{$data['score']}</td>
+                        <td><img src="{$data['ico']}" onload="javascript:DrawImage(this,44,44);$(this).show();" /></td>
+                        <td>{$data['type']}</td>
+                        <td>{$data['sort']}</td>
+                        <td>{$data['is_hide']}</td>
                         <td>
                             <a href="{:U('delete', array('id'=>$data['id']))}">删除</a>  
                             <a href="{:U('add', array('id'=>$data['id']))}">修改</a>  
