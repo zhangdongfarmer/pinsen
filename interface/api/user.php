@@ -353,6 +353,10 @@ class user extends base{
 		$page = intval($param['page']) ? intval($param['page']) : 1;
 		$page_size = intval($param['page_size']) ? intval($param['page_size']) : 5;
 		$data = M('order')->where($where)->field($field)->order($order)->page($page)->limit($page_size)->select();
+		foreach($data as &$v){
+			$path = M('picture')->where('id='.$v['order_ico'])->find();
+	        $v['order_ico'] = __ROOT__.$path['path'];
+		}
 		$this->getResponse($data?$data:array(), '0');
 	}
 	
@@ -438,6 +442,25 @@ class user extends base{
 				$this->getResponse('', '301');
 			}
 			
+		}else{
+			$this->getResponse('', '999');
+		}
+	}
+	
+	/**
+	 * 帮助反馈
+	 */
+	public function help($param){
+		if($param['subbranch_id']){
+			$subbranch_id = intval($param['subbranch_id']);
+			$store = M('drug_store')->where('id='.$subbranch_id)->find();
+			$data = M('help')->field('id,title,content,update_time,update_user')->where('store_id='.$store['id'])->select();
+			foreach($data as &$v){
+	        	$user = M('ucenter_member')->where('id='.$v['update_user'])->find();
+	        	$v['update_user'] = $user['username'];
+	        	$v['update_time'] = date('Y-m-d H:i:s',$v['update_time']);
+			}
+			$this->getResponse($data, '0');
 		}else{
 			$this->getResponse('', '999');
 		}

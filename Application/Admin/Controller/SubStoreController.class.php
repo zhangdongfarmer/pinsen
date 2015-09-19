@@ -53,16 +53,14 @@ class SubStoreController extends \Admin\Controller\AdminController
     	$id = I('get.id','');
     	if($id){
     		$branch = D('Subbranch')->find($id);
-    		
-        	
     		$area_id = intval($branch['region']);
         	$region = M('area')->where('area_id='.$area_id)->find();
         	$city = M('area')->find($region['area_parent_id']);
         	$province = M('area')->find($city['area_parent_id']);
         	
     		$this->assign('area_id', $area_id);
-    		$this->assign('city_id', $city['area_parent_id']);
-    		$this->assign('province_id', $province['area_parent_id']);
+    		$this->assign('city_id', $city['area_id']);
+    		$this->assign('province_id', $province['area_id']);
     		
             $this->assign($branch);
 	    	$this->meta_title = '修改分店';
@@ -83,10 +81,6 @@ class SubStoreController extends \Admin\Controller\AdminController
         $data['address'] = $_POST['address'];
         $data['update_time'] = $time;
         
-        /*echo '<pre>';
-        print_r($data);
-        echo '</pre>';exit;*/
-        
         if(empty($_POST['id'])){ //新增数据
 	        $data['create_time'] = $time; 
             $id = D('Subbranch')->add($data); //添加基础内容
@@ -103,6 +97,16 @@ class SubStoreController extends \Admin\Controller\AdminController
         
         $jumpUrl = U('Admin/SubStore/index');
         $this->success('更新成功！', $jumpUrl);
+    }
+    
+    public function delete(){
+    	$id = I('get.id','');
+    	$res = D('Subbranch')->where('id='.$id)->delete();
+    	if($res){
+    		$this->success('删除成功');
+    	}else{
+    		$this->success('删除失败');
+    	}
     }
     
 	/**
