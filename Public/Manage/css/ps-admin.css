@@ -1,0 +1,67 @@
+/*
+===============COPYRIGHT=============
+Author:Janda.Lau;
+Contact:
+	QQ:210465;
+	E-Mail:ifanny@qq.com;
+	Phone:132-65556566;
+Thank you for your support!
+*/
+@charset "utf-8";
+.login-body{background:url(../img/login_background.png) no-repeat 50% 0;/*background-size: cover,100%;*/}
+.top-bar{height: 70px;background-color: #000;opacity: .5;}
+.top-menu{height: 70px;width: 100%;left: 0;top: 0;}
+.top-menu .logo{margin-top:15px;}
+.top-menu .logo img{height:40px;display:block;}
+.login-box{height:488px;position: relative;}
+.login-box .center-line{width: 2px;height: 423px;overflow: hidden;left: 50%;margin: 34px 0 0 60px;background:url(../img/login_middle_line.png) no-repeat 50% 0;}
+.login-box .login-item{width:390px;background-color:#fff;height: 348px;margin-top: 70px;}
+.login-box .login-item h3.titleH3{font-size:16px;line-height:56px;padding:0 24px;border-bottom:solid 1px #f1f1f1;color:#242424;}
+.login-box .login-item  .items_panel{padding:0 50px;font-size:14px;position:relative;}
+.login-box .login-item  .items_panel .err_tips{color:#ec2020;min-height:21px;margin-top:11px;font-size:12px;}
+.login-box .login-item  .items_panel .item .input_item{width:268px;height:20px;padding:8px 8px;font-size:14px;border:1px #ddd solid;}
+.login-box .login-item  .items_panel .item .hint{margin-top:7px;color:#aaaaaa;margin-bottom:10px;display:block;}
+.login-box .login-item  .items_panel .item .green_btn,.btn_box .green_btn{height:40px;width:100%;background-color:#2cc64d;font-size:16px;margin-top:30px;color:#ffffff;font-weight:bold;border:1px solid #2ab949;}
+
+.login-box .dl-item{width: 283px;color: #fff;text-align: center;line-height: 25px;margin-top: 68px;}
+.login-box .dl-item h3{font-size: 22px;padding-bottom: 10px;text-align: left;}
+.footer-login{text-align: center;line-height: 60px;}
+
+.top_main_ram{padding-left: 20px;}
+.top_main_ram .logo_font{font-size: 24px;color: #fff;padding-left: 20px;line-height: 40px;}
+
+.admin_right{float:right;padding:23px 20px 0 0;color:#fff;}
+.admin_right span.admin_icon{width:24px;height:24px;display:inline-block;zoom:1;vertical-align:middle;border-radius:14px;overflow:hidden;margin:-2px 3px 0 0;}
+.admin_right a.out_btn{display:inline-block;zoom:1;vertical-align:middle;padding:0px 8px;background-color:#448fed;border-radius:3px;border:1px solid #237ae8;margin-top:-2px;color:#fff;font-size: 12px;margin-left: 10px;}
+.left_body{background:#fafafa url(../img/left_body.png) repeat-y 0 0;}
+.left_body .left_menu{width: 200px;}
+.left_body .left_menu ul{padding: 30px 0px 0 0px;}
+.left_body .left_menu ul li a{display: block;line-height: 50px;border-bottom: 1px #eee solid;font-size: 16px;padding-left: 20px;}
+.left_body .left_menu ul li a:hover{background-color: #fff;color: #3280db;}
+.main_title{line-height: 50px;border-bottom: 1px #eee solid;padding-left: 20px;background-color: #fafafa;color: #000;font-size: 16px;}
+.main_content_box{padding: 20px;}
+.table-box thead{height:30px;}
+.table-box thead th,.table-box tbody th{line-height:40px;background-color:#f4f4f4;border:1px #eee solid;color: #333;font-weight: 700;}
+.table-box tbody td{line-height:40px;text-align:center;background-color: #fff;border:1px #eee solid;}
+.table-box tbody td a{color: #3280db;}
+.table-box tbody td.text_left,
+.table-box tbody th.text_left,
+.table-box thead th.text_left{text-align: left;padding-left: 10px;}
+
+.btn_box{/*padding-top: 20px;*/padding-right: 20;}
+.btn_box .green_btn{width: 200px;}
+.main_title .btn_box{margin-right: 20px;}
+.main_title .btn_box .green_btn {margin-top: 10px;width: 100px;height: 30px;}
+.dp_list{width: 20%;}
+.dp_content{width: 80%;}
+.l-input{border:1px #ddd solid;padding: 3px 10px;}
+.dp_list .table-box  tbody tr.cur td{background-color: #aaa;color: #fff;}
+.dp_list .table-box  tbody tr.cur td a{color: #fff;}
+
+.green_btn:hover{opacity: .7;}
+.green_btn
+{webkit-transition:all .3s ease-out;-moz-transition:all .3s ease-out;-ms-transition:all .3s ease-out;-o-transition:all .3s ease-out;transition:all .3s ease-out;}
+
+
+
+
