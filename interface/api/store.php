@@ -29,7 +29,7 @@ class store extends base{
 					$data[$k]['store_id'] = $v['id'];
 					$data[$k]['type'] = 2;//分店
 					$data[$k]['name'] = trim($v['name']);
-					$data[$k]['employees'] = D('member')->employeeNum($v['subbranch_id']);
+					$data[$k]['employees'] = D('member')->employeeNum($v['id']);
 					$subbranch_count += $data[$k]['employees'];
 				}
 			}
@@ -93,9 +93,10 @@ class store extends base{
 			$subbrabch_ids = D('Subbranch')->getSubbranchIds($store_id);
 			
 			$map['subbranch_id'] = array('in',$subbrabch_ids);
-			$map['truename'] = array('like',"{%$keyword%}");
-			$field = 'a.uid,a.head,a.job,a.truename';
+			$map['truename'] = array('like',"%$keyword%");
+			$field = 'uid,head,job,truename';
 			$data = M('member')->where($map)->field($field)->order('uid desc')->select();
+			echo M()->getLastSql();exit;
 			$this->getResponse($data,'0');
 		}else{
 			$this->getResponse('','999');
@@ -119,7 +120,7 @@ class store extends base{
 	/**
 	 * 	增加销量
 	 */
-	public function scan($param){
+	public function addsale($param){
 		if($param['drug_id']){
 			$drug_id = intval($param['drug_id']);
 			$data['salenum'] = array('exp', '`salenum`+1');
