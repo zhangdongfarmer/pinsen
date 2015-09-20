@@ -2,7 +2,7 @@
 
 <!-- 子导航 -->
 <block name="sidebar">
-    <include file="Public/sidemenu" />
+    <include file="sidemenu" />
 </block>
 
 <block name="body">
@@ -23,13 +23,15 @@
         <!-- 基础文档模型 -->
         <div id="tab1" class="tab-pane in tab1">
             <div class="form-item cf">
-                <label class="item-label">分店名称：<span class="check-tips"></span></label>
+                <label class="item-label">礼品名称：<span class="check-tips"></span></label>
                 <div class="controls">
-                    <input type="text" class="text input-large" name="sub_name" value="{$name}">
+                    <input type="text" class="text input-large" name="gname" value="{$name}">
                 </div>
             </div>
+            
+            <!-- 
             <div class="form-item cf">
-                <label class="item-label">所属总店：<span class="check-tips"></span></label>
+                <label class="item-label">作用药店：<span class="check-tips"></span></label>
                 <div class="controls">
 			            <select class="w110" name="store_id">
 			            	<option value=''>--请选择--</option>
@@ -39,47 +41,39 @@
 			          	</select>
                 </div>
             </div>
-            <div class="form-item cf">
-                <label class="item-label">分店地区：<span class="check-tips"></span></label>
-                <div class="controls">
-                    <div id='area'>
-			            <select class="w110">
-			          	</select>
-			          	<input type="hidden" value="" name="province_id" id="_province_id">
-			          	<input type="hidden" value="" name="city_id" id="_city_id">
-			          	<input type="hidden" name="area_id" id="area_id" class="area_ids"/>
-			          	<input type="hidden" name="area_info" id="area_info" class="area_names"/>
-		          	</div>
-                    
-                </div>
-            </div>
-            <div class="form-item cf">
-                <label class="item-label">详细地址：<span class="check-tips"></span></label>
-                <div class="controls">
-                    <input type="text" class="text input-large" name="address" value="{$address}">
-                </div>
-            </div>
-            <!-- 
-            <div class="form-item cf">
-                <label class="item-label">联系人：<span class="check-tips"></span></label>
-                <div class="controls">
-                    <input type="text" class="text input-large" name="contacts" value="{$title}">
-                </div>
-            </div>
-            <div class="form-item cf">
-                <label class="item-label">邮箱地址：<span class="check-tips"></span></label>
-                <div class="controls">
-                    <input type="text" class="text input-large" name="email" value="{$gold}">
-                </div>
-            </div>
-            <div class="form-item cf">
-                <label class="item-label">联系电话：<span class="check-tips"></span></label>
-                <div class="controls">
-                    <input type="text" class="text input-large" name="phone" value="{$score}">
-                </div>
-            </div>
-             -->
+            -->
             
+            <div class="form-item cf">
+                <div class="form-item cf">
+	                <label class="item-label">礼品积分：<span class="check-tips"></span></label>
+	                <div class="controls">
+	                   <input type="text" class="text input-large" name="score" value="{$score}">
+	                </div>
+                </div>
+            </div>
+            
+            <div class="form-item cf">
+                <label class="item-label">礼品类型：<span class="check-tips"></span></label>
+                <div class="controls">
+			            <select class="w110" name="type">
+			            	<option value=''>--请选择--</option>
+			            	<option value='1' <if condition="$type eq 1">selected='selected'</if>>普通礼品</option>
+			            	<option value='2' <if condition="$type eq 2">selected='selected'</if>>金币礼品</option>
+			          	</select>
+                </div>
+            </div>
+            
+                <div class="form-item cf">
+                <label class="item-label">礼品图片：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <input type="file" id="upload_picture_course_ico">
+                    <input type="hidden" name="order_ico" id="cover_id_course_ico" value="{$order_ico|default=''}"/>
+                    <div class="upload-img-box">
+                    <notempty name="order_ico">
+                        <div class="upload-pre-item"><img src="__ROOT__{$order_ico|get_cover='path'}"/></div>
+                    </notempty>
+                    </div>
+                </div>
                 <script type="text/javascript">
                     //上传图片
                     /* 初始化上传插件 */
@@ -114,43 +108,28 @@
                 </script>
             </div>
             
-                <script type="text/javascript">
-                    //上传图片
-                    /* 初始化上传插件 */
-                    $("#upload_file_video_url").uploadify({
-                        "height"          : 30,
-                        "swf"             : "__STATIC__/uploadify/uploadify.swf",
-                        "fileObjName"     : "download",
-                        "buttonText"      : "上传视频",
-                        "uploader"        : "{:U('File/upload',array('session_id'=>session_id()))}",
-                        "width"           : 120,
-                        'removeTimeout'	  : 1,
-                        'fileTypeExts'	  : '*.flv; *.mp4; *.rmvb; *.rm; *.avi; *.swf;',
-                        "onUploadSuccess" : uploadVideoFile
-                    });
-                    function uploadVideoFile(file, data){
-                        var data = $.parseJSON(data);
-                        if(data.status){
-                            var name = "video_url";
-                            $("input[name="+name+"]").val(data.data);
-                            $("input[name="+name+"]").parent().find('.upload-img-box').html(
-                                "<div class=\"upload-pre-file\"><span class=\"upload_icon_all\"></span>" + data.info + "</div>"
-                            );
-                        } else {
-                            updateAlert(data.info);
-                            setTimeout(function(){
-                                $('#top-alert').find('button').click();
-                                $(that).removeClass('disabled').prop('disabled',false);
-                            },1500);
-                        }
-                    }
-                </script>
+            <div class="form-item cf">
+                <div class="form-item cf">排序：<span class="check-tips"></span></label>
+	                <div class="controls">
+	                   <input type="text" class="text input-large" name="sort" value="{$sort}">
+	                </div>
+                </div>
             </div>
+            
+            <div class="form-item cf">
+                <div class="form-item cf">状态：<span class="check-tips"></span></label>
+	                <div class="controls">
+	                   <input type="radio" class="" name="is_hide" value="0" <if condition="$is_hide eq 0">checked='checked'</if>>显示
+	                   &nbsp;&nbsp;
+	                   <input type="radio" class="" name="is_hide" value="1" <if condition="$is_hide eq 1">checked='checked'</if>>隐藏
+	                </div>
+                </div>
+            
         </div>
 
         <div class="form-item cf">
             <button class="btn submit-btn ajax-post hidden" id="submit" type="submit" target-form="form-horizontal">确 定</button>
-            <a class="btn btn-return" href="{:U('sub_store/index?cate_id='.$cate_id)}">返 回</a>
+            <a class="btn btn-return" href="{:U('order/index')}">返 回</a>
             <input type="hidden" name="id" value="{$id|default=''}"/>
         </div>
     </form>

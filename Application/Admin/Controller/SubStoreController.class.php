@@ -26,7 +26,18 @@ class SubStoreController extends \Admin\Controller\AdminController
      * 列表页
      */
     public function index(){
-        $list = $this->lists('SubStore');
+        $list = $this->lists('Subbranch');
+        foreach($list as &$v){
+        	$store = D('DrugStore')->find($v['store_id']);
+        	
+        	$area_id = intval($v['region']);
+        	$region = M('area')->where('area_id='.$area_id)->find();
+        	$city = M('area')->find($region['area_parent_id']);
+        	$province = M('area')->find($city['area_parent_id']);
+        	
+        	$v['store'] = $store['name'];
+        	$v['region'] = $province['area_name'].$city['area_name'].$region['area_name'];
+        }
         $this->assign('list', $list);
         $this->meta_title = '分店管理';
         $this->display();
@@ -36,6 +47,26 @@ class SubStoreController extends \Admin\Controller\AdminController
      * 添加分店页
      */
     public function add(){
+    	$store = D('DrugStore')->order('id desc')->select();
+    	$this->assign('store', $store);
+    	
+    	$id = I('get.id','');
+    	if($id){
+    		$branch = D('Subbranch')->find($id);
+    		$area_id = intval($branch['region']);
+        	$region = M('area')->where('area_id='.$area_id)->find();
+        	$city = M('area')->find($region['area_parent_id']);
+        	$province = M('area')->find($city['area_parent_id']);
+        	
+    		$this->assign('area_id', $area_id);
+    		$this->assign('city_id', $city['area_id']);
+    		$this->assign('province_id', $province['area_id']);
+    		
+            $this->assign($branch);
+	    	$this->meta_title = '修改分店';
+    	}else{
+    		$this->meta_title = '新增分店';
+    	}
         $this->display();
     }
     
@@ -43,7 +74,39 @@ class SubStoreController extends \Admin\Controller\AdminController
      * 执行添加
      */
     public function doadd(){
-    	
+    	$time = time();
+        $data['name'] = $_POST['sub_name'];
+        $data['store_id'] = intval($_POST['store_id']);
+        $data['region'] = $_POST['area_id'];
+        $data['address'] = $_POST['address'];
+        $data['update_time'] = $time;
+        
+        if(empty($_POST['id'])){ //新增数据
+	        $data['create_time'] = $time; 
+            $id = D('Subbranch')->add($data); //添加基础内容
+            if(!$id){
+                $this->error('新增分店出错！');
+            }
+        } else { //更新数据
+        	$id = intval($_POST['id']);
+            $status = D('Subbranch')->where('id='.$id)->save($data); //更新基础内容
+            if(false === $status){
+                $this->error('更新分店出错！');
+            }
+        }
+        
+        $jumpUrl = U('Admin/SubStore/index');
+        $this->success('更新成功！', $jumpUrl);
+    }
+    
+    public function delete(){
+    	$id = I('get.id','');
+    	$res = D('Subbranch')->where('id='.$id)->delete();
+    	if($res){
+    		$this->success('删除成功');
+    	}else{
+    		$this->success('删除失败');
+    	}
     }
     
 	/**

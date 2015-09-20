@@ -26,13 +26,14 @@ class store extends base{
 			$data = array();
 			if($subbranch_list){
 				foreach($subbranch_list as $k=>$v){
+					$data[$k]['store_id'] = $v['id'];
 					$data[$k]['type'] = 2;//分店
 					$data[$k]['name'] = trim($v['name']);
-					$data[$k]['employees'] = D('member')->employeeNum($v['subbranch_id']);
+					$data[$k]['employees'] = D('member')->employeeNum($v['id']);
 					$subbranch_count += $data[$k]['employees'];
 				}
 			}
-			array_unshift($data,array('type'=>1,'name'=>$store['name'],'employees'=>$subbranch_count));
+			array_unshift($data,array('store_id'=>$store['id'],'type'=>1,'name'=>$store['name'],'employees'=>$subbranch_count));
 			$this->getResponse($data,'0');
 		}else{
 			$this->getResponse('','301');
@@ -92,9 +93,10 @@ class store extends base{
 			$subbrabch_ids = D('Subbranch')->getSubbranchIds($store_id);
 			
 			$map['subbranch_id'] = array('in',$subbrabch_ids);
-			$map['truename'] = array('like',"{%$keyword%}");
-			$field = 'a.uid,a.head,a.job,a.truename';
+			$map['truename'] = array('like',"%$keyword%");
+			$field = 'uid,head,job,truename';
 			$data = M('member')->where($map)->field($field)->order('uid desc')->select();
+			echo M()->getLastSql();exit;
 			$this->getResponse($data,'0');
 		}else{
 			$this->getResponse('','999');
@@ -105,7 +107,27 @@ class store extends base{
 	 * 扫一扫
 	 */
 	public function scan($param){
-		
+		if($param['code']){
+			$code = trim($param['code']);
+			$drug = M('drug')->field('id,title as drug_name')->where('bar_code='.$code)->find();
+			$this->getResponse($drug,'0');
+		}else{
+			$this->getResponse('','999');
+		}
 	}
 	
+	
+	/**
+	 * 	增加销量
+	 */
+	public function addsale($param){
+		if($param['drug_id']){
+			$drug_id = intval($param['drug_id']);
+			$data['salenum'] = array('exp', '`salenum`+1');
+			$drug = M('drug')->where('id='.$drug_id)->save($data);
+			$this->getResponse($drug,'0');
+		}else{
+			$this->getResponse('','999');
+		}
+	}
 }
