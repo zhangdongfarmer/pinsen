@@ -2,14 +2,14 @@
 
 <!-- 子导航 -->
 <block name="sidebar">
-    <include file="sidemenu" />
+    <include file="Public/sidemenu" />
 </block>
 
 <block name="body">
     <script type="text/javascript" src="__STATIC__/uploadify/jquery.uploadify.min.js"></script>
     <div class="main-title cf">
         <h2>
-            新增课件
+            新增药店
         </h2>
     </div>
     <!-- 标签页导航 -->
@@ -31,11 +31,7 @@
             <div class="form-item cf">
                 <label class="item-label">地区：<span class="check-tips"></span></label>
                 <div class="controls">
-                    <select name="region">
-                        <volist name="region_list" key="key" id="vo">
-                            <option value="{$key}" <eq name="key" value="$region">selected</eq>>{$vo}</option>
-                        </volist>
-                    </select>
+                    {:hook('J_China_City', array('province'=>$region[0], 'city'=>$region[1], 'district'=>$region[2], 'community'=>$region[3]))}
                 </div>
             </div>
             <div class="form-item cf">

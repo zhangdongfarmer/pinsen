@@ -11,8 +11,10 @@ use Think\Model;
 
 class PharmaModel extends Model{
     
-    public function getList() {
-        
-        $this->where($where)->select();
-    }
+    /* 自动完成规则 */
+    protected $_auto = array(
+        array('create_time', 'strtotime', self::MODEL_BOTH, 'function'),
+        array('update_time', 'strtotime', self::MODEL_BOTH, 'function'),
+    );
+    
 }

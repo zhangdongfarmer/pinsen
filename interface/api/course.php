@@ -264,7 +264,7 @@ class course extends base{
 			$keyword = trim($param['keyword']);
 			$map['title'] = array('like',"%{$keyword}%");
 			$map['subbranch_id'] = intval($param['subbranch_id']);
-			$field = 'id,title,course_ico,expire_time,play_cout,is_recom';
+			$field = 'id,title,course_ico,expire_time,play_count,is_recom';
 			$page = intval($param['page']) ? intval($param['page']) : 1;
 			$page_size = intval($param['page_size']) ? intval($param['page_size']) : 5;
 			$course = M('course')->where($map)->field($field)->order('play_count desc')->page($page)->limit($page_size)->select();

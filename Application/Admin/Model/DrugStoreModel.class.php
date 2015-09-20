@@ -10,5 +10,9 @@ use Think\Model;
  */
 
 class DrugStoreModel extends Model{
-
+    /* 自动完成规则 */
+    protected $_auto = array(
+        array('create_time', 'strtotime', self::MODEL_BOTH, 'function'),
+    );
+    
 }

@@ -33,12 +33,15 @@ class ActivityController extends \Admin\Controller\AdminController {
     }
     public function add(){
         $id = I('get.id','');
-        
+        $pharma_list = M('pharma')->getField('id,title');
+        $this->assign('pharma_list', $pharma_list);
+        $drug_store_list = M('drug_store')->getField('id,name');
+        $this->assign('drug_store_list', $drug_store_list);
         if($id){
-            $drug_info = D('Activity')->find($id);
-            $drug_info['create_time'] = date('Y-m-d H:i', $drug_info['create_time']);
-            $drug_info['update_time'] = date('Y-m-d H:i', $drug_info['update_time']);
-            $this->assign($drug_info);
+            $activity_info = D('Activity')->find($id);
+            $activity_info['start_time'] = date('Y-m-d H:i', $activity_info['start_time']);
+            $activity_info['end_time'] = date('Y-m-d H:i', $activity_info['end_time']);
+            $this->assign($activity_info);
             
             $this->meta_title = '修改活动';
         }else{
@@ -56,12 +59,12 @@ class ActivityController extends \Admin\Controller\AdminController {
 
         /* 添加或新增基础内容 */
         if(empty($data['id'])){ //新增数据
-            $id = D('Activity')->add(); //添加基础内容
+            $id = D('Activity')->add($data); //添加基础内容
             if(!$id){
                 $this->error('新增活动出错！');
             }
         } else { //更新数据
-            $status = D('Activity')->save(); //更新基础内容
+            $status = D('Activity')->save($data); //更新基础内容
             if(false === $status){
                 $this->error('更新活动出错！');
             }

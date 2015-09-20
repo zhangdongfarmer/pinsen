@@ -1,0 +1,238 @@
+<extend name="Public/base" />
+
+<!-- 子导航 -->
+<block name="sidebar">
+    <include file="sidemenu" />
+</block>
+
+<block name="body">
+    <script type="text/javascript" src="__STATIC__/uploadify/jquery.uploadify.min.js"></script>
+    <div class="main-title cf">
+        <h2>
+            {$meta_title}
+        </h2>
+    </div>
+    <!-- 标签页导航 -->
+<div class="tab-wrap">
+    <ul class="tab-nav nav">
+        <li data-tab="tab1" class="current"><a href="javascript:void(0);">详情</a></li>
+    </ul>
+    <div class="tab-content">
+    <!-- 表单 -->
+    <form id="form" action="{:U('doAdd')}" method="post" class="form-horizontal">
+        <!-- 基础文档模型 -->
+        <div id="tab1" class="tab-pane in tab1">
+            <div class="form-item cf">
+                <label class="item-label">礼品名称：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <input type="text" class="text input-large" name="gname" value="{$name}">
+                </div>
+            </div>
+            
+            <!-- 
+            <div class="form-item cf">
+                <label class="item-label">作用药店：<span class="check-tips"></span></label>
+                <div class="controls">
+			            <select class="w110" name="store_id">
+			            	<option value=''>--请选择--</option>
+			            	<volist name='store' id='vo'>
+			            		<option value='{$vo.id}' <if condition="$vo.id eq $store_id">selected="selected"</if>>{$vo.name}</option>
+			            	</volist>
+			          	</select>
+                </div>
+            </div>
+            -->
+            
+            <div class="form-item cf">
+                <div class="form-item cf">
+	                <label class="item-label">礼品积分：<span class="check-tips"></span></label>
+	                <div class="controls">
+	                   <input type="text" class="text input-large" name="score" value="{$score}">
+	                </div>
+                </div>
+            </div>
+            
+            <div class="form-item cf">
+                <label class="item-label">礼品类型：<span class="check-tips"></span></label>
+                <div class="controls">
+			            <select class="w110" name="type">
+			            	<option value=''>--请选择--</option>
+			            	<option value='1' <if condition="$type eq 1">selected='selected'</if>>普通礼品</option>
+			            	<option value='2' <if condition="$type eq 2">selected='selected'</if>>金币礼品</option>
+			          	</select>
+                </div>
+            </div>
+            
+                <div class="form-item cf">
+                <label class="item-label">礼品图片：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <input type="file" id="upload_picture_course_ico">
+                    <input type="hidden" name="order_ico" id="cover_id_course_ico" value="{$order_ico|default=''}"/>
+                    <div class="upload-img-box">
+                    <notempty name="order_ico">
+                        <div class="upload-pre-item"><img src="__ROOT__{$order_ico|get_cover='path'}"/></div>
+                    </notempty>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    //上传图片
+                    /* 初始化上传插件 */
+                    $("#upload_picture_course_ico").uploadify({
+                        "height"          : 30,
+                        "swf"             : "__STATIC__/uploadify/uploadify.swf",
+                        "fileObjName"     : "download",
+                        "buttonText"      : "上传图片",
+                        "uploader"        : "{:U('File/uploadPicture',array('session_id'=>session_id()))}",
+                        "width"           : 120,
+                        'removeTimeout'	  : 1,
+                        'fileTypeExts'	  : '*.jpg; *.png; *.gif;',
+                        "onUploadSuccess" : uploadPictureFile
+                    });
+                    function uploadPictureFile(file, data){
+                        var data = $.parseJSON(data);
+                        var src = '';
+                        if(data.status){
+                            $("#cover_id_course_ico").val(data.id);
+                            src = data.url || '__ROOT__' + data.path
+                            $("#cover_id_course_ico").parent().find('.upload-img-box').html(
+                                '<div class="upload-pre-item"><img src="__ROOT__' + src + '"/></div>'
+                            );
+                        } else {
+                            updateAlert(data.info);
+                            setTimeout(function(){
+                                $('#top-alert').find('button').click();
+                                $(that).removeClass('disabled').prop('disabled',false);
+                            },1500);
+                        }
+                    }
+                </script>
+            </div>
+            
+            <div class="form-item cf">
+                <div class="form-item cf">排序：<span class="check-tips"></span></label>
+	                <div class="controls">
+	                   <input type="text" class="text input-large" name="sort" value="{$sort}">
+	                </div>
+                </div>
+            </div>
+            
+            <div class="form-item cf">
+                <div class="form-item cf">状态：<span class="check-tips"></span></label>
+	                <div class="controls">
+	                   <input type="radio" class="" name="is_hide" value="0" <if condition="$is_hide eq 0">checked='checked'</if>>显示
+	                   &nbsp;&nbsp;
+	                   <input type="radio" class="" name="is_hide" value="1" <if condition="$is_hide eq 1">checked='checked'</if>>隐藏
+	                </div>
+                </div>
+            
+        </div>
+
+        <div class="form-item cf">
+            <button class="btn submit-btn ajax-post hidden" id="submit" type="submit" target-form="form-horizontal">确 定</button>
+            <a class="btn btn-return" href="{:U('order/index')}">返 回</a>
+            <input type="hidden" name="id" value="{$id|default=''}"/>
+        </div>
+    </form>
+    </div>
+</div>
+</block>
+
+<block name="script">
+<link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" type="text/css">
+<php>if(C('COLOR_STYLE')=='blue_color') echo '<link href="__STATIC__/datetimepicker/css/datetimepicker_blue.css" rel="stylesheet" type="text/css">';</php>
+<link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+
+<script type="text/javascript" src="__STATIC__/common_select.js" charset="UTF-8"></script>
+<script type="text/javascript" src="__STATIC__/area_array.js" charset="UTF-8"></script>
+
+<script type="text/javascript">
+
+Think.setValue("type", {$info.type|default='""'});
+Think.setValue("display", {$info.display|default=0});
+
+$('#submit').click(function(){
+	$('#form').submit();
+});
+
+$(function(){
+
+	//区域三级联动
+	regionInit("area");
+	var province_id = "{$province_id}" || '';
+	$('#area > select:eq(0)').val(province_id);
+	$('#area > select:eq(0)').change();
+	var city_id = "{$city_id}" || '';
+	$('#area > select:eq(1)').val(city_id);
+	$('#area > select:eq(1)').change();
+	var area_id = "{$area_id}" || '';
+	$('#area > select:eq(2)').val(area_id);
+	$('#area > select:eq(2)').change();
+	
+	
+    $('.time').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        language:"zh-CN",
+        minView:2,
+        autoclose:true
+    });
+    showTab();
+
+	<if condition="C('OPEN_DRAFTBOX') and (ACTION_NAME eq 'add' or $info['status'] eq 3)">
+	//保存草稿
+	var interval;
+	$('#autoSave').click(function(){
+        var target_form = $(this).attr('target-form');
+        var target = $(this).attr('url')
+        var form = $('.'+target_form);
+        var query = form.serialize();
+        var that = this;
+
+        $(that).addClass('disabled').attr('autocomplete','off').prop('disabled',true);
+        $.post(target,query).success(function(data){
+            if (data.status==1) {
+                updateAlert(data.info ,'alert-success');
+                $('input[name=id]').val(data.data.id);
+            }else{
+                updateAlert(data.info);
+            }
+            setTimeout(function(){
+                $('#top-alert').find('button').click();
+                $(that).removeClass('disabled').prop('disabled',false);
+            },1500);
+        })
+
+        //重新开始定时器
+        clearInterval(interval);
+        autoSaveDraft();
+        return false;
+    });
+
+	//Ctrl+S保存草稿
+	$('body').keydown(function(e){
+		if(e.ctrlKey && e.which == 83){
+			$('#autoSave').click();
+			return false;
+		}
+	});
+
+	//每隔一段时间保存草稿
+	function autoSaveDraft(){
+		interval = setInterval(function(){
+			//只有基础信息填写了，才会触发
+			var title = $('input[name=title]').val();
+			var name = $('input[name=name]').val();
+			var des = $('textarea[name=description]').val();
+			if(title != '' || name != '' || des != ''){
+				$('#autoSave').click();
+			}
+		}, 1000*parseInt({:C('AOTUSAVE_DRAFT')}));
+	}
+	autoSaveDraft();
+
+	</if>
+
+});
+</script>
+</block>

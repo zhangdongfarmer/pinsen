@@ -2,14 +2,14 @@
 
 <!-- 子导航 -->
 <block name="sidebar">
-    <include file="sidemenu" />
+    <include file="Public/sidemenu" />
 </block>
 
 <block name="body">
     <script type="text/javascript" src="__STATIC__/uploadify/jquery.uploadify.min.js"></script>
     <div class="main-title cf">
         <h2>
-            新增分店
+            {$meta_title}
         </h2>
     </div>
     <!-- 标签页导航 -->
@@ -25,7 +25,7 @@
             <div class="form-item cf">
                 <label class="item-label">分店名称：<span class="check-tips"></span></label>
                 <div class="controls">
-                    <input type="text" class="text input-large" name="drug_name" value="{$title}">
+                    <input type="text" class="text input-large" name="sub_name" value="{$name}">
                 </div>
             </div>
             <div class="form-item cf">
@@ -33,6 +33,9 @@
                 <div class="controls">
 			            <select class="w110" name="store_id">
 			            	<option value=''>--请选择--</option>
+			            	<volist name='store' id='vo'>
+			            		<option value='{$vo.id}' <if condition="$vo.id eq $store_id">selected="selected"</if>>{$vo.name}</option>
+			            	</volist>
 			          	</select>
                 </div>
             </div>
@@ -42,8 +45,8 @@
                     <div id='area'>
 			            <select class="w110">
 			          	</select>
-			          	<input type="hidden" value="" name="province_id" id="drug_province_id">
-			          	<input type="hidden" value="" name="city_id" id="drug_city_id">
+			          	<input type="hidden" value="" name="province_id" id="_province_id">
+			          	<input type="hidden" value="" name="city_id" id="_city_id">
 			          	<input type="hidden" name="area_id" id="area_id" class="area_ids"/>
 			          	<input type="hidden" name="area_info" id="area_info" class="area_names"/>
 		          	</div>
@@ -53,9 +56,10 @@
             <div class="form-item cf">
                 <label class="item-label">详细地址：<span class="check-tips"></span></label>
                 <div class="controls">
-                    <input type="text" class="text input-large" name="address" value="{$title}">
+                    <input type="text" class="text input-large" name="address" value="{$address}">
                 </div>
             </div>
+            <!-- 
             <div class="form-item cf">
                 <label class="item-label">联系人：<span class="check-tips"></span></label>
                 <div class="controls">
@@ -74,6 +78,7 @@
                     <input type="text" class="text input-large" name="phone" value="{$score}">
                 </div>
             </div>
+             -->
             
                 <script type="text/javascript">
                     //上传图片
@@ -176,6 +181,16 @@ $(function(){
 
 	//区域三级联动
 	regionInit("area");
+	var province_id = "{$province_id}" || '';
+	$('#area > select:eq(0)').val(province_id);
+	$('#area > select:eq(0)').change();
+	var city_id = "{$city_id}" || '';
+	$('#area > select:eq(1)').val(city_id);
+	$('#area > select:eq(1)').change();
+	var area_id = "{$area_id}" || '';
+	$('#area > select:eq(2)').val(area_id);
+	$('#area > select:eq(2)').change();
+	
 	
     $('.time').datetimepicker({
         format: 'yyyy-mm-dd hh:ii',
