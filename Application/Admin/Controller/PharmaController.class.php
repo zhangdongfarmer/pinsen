@@ -36,6 +36,7 @@ class PharmaController extends \Admin\Controller\AdminController {
         
         if($id){
             $pharma_info = D('Pharma')->find($id);
+            $pharma_info['region'] = explode(',', $pharma_info['region']);
             $pharma_info['create_time'] = date('Y-m-d H:i', $pharma_info['create_time']);
             $pharma_info['update_time'] = date('Y-m-d H:i', $pharma_info['update_time']);
             $this->assign($pharma_info);
@@ -49,19 +50,25 @@ class PharmaController extends \Admin\Controller\AdminController {
     }
     public function doadd(){
          /* 获取数据对象 */
-        $data = D('Pharma')->create($data);
+        $pharma = D('Pharma');
+        $data = $pharma->create();
+        I('post.province','') && $data['region'] = I('post.province','');
+        I('post.city','') && $data['region'] .= ',' . I('post.city','');
+        I('post.district','') && $data['region'] .= ',' . I('post.district','');
+        I('post.community','') && $data['region'] .= ',' . I('post.community','');
+        
         if(empty($data)){
             return false;
         }
 
         /* 添加或新增基础内容 */
         if(empty($data['id'])){ //新增数据
-            $id = D('Pharma')->add(); //添加基础内容
+            $id = $pharma->add($data); //添加基础内容
             if(!$id){
                 $this->error('新增药厂出错！');
             }
         } else { //更新数据
-            $status = D('Pharma')->save(); //更新基础内容
+            $status = $pharma->save($data); //更新基础内容
             if(false === $status){
                 $this->error('更新药厂出错！');
             }

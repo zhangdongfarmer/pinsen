@@ -24,7 +24,8 @@ class IndexController extends AdminController {
      */
     public function index(){
         if(UID){
-			$this->display();
+            $this->redirect('Course/index');
+            $this->display();
         } else {
             $this->redirect('Public/login');
         }

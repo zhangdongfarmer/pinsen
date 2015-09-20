@@ -11,11 +11,11 @@ use Admin\Model\AuthGroupModel;
 use Think\Page;
 
 /**
- * 活动管理
+ * 广告管理
  * @author guopan <243334464@qq.com>
  * @date 2015-06-14
  */
-class ActivityController extends \Admin\Controller\AdminController {
+class AdvertiseController extends \Admin\Controller\AdminController {
     
 
     public function _initialize() {
@@ -26,63 +26,58 @@ class ActivityController extends \Admin\Controller\AdminController {
      * 列表
      */
     public function index(){
-        $list = $this->lists('Activity');
+        $list = $this->lists('Advertise');
         $this->assign('list', $list);
-        $this->meta_title = '活动管理';
+        $this->meta_title = '广告管理';
         $this->display();
     }
     public function add(){
         $id = I('get.id','');
-        $pharma_list = M('pharma')->getField('id,title');
-        $this->assign('pharma_list', $pharma_list);
-        $drug_store_list = M('drug_store')->getField('id,name');
-        $this->assign('drug_store_list', $drug_store_list);
         if($id){
-            $activity_info = D('Activity')->find($id);
-            $activity_info['start_time'] = date('Y-m-d H:i', $activity_info['start_time']);
-            $activity_info['end_time'] = date('Y-m-d H:i', $activity_info['end_time']);
-            $this->assign($activity_info);
+            $advertise_info = D('Advertise')->find($id);
+            $advertise_info['create_time'] = date('Y-m-d H:i', $advertise_info['create_time']);
+            $this->assign($advertise_info);
             
-            $this->meta_title = '修改活动';
+            $this->meta_title = '修改广告';
         }else{
             
-            $this->meta_title = '新增活动';
+            $this->meta_title = '新增广告';
         }
         $this->display();
     }
     public function doadd(){
          /* 获取数据对象 */
-        $data = D('Activity')->create($data);
+        $data = D('Advertise')->create($data);
         if(empty($data)){
             return false;
         }
 
         /* 添加或新增基础内容 */
         if(empty($data['id'])){ //新增数据
-            $id = D('Activity')->add($data); //添加基础内容
+            $id = D('Advertise')->add($data); //添加基础内容
             if(!$id){
-                $this->error('新增活动出错！');
+                $this->error('新增广告出错！');
             }
         } else { //更新数据
-            $status = D('Activity')->save($data); //更新基础内容
+            $status = D('Advertise')->save($data); //更新基础内容
             if(false === $status){
-                $this->error('更新活动出错！');
+                $this->error('更新广告出错！');
             }
         }
         
-        $jumpUrl = U('Admin/Activity/index');
+        $jumpUrl = U('Admin/Advertise/index');
         $this->success('更新成功！', $jumpUrl);
         
     }
     
     public function delete(){
         $ids = I('post.id');
-        D('Activity')->delete($ids);
-        $err = D('Activity')->getError();
+        D('Advertise')->delete($ids);
+        $err = D('Advertise')->getError();
         if($err){
             $this->error($err);
         }else{
-            $jumpUrl = U('Admin/Activity/index');
+            $jumpUrl = U('Admin/Advertise/index');
             $this->success('删除成功！', $jumpUrl);
         }
     }
