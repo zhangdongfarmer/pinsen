@@ -84,5 +84,9 @@ h1,h2,h3,h4,h5,h6
 
 body{font-family:"\5FAE\8F6F\96C5\9ED1","Microsoft YaHei";}
 
+.green_btn_a{padding:5px 20px;  margin-top: 10px;  background-color: #2cc64d;order: 1px solid #2ab949;color: #ffffff;font-size: 16px;font-weight: bold;}
+
 
 /*公用头、底部样式*/
+
+.page{padding:5px; text-align:right; font-family:'微软雅黑';}

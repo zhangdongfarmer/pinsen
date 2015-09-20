@@ -22,4 +22,14 @@ class IndexController extends BaseController
     {
         $this->display();
     }
+    
+    /**
+     * 药店管理头部
+     */
+    public function tops()
+    {
+        $this->assign('storeName', $this->user['storeName']);
+        $this->assign('userName', $this->user['email']);
+        $this->display();
+    }
 }

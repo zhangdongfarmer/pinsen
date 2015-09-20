@@ -21,7 +21,7 @@ return array(
     'DATA_AUTH_KEY' => '!AytOj^6.kwd@M`Nepv1XgH:q*(VrZIbS9o$GscB', //默认数据加密KEY
 
     /* 调试配置 */
-    'SHOW_PAGE_TRACE' => true,
+    'SHOW_PAGE_TRACE' => false,
 
     /* 用户相关设置 */
     'USER_MAX_CACHE'     => 1000, //最大缓存用户数
@@ -40,8 +40,8 @@ return array(
     'DB_TYPE'   => 'mysql', // 数据库类型
     'DB_HOST'   => '127.0.0.1', // 服务器地址
     'DB_NAME'   => 'pinsen', // 数据库名
-    'DB_USER'   => 'root', // 用户名
-    'DB_PWD'    => '123456789',  // 密码
+    'DB_USER'   => 'tanggsh', // 用户名
+    'DB_PWD'    => '7421311',  // 密码
     'DB_PORT'   => '3306', // 端口
     'DB_PREFIX' => 'ts_', // 数据库表前缀
 

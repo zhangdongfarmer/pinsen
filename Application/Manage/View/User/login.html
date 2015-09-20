@@ -1,0 +1,45 @@
+<include file="public/header" />
+<div class="login-body">
+<header class="header layout">
+        <div class="top-bar layout"></div>
+        <div class="top-menu z-9 posa">
+            <div class="area layout">
+                <div class=" logo fl"><img src="__IMG__/logo_left.png"></div>
+                <div class="logo fr"><img src="__IMG__/logo_slogan.png"></div>
+            </div>
+        </div>
+    </header>
+    <main class="main layout">
+        <div class="area login-box layout">
+            <span class="center-line posa"></span>
+            <div class="login-item fl">
+                <h3 class="titleH3">登陆品森企业管理</h3>
+                <div class="items_panel">
+                    <div class="err_tips" id="msgContainer"><div class=" error" id="emptyUserName">{$errorMsg}</div></div>
+                    <form method="post" action="{:U(user/login)}" />
+                    <div class="item">
+                        <input type="text" class="input_item" id="user" name="user" value="{$_POST.user}" placeholder="企业邮箱地址">
+                        <label class="hint">填写完成企业注册管理邮箱地址</label>
+                    </div>
+                    <div class="item">
+                        <input type="password" class="input_item" id="passwd" name="passwd" value="" placeholder="密码">
+                        <label class="hint"> </label>
+                    </div>
+                    <div class="item">
+                        <input type="submit" class="green_btn" value="登 录" id="btlogin" name="btlogin">
+                    </div>
+                </form>
+                </div>
+            </div>
+            <div class="dl-item fr">
+                <h3>扫描下载</h3>
+                <img src="__IMG__/dl-2wm.png">
+                Android  IPHONE
+            </div>
+        </div>
+    </main>
+    <footer class="footer layout">
+        <div class="area footer-login layout">
+            Copyright © 2015 品森 All Rights Reserved. 粤ICP备13026534号
+        </div>
+    </footer>

@@ -11,16 +11,46 @@ use Think\Controller;
 
 class BaseController extends Controller 
 {
-    
+    /**
+     * 用户登录信息
+     * @var type 
+     */
+    protected $user = array();
+
+
     public function __construct()
     {
         parent::__construct();
         
         //判断是否登录
-        $_SESSION['userId'] = 100;
-        if(empty($_SESSION['userId'])){
-            exit('Please login in.');
+        $this->user =session('store_auth');
+        if(empty($this->user['storeId'])){
+            redirect(U('user/login'));
         }
+        
+    }
+    
+    /**
+     * 输出json格式数据
+     * @param type $arr
+     */
+    protected function showJson($arr)
+    {
+        echo json_encode($arr);
+    }
+    
+    /**
+     * 输出状态信息
+     * 
+     * @param type $arr
+     */
+    protected function showStatus($code, $msg)
+    {
+        $arr = array(
+            'code'  => intval($code),
+            'msg'   => $msg
+        );
+        $this->showJson($arr);
     }
     
 }

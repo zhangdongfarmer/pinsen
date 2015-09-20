@@ -811,3 +811,12 @@ function get_table_field($value = null, $condition = 'id', $field = null, $table
 	}
 	return $info;
 }
+
+/**
+ * 系统非常规MD5加密方法
+ * @param  string $str 要加密的字符串
+ * @return string 
+ */
+function think_passwd_md5($str, $key = 'ThinkDrugStore'){
+	return '' === $str ? '' : md5(sha1($str) . $key);
+}

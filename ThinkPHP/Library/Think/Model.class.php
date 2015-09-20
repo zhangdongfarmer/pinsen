@@ -1570,5 +1570,26 @@ class Model {
             $this->$name = $value;
         return $this;
     }
+    
+    /**
+     * 
+     * @param type $perPage
+     */
+    public function findPage($perPage=10)
+    {
+        $total = $this->count();
+        if($total){
+            $data = $this->page(intval($_REQUEST['p']), $perPage)->select();
+            $page = new \COM\Page($total, $perPage, $REQUEST);
+            if($total>$listRows){
+                $page->setConfig('theme','%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%');
+            }
+            $p =$page->show();
+        }
+        return array(
+            'data'  => $data,
+            'html'  => $p,
+        );
+    }
 
 }

@@ -1,0 +1,44 @@
+<include file="public/header"/>
+<div class="main_title">增加/修改分店</div>
+	<div class="main_content_box layout">
+		<div class="table-box">
+            <form action="{:U('store/add')}" method="post">
+			<table width="100%" cellspacing= "1" cellpadding= "1" bgcolor="#eee">
+				<tbody>
+					<tr>
+						<th width="120" align="right">分店名称：</th>
+						<td class="text_left"><input type="text" id="text_box" name="name" value="{$detail.name}" class="l-input" style="width:384px;" /></td>
+						
+					</tr>
+					<tr>
+						<th align="right">地区：</th>
+						<td class="text_left">
+							<select name="area[]" id="254s56" style="" class="card_word gray ">
+	                            <option value="0" selected="selected">广州</option>
+	                            <option value="1" >深圳</option>
+	                         </select>
+	                         <select name="area[]" id="254s56" style="" class="card_word gray ">
+	                            <option value="0" selected="selected">广州</option>
+	                            <option value="1" >深圳</option>
+	                         </select>
+	                         <select name="area[]" id="254s56" style="" class="card_word gray ">
+	                            <option value="0" selected="selected">广州</option>
+	                            <option value="1" >深圳</option>
+	                         </select>
+                         </td>
+					</tr>
+					<tr>
+						<th align="right">地址：</th>
+						<td class="text_left"><input type="text" id="text_box" name="address" value="{$detail.address}" class="l-input" style="width:384px;" /></td>
+						
+					</tr>
+				</tbody>
+                <input type="hidden" name="store_id" value="{$detail.id}" />
+            </form>
+			</table>
+			<div class="btn_box layout">
+				<input type="submit" class="green_btn" value="保 存" id="btlogin" name="btlogin">
+			</div>			
+		</div>
+	</div>
+<include file="public/footer" />

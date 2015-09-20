@@ -75,6 +75,7 @@ class MemberModel extends Model {
         $auth = array(
             'uid'             => $user['uid'],
             'username'        => $user['nickname'],
+            'is_main_store'   => $user['is_main_store'],    //是否主店账号
             'last_login_time' => $user['last_login_time'],
         );
 
