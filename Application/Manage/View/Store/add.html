@@ -2,34 +2,29 @@
 <div class="main_title">增加/修改分店</div>
 	<div class="main_content_box layout">
 		<div class="table-box">
-            <form action="{:U('store/add')}" method="post">
+            <form action="{:U('store/add')}" method="post" onsubmit="return checkForm();">
 			<table width="100%" cellspacing= "1" cellpadding= "1" bgcolor="#eee">
 				<tbody>
 					<tr>
 						<th width="120" align="right">分店名称：</th>
-						<td class="text_left"><input type="text" id="text_box" name="name" value="{$detail.name}" class="l-input" style="width:384px;" /></td>
+						<td class="text_left"><input type="text" id="name_box" name="name" value="{$detail.name}" class="l-input" style="width:384px;" /></td>
 						
 					</tr>
 					<tr>
 						<th align="right">地区：</th>
-						<td class="text_left">
-							<select name="area[]" id="254s56" style="" class="card_word gray ">
-	                            <option value="0" selected="selected">广州</option>
-	                            <option value="1" >深圳</option>
+						<td class="text_left" id="areaBox">
+                        <foreach name="areaInfo" item="val">
+							<select name="area[]" class="card_word gray ">
+                                <foreach name="val['data']" item="list">
+	                            <option value="{$list.id}" <if condition="$list['id'] eq $val['selectedId']">selected="selected"</if>>{$list.name}</option>
+                                </foreach>
 	                         </select>
-	                         <select name="area[]" id="254s56" style="" class="card_word gray ">
-	                            <option value="0" selected="selected">广州</option>
-	                            <option value="1" >深圳</option>
-	                         </select>
-	                         <select name="area[]" id="254s56" style="" class="card_word gray ">
-	                            <option value="0" selected="selected">广州</option>
-	                            <option value="1" >深圳</option>
-	                         </select>
+                        </foreach>
                          </td>
 					</tr>
 					<tr>
 						<th align="right">地址：</th>
-						<td class="text_left"><input type="text" id="text_box" name="address" value="{$detail.address}" class="l-input" style="width:384px;" /></td>
+						<td class="text_left"><input type="text" id="address_box" name="address" value="{$detail.address}" class="l-input" style="width:384px;" /></td>
 						
 					</tr>
 				</tbody>
@@ -41,4 +36,60 @@
 			</div>			
 		</div>
 	</div>
+<script>
+    var selObj = $('#areaBox').find('select');
+    selObj.each(function(i){       
+          registSelectEvent($(this), i);   
+    });
+    
+    function registSelectEvent(obj, i)
+    {
+        obj.change(function(){
+            var newFlag = i + 1;
+            var areaId = obj.val();
+            while(newFlag<3){
+                obj.next('select').remove();
+                $.ajax({
+                    url:'{:U("user/getChildrenArea")}',
+                    type:'post',
+                    data:{id:areaId},
+                    dataType:'json',
+                    async:false,
+                    success:function(rel){
+                        if(rel){
+                            areaId = rel[0].id;
+                            var newSel = $('<select name="area[]" class="card_word gray "></select>');
+                            for(var num in rel){
+                                newSel.append('<option value="'+rel[num].id+'">'+rel[num].name+'</option>');
+                            }
+                            $('#areaBox').append(newSel);
+                            registSelectEvent(newSel, newFlag);  
+                        }
+                    }//end success function
+                });
+                newFlag++;
+            }//end while
+       });
+    }
+    
+    function checkForm()
+    {
+        if($('#name_box').val() == ''){
+            alert('请填写分店名称');
+            return false;
+        }
+        
+        var areaId = $('#areaBox').find('select').eq(2).val();
+        if(!areaId){
+            alert('请选择分店所在城市区域');
+            return false;
+        }
+        
+        if($('#address_box').val() == ''){
+            alert('请填写分店的详细地址');
+            return false;
+        }
+        return true;
+    }
+</script>
 <include file="public/footer" />

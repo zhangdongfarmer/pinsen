@@ -25,11 +25,29 @@ class StoreController extends BaseController {
      */
     public function add()
     {
-        $id = I('get.store_id');
+        if($_POST){
+            $subId = D('Subbranch')->save()->where();
+            var_dump($subId);exit;
+        }
+        $id = I('get.store_id');        
         if($id){
             $detail = D('Subbranch')->getById($id);
             $this->assign('detail', $detail);
+            $areaId = intval($detail['area_id']);
+        }else{
+            $areaId = 0;
         }
+        
+        //获取区域信息
+        $areaInfo = array();
+        do{
+            $areaDetail = M('area')->where(['id'=>$areaId])->find();
+            $parentId = intval($areaDetail['parentid']);
+            $areaList = M('area')->where(['parentid'=>$parentId])->select();
+            array_unshift($areaInfo, array('selectedId'=>$areaId, 'data'=>$areaList));
+            $areaId = $parentId;
+        }while($areaId > 0);
+        $this->assign('areaInfo', $areaInfo);
         $this->display();
     }
     
