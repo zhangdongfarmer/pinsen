@@ -15,7 +15,7 @@ class store extends base{
 			$map['id'] = $subbranch_id;
 			$subbranch = M('subbranch')->where($map)->find();
 			$store_id = intval($subbranch['store_id']);
-			
+            
 			//药店
 			$wh['id'] = $store_id;
 			$store = M('drug_store')->where($wh)->find();
@@ -56,7 +56,7 @@ class store extends base{
 				$employees = M('member')->where($map)->field('uid,truename,job,head')->order('uid desc')->select();
 				if($employees){
 					foreach($employees as $k=>$v){
-						$data[$k]['uid'] = intval($v['uid']);
+						$data[$k]['uid'] = $v['uid'];
 						$data[$k]['head'] = $v['head'];
 						$data[$k]['job'] = trim($v['job']);
 						$data[$k]['truename'] = trim($v['truename']);
@@ -67,7 +67,7 @@ class store extends base{
 				$employees = M('member')->where($map)->field('uid,truename,job,head')->order('uid desc')->select();
 				if($employees){
 					foreach($employees as $k=>$v){
-						$data[$k]['uid'] = intval($v['uid']);
+						$data[$k]['uid'] = $v['uid'];
 						$data[$k]['head'] = $v['head'];
 						$data[$k]['job'] = trim($v['job']);
 						$data[$k]['truename'] = trim($v['truename']);
@@ -88,6 +88,7 @@ class store extends base{
 			$keyword = trim($param['keyword']);
 			$subbranch_id = intval($param['subbranch_id']);
 			
+            
 			$store = M('subbranch')->where('id='.$subbranch_id)->field('store_id')->find();
 			$store_id = intval($store['store_id']);
 			$subbrabch_ids = D('Subbranch')->getSubbranchIds($store_id);
@@ -96,12 +97,26 @@ class store extends base{
 			$map['truename'] = array('like',"%$keyword%");
 			$field = 'uid,head,job,truename';
 			$data = M('member')->where($map)->field($field)->order('uid desc')->select();
-			echo M()->getLastSql();exit;
 			$this->getResponse($data,'0');
 		}else{
 			$this->getResponse('','999');
 		}
 	}
+    
+    /**
+     * 查询分店或所有的成员
+     * @param type $param
+     */
+    public function getMembers($param)
+    {
+        $subbranchId = intval($param['subbranch_id']);
+        $memberMod = M('member')->field('uid,nickname,head,job,truename,subbranch_id,sex, score, job');
+        if($subbranchId){
+            $memberMod->where(['subbranch_id'=>$subbranchId]);
+        }
+        $data = $memberMod->select();
+        $this->getResponse($data, 0);
+    }
 	
 	/**
 	 * 扫一扫
