@@ -25,28 +25,38 @@ class StoreController extends BaseController {
      */
     public function add()
     {
+    	$id = intval(I('request.id'));
         if($_POST){
-            $subId = D('Subbranch')->save()->where();
-            var_dump($subId);exit;
+        	$data = array(
+        		'name'		=> I('post.name'),
+        		'area_id'	=> intval($_POST['area'][2]),
+        		'address'	=> I('post.address'),
+        		'update_time'	=> time()
+        	);
+        	//如果存在id为编辑
+        	if($id > 0){
+        		$detail = D('Subbranch')->getById($id);
+        		if($detail['store_id'] == $this->user['storeId']){
+        			$result = D('Subbranch')->where(['id'=>$id])->save($data);
+        		}else{
+        			$this->assign('errorMsg', '对不起你没有权限修改');
+        		}
+        	}else{	//插入分店信息
+        		$data['create_time'] = time();
+        		$data['store_id'] = $this->user['storeId'];
+        		$result = D('Subbranch')->add($data);
+        	}
+        	if($result){
+        		redirect(U('store/index'));
+        	}
+        	$this->assign('errorMsg', '操作失败');
+        	$this->assign('detail', $data);
         }
-        $id = I('get.store_id');        
+        
         if($id){
             $detail = D('Subbranch')->getById($id);
             $this->assign('detail', $detail);
-            $areaId = intval($detail['area_id']);
-        }else{
-            $areaId = 0;
         }
-        
-        //获取区域信息
-        $areaInfo = array();
-        do{
-            $areaDetail = M('area')->where(['id'=>$areaId])->find();
-            $parentId = intval($areaDetail['parentid']);
-            $areaList = M('area')->where(['parentid'=>$parentId])->select();
-            array_unshift($areaInfo, array('selectedId'=>$areaId, 'data'=>$areaList));
-            $areaId = $parentId;
-        }while($areaId > 0);
         $this->assign('areaInfo', $areaInfo);
         $this->display();
     }
@@ -57,11 +67,38 @@ class StoreController extends BaseController {
      */
     public function delete()
     {
-        $storeId = I('get.store_id');
-        $result = D('Subbranch')->deleteById($storeId, $this->user['store_id']);
+        $id = I('post.id');
+        $result = D('Subbranch')->deleteById($id, $this->user['storeId']);
         if($result){
-            return $this->showStatus(1, '删除ID为'.$storeId.'的分店数据成功');
+            return $this->showStatus(1, '删除ID为'.$id.'的分店数据成功');
         }
-        return $this->showStatus(-1, '删除ID为'.$storeId.'的分店数据失败');
+        return $this->showStatus(-1, '删除ID为'.$id.'的分店数据失败');
+    }
+    
+    /**
+     * 药店基础信息
+     */
+    public function baseinfo()
+    {
+    	if($_POST){
+    		$data = array(
+    			'area_id'	=> intval($_POST['area'][2]),
+    			'user_name'	=> I('post.user_name'),
+    			'phone'		=> I('post.phone')    			
+    		);
+    		if(!empty($_POST['passwd'])){
+    			if(strlen($_POST['passwd'])<6){
+    				$this->assign('errorMsg', '密码的长度不够');
+    			}else if($_POST['passwd'] != $_POST['passwd_confirm']){
+    				$this->assign('errorMsg', '您两次输入的密码不一致');
+    			}
+    			$data['passwd'] = think_passwd_md5($_POST['passwd']);
+    		}
+    		$result = D('DrugStore')->where(['id'=>$this->user['storeId']])->save($data);
+    		$this->assign('errorMsg', $result ? '更新成功' : '暂无更新或操作失败');
+    	}
+        $detail = D('DrugStore')->where(['id'=>$this->user['storeId']])->find();
+        $this->assign('detail', $detail);
+        $this->display();
     }
 }

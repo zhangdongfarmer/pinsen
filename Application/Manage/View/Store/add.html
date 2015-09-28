@@ -2,6 +2,7 @@
 <div class="main_title">增加/修改分店</div>
 	<div class="main_content_box layout">
 		<div class="table-box">
+		<div style="padding-bottom:5px; color:#f00;">{$errorMsg}</div>
             <form action="{:U('store/add')}" method="post" onsubmit="return checkForm();">
 			<table width="100%" cellspacing= "1" cellpadding= "1" bgcolor="#eee">
 				<tbody>
@@ -12,15 +13,7 @@
 					</tr>
 					<tr>
 						<th align="right">地区：</th>
-						<td class="text_left" id="areaBox">
-                        <foreach name="areaInfo" item="val">
-							<select name="area[]" class="card_word gray ">
-                                <foreach name="val['data']" item="list">
-	                            <option value="{$list.id}" <if condition="$list['id'] eq $val['selectedId']">selected="selected"</if>>{$list.name}</option>
-                                </foreach>
-	                         </select>
-                        </foreach>
-                         </td>
+						<td class="text_left" id="areaBox"></td>
 					</tr>
 					<tr>
 						<th align="right">地址：</th>
@@ -28,7 +21,7 @@
 						
 					</tr>
 				</tbody>
-                <input type="hidden" name="store_id" value="{$detail.id}" />
+                <input type="hidden" name="id" value="{$detail.id}" />
             </form>
 			</table>
 			<div class="btn_box layout">
@@ -37,59 +30,34 @@
 		</div>
 	</div>
 <script>
-    var selObj = $('#areaBox').find('select');
-    selObj.each(function(i){       
-          registSelectEvent($(this), i);   
-    });
+var obj = areaSelect({
+	initAreaId:{$detail.area_id|intval},	//初始化区域id
+	initUrl:'{:U("user/getAreaSelectPath")}',	//区域初始化数据请求地址
+	getChildrenUrl:'{:U("user/getChildrenArea")}',	//子区域请求地址
+	selectBoxObj:$('#areaBox'),	//存放区域select的jQuery对象
+	selectArrName:'area',	//区域选择select表单name的值数组
+	classNames:'card_word gray'
+});
+
     
-    function registSelectEvent(obj, i)
-    {
-        obj.change(function(){
-            var newFlag = i + 1;
-            var areaId = obj.val();
-            while(newFlag<3){
-                obj.next('select').remove();
-                $.ajax({
-                    url:'{:U("user/getChildrenArea")}',
-                    type:'post',
-                    data:{id:areaId},
-                    dataType:'json',
-                    async:false,
-                    success:function(rel){
-                        if(rel){
-                            areaId = rel[0].id;
-                            var newSel = $('<select name="area[]" class="card_word gray "></select>');
-                            for(var num in rel){
-                                newSel.append('<option value="'+rel[num].id+'">'+rel[num].name+'</option>');
-                            }
-                            $('#areaBox').append(newSel);
-                            registSelectEvent(newSel, newFlag);  
-                        }
-                    }//end success function
-                });
-                newFlag++;
-            }//end while
-       });
+function checkForm()
+{
+    if($('#name_box').val() == ''){
+        alert('请填写分店名称');
+        return false;
     }
     
-    function checkForm()
-    {
-        if($('#name_box').val() == ''){
-            alert('请填写分店名称');
-            return false;
-        }
-        
-        var areaId = $('#areaBox').find('select').eq(2).val();
-        if(!areaId){
-            alert('请选择分店所在城市区域');
-            return false;
-        }
-        
-        if($('#address_box').val() == ''){
-            alert('请填写分店的详细地址');
-            return false;
-        }
-        return true;
+    var areaId = $('#areaBox').find('select').eq(2).val();
+    if(!areaId){
+        alert('请选择分店所在城市区域');
+        return false;
     }
+    
+    if($('#address_box').val() == ''){
+        alert('请填写分店的详细地址');
+        return false;
+    }
+    return true;
+}
 </script>
 <include file="public/footer" />

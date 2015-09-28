@@ -54,7 +54,17 @@ class UserController extends Controller {
     public function getChildrenArea()
     {
         $areaId = intval(I('post.id'));
-        $data = M('area')->where(['parentid'=>$areaId])->select();
+        $data = D('area')->where(['parentid'=>$areaId])->select();
         $this->ajaxReturn($data);
+    }
+    
+    /**
+     * 获取区域select层级关系数据
+     */
+    public function getAreaSelectPath()
+    {
+    	$areaId = intval(I('post.id'));
+    	$data = D('area')->getAreaList($areaId);
+    	$this->ajaxReturn($data);
     }
 }
