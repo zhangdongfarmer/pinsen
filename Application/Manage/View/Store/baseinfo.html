@@ -1,0 +1,90 @@
+<include file="Public/header"/>
+<div class="main_title">增加/修改分店</div>
+	<div class="main_content_box layout">
+		<div class="table-box">
+            <form action="{:U('store/baseinfo')}" method="post" onsubmit="return checkform();">
+			<table width="100%" cellspacing= "1" cellpadding= "1" bgcolor="#eee">
+				<tbody>
+					<tr>
+						<th width="120" align="right">名称：</th>
+						<td class="text_left">{$detail.name}</td>
+						
+					</tr>
+					<tr>
+						<th align="right">地区：</th>
+						<td class="text_left" id="areaBox"></td>
+					</tr>
+					<th width="120" align="right">详细地址：</th>
+						<td class="text_left"><input type="text" id="text_box" name="address" value="{$detail.address}" class="l-input" style="width:384px;" /></td>
+					<tr>
+						<th align="right">联系人：</th>
+						<td class="text_left"><input type="text" id="text_box" name="user_name" value="{$detail.user_name}" class="l-input" style="width:200px;" /></td>
+					</tr>
+					<tr>
+						<th align="right">邮箱：</th>
+						<td class="text_left">{$detail.email}</td>
+					</tr>
+					<tr>
+						<th align="right">联系电话：</th>
+						<td class="text_left"><input type="text" id="text_box" name="phone" value="{$detail.phone}" class="l-input" style="width:200px;" /></td>
+					</tr>
+					<tr>
+						<th align="right">门店数量：</th>
+						<td class="text_left">{$detail.subbranch_count}</td>
+					</tr>
+					<tr>
+						<th align="right">员工数量：</th>
+						<td class="text_left">{$detail.employee_count}</td>
+					</tr>
+					<tr>
+						<th align="right">密码：</th>
+						<td class="text_left"><input type="password" id="passwd" name="passwd" value="" class="l-input" style="width:200px;" /></td>
+					</tr>
+					<tr>
+						<th align="right">密码确认：</th>
+						<td class="text_left"><input type="password" id="passwd_confirm" name="passwd_conform" value="" class="l-input" style="width:200px;" /></td>
+					</tr>
+				</tbody>
+			</table>			
+            <div style="color:#f00;">{$errorMsg}</div>
+			<div class="btn_box layout">
+				<input type="submit" class="green_btn" value="保 存" id="btlogin" name="btlogin">
+			</div>	
+            </form>
+		</div>
+	</div>
+<script>
+var obj = areaSelect({
+	initAreaId:{$detail.area_id},	//初始化区域id
+	initUrl:'{:U("user/getAreaSelectPath")}',	//区域初始化数据请求地址
+	getChildrenUrl:'{:U("user/getChildrenArea")}',	//子区域请求地址
+	selectBoxObj:$('#areaBox'),	//存放区域select的jQuery对象
+	selectArrName:'area',	//区域选择select表单name的值数组
+	classNames:'card_word gray'
+});
+
+function checkform()
+{
+	var areaId = $('#areaBox').find('select').eq(2).val();
+    if(!areaId){
+        alert('请选择分店所在城市区域');
+        return false;
+    }
+    
+    if($('#passwd').val() != ''){
+    	var passwd = $('#passwd').val();
+    	if(passwd.length < 6){
+    		alert('请输入大于6位的密码');
+    		$('#passwd').focus();
+    		return false;
+    	}
+    	
+    	if(passwd != $('#passwd_confirm').val()){
+    		alert('您两次输入的密码不一致，请重新输入！');
+    		return false;
+    	}
+    }
+    return true;
+}
+</script>
+<include file="Public/footer" />

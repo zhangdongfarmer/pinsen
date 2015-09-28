@@ -45,4 +45,17 @@ class SubbranchModel extends Model {
         );
         return $this->where($wh)->delete();
     }
+    
+    /**
+     * 
+     * @param type $storeId
+     * @param type $subId
+     * @param type $name
+     * @param type $areaId
+     * @param type $address
+     */
+    public function updateData($storeId, $subId, $name, $areaId, $address)
+    {
+        
+    }
 }

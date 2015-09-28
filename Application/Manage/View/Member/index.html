@@ -1,0 +1,103 @@
+<include file='Public/header' />
+<div class="main_title">店员管理
+        <div class="btn_box fr">
+                <a href="{:U('member/add')}" class="green_btn_a">添加</a>
+            </div>
+    </div>
+    <div class="main_content_box layout">
+        <div class="dp_list fl">
+            <div class="table-box">
+                <table width="100%" cellspacing= "1" cellpadding= "1" bgcolor="#eee">
+                    <thead>
+                        <tr>
+                            <th>分店</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <foreach name="subbranchList" item="vol">
+                        <tr <if condition="$vol['id'] eq $id" >class="cur"</if>>
+                            <td width="400"><a href="{:U('member/index', array('id'=>$vol['id']))}">{$vol.name}</a></td>
+                        </tr>
+                        </foreach>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="dp_content fl">
+            <div class="table-box">
+                <table width="100%" cellspacing= "1" cellpadding= "1" bgcolor="#eee">
+                    <thead>
+                        <tr>
+                            <th class="text_left">姓名</th>
+                            <th>职位</th>
+                            <th>手机号码</th>
+                            <th>邮箱</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <foreach name="memberList['data']" item="val">
+                        <tr>
+                            <td class="text_left"><img src="{$val.head|default='__IMG__/admins_user.png'}" width="30" style="vertical-align: middle;margin-right:10px;"> {$val.truename}</td>
+                            <td >{$val.job}</td>
+                            <td >{$val.nickname}</td>
+                            <td >{$val.email}</td>
+                            <td><a href="{:U('member/add', array('uid'=>$val['uid']))}" target="manFrame">修改</a> 
+                            <a href="javascript:void(0);" onclick="delMember({$val.uid});" target="manFrame">删除</a> 
+                            <a href="javascript:void(0);" onclick="rebackPasswd({$val.uid});" target="manFrame">重置密码</a></td>
+                        </tr>
+                    </foreach>
+                    </tbody>
+                </table>
+                <div class="page">{$page}</div>
+            </div>
+        </div>
+    </div>
+<script>
+/**
+ * 删除店员
+ */
+function delMember(uid)
+{
+	if(confirm('删除不可恢复，您确认要删除吗？')){
+        $.ajax({
+            url:'{:U("member/delete")}',
+            type:'post',
+            data:{'uid':uid}, 
+            dataType:'json',
+            success:function(rel){
+                if(rel.msg){
+                    alert(rel.msg);
+                }
+                if(rel.code == 1){
+                    location.href = location.href;
+                }
+            }
+        });
+    }       
+}
+
+/**
+ * 重置密码
+ */
+function rebackPasswd(uid)
+{
+	if(confirm('您确认要重置用户密码吗？')){
+        $.ajax({
+            url:'{:U("member/reback")}',
+            type:'post',
+            data:{'uid':uid}, 
+            dataType:'json',
+            success:function(rel){
+                if(rel.msg){
+                    alert(rel.msg);
+                }
+                if(rel.code == 1){
+                    location.href = location.href;
+                }
+            }
+        });
+    }  
+}
+</script>
+<include file='Public/footer' />

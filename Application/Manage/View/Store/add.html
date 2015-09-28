@@ -2,38 +2,26 @@
 <div class="main_title">增加/修改分店</div>
 	<div class="main_content_box layout">
 		<div class="table-box">
-            <form action="{:U('store/add')}" method="post">
+		<div style="padding-bottom:5px; color:#f00;">{$errorMsg}</div>
+            <form action="{:U('store/add')}" method="post" onsubmit="return checkForm();">
 			<table width="100%" cellspacing= "1" cellpadding= "1" bgcolor="#eee">
 				<tbody>
 					<tr>
 						<th width="120" align="right">分店名称：</th>
-						<td class="text_left"><input type="text" id="text_box" name="name" value="{$detail.name}" class="l-input" style="width:384px;" /></td>
+						<td class="text_left"><input type="text" id="name_box" name="name" value="{$detail.name}" class="l-input" style="width:384px;" /></td>
 						
 					</tr>
 					<tr>
 						<th align="right">地区：</th>
-						<td class="text_left">
-							<select name="area[]" id="254s56" style="" class="card_word gray ">
-	                            <option value="0" selected="selected">广州</option>
-	                            <option value="1" >深圳</option>
-	                         </select>
-	                         <select name="area[]" id="254s56" style="" class="card_word gray ">
-	                            <option value="0" selected="selected">广州</option>
-	                            <option value="1" >深圳</option>
-	                         </select>
-	                         <select name="area[]" id="254s56" style="" class="card_word gray ">
-	                            <option value="0" selected="selected">广州</option>
-	                            <option value="1" >深圳</option>
-	                         </select>
-                         </td>
+						<td class="text_left" id="areaBox"></td>
 					</tr>
 					<tr>
 						<th align="right">地址：</th>
-						<td class="text_left"><input type="text" id="text_box" name="address" value="{$detail.address}" class="l-input" style="width:384px;" /></td>
+						<td class="text_left"><input type="text" id="address_box" name="address" value="{$detail.address}" class="l-input" style="width:384px;" /></td>
 						
 					</tr>
 				</tbody>
-                <input type="hidden" name="store_id" value="{$detail.id}" />
+                <input type="hidden" name="id" value="{$detail.id}" />
             </form>
 			</table>
 			<div class="btn_box layout">
@@ -41,4 +29,35 @@
 			</div>			
 		</div>
 	</div>
+<script>
+var obj = areaSelect({
+	initAreaId:{$detail.area_id|intval},	//初始化区域id
+	initUrl:'{:U("user/getAreaSelectPath")}',	//区域初始化数据请求地址
+	getChildrenUrl:'{:U("user/getChildrenArea")}',	//子区域请求地址
+	selectBoxObj:$('#areaBox'),	//存放区域select的jQuery对象
+	selectArrName:'area',	//区域选择select表单name的值数组
+	classNames:'card_word gray'
+});
+
+    
+function checkForm()
+{
+    if($('#name_box').val() == ''){
+        alert('请填写分店名称');
+        return false;
+    }
+    
+    var areaId = $('#areaBox').find('select').eq(2).val();
+    if(!areaId){
+        alert('请选择分店所在城市区域');
+        return false;
+    }
+    
+    if($('#address_box').val() == ''){
+        alert('请填写分店的详细地址');
+        return false;
+    }
+    return true;
+}
+</script>
 <include file="public/footer" />

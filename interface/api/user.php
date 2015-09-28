@@ -119,6 +119,15 @@ class user extends base{
 	}
 	
 	/**
+	 * 用户图片上传
+	 * @param unknown $param
+	 */
+	public function upicture($param)
+	{
+		$uid = intval($param['uid']);
+	}
+	
+	/**
 	 * 学习记录
 	 */
 	public function study($param){
@@ -459,6 +468,25 @@ class user extends base{
 	        	$user = M('ucenter_member')->where('id='.$v['update_user'])->find();
 	        	$v['update_user'] = $user['username'];
 	        	$v['update_time'] = date('Y-m-d H:i:s',$v['update_time']);
+			}
+			$this->getResponse($data, '0');
+		}else{
+			$this->getResponse('', '999');
+		}
+	}
+	
+	/**
+	 * 站内消息
+	 */
+	public function notice($param){
+		if($param['subbranch_id']){
+			$subbranch_id = intval($param['subbranch_id']);
+			$store = M('drug_store')->where('id='.$subbranch_id)->find();
+			$data = M('help')->field('id,title,content,update_time,update_user')->where('store_id='.$store['id'])->select();
+			foreach($data as &$v){
+				$user = M('ucenter_member')->where('id='.$v['update_user'])->find();
+				$v['update_user'] = $user['username'];
+				$v['update_time'] = date('Y-m-d H:i:s',$v['update_time']);
 			}
 			$this->getResponse($data, '0');
 		}else{

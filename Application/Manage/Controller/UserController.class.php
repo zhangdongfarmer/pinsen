@@ -47,4 +47,24 @@ class UserController extends Controller {
             'msg'   => '退出成功'
         ));
     }
+    
+    /**
+     * 获取区域信息
+     */
+    public function getChildrenArea()
+    {
+        $areaId = intval(I('post.id'));
+        $data = D('area')->where(['parentid'=>$areaId])->select();
+        $this->ajaxReturn($data);
+    }
+    
+    /**
+     * 获取区域select层级关系数据
+     */
+    public function getAreaSelectPath()
+    {
+    	$areaId = intval(I('post.id'));
+    	$data = D('area')->getAreaList($areaId);
+    	$this->ajaxReturn($data);
+    }
 }

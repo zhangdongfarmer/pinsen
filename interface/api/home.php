@@ -13,6 +13,16 @@ class home extends base{
 		$field = 'id,title,ad_ico,content';
 		$limit = 3;
 		$data = M('advertise')->where($map)->order($order)->field($field)->limit($limit)->select();
+		foreach($data as $key => $val){
+			$id = intval($val['ad_ico']);
+			if($id){
+				$picture = M('Picture')->field('id, path, url')->where(['id'=>$id])->find();
+				$data[$key]['path'] = 'http://'.$_SERVER['SERVER_NAME'].$picture['path'];
+				$data[$key]['url'] = $picture['url'];
+				$data[$key]['picture_id'] = $id;
+			}
+		}
+		
 		$this->getResponse($data?$data:array(),'0');
 	}
 	

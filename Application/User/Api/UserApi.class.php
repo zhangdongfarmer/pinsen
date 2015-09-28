@@ -98,5 +98,19 @@ class UserApi extends Api{
 		}
 		return $return;
 	}
+	
+	/**
+	 * 会员职务列表
+	 * 
+	 * @return array
+	 */
+	public function getJobList()
+	{
+		return array(
+			'0'	=> '店员',
+			'1'	=> '店长',
+			'2'	=> '总经理'
+		);
+	}
 
 }

@@ -22,8 +22,8 @@
 						<td>{$vo.name}</td>
 						<td>{$vo.address}</td>
 						<td>
-                            <a href="{:U('store/add', array('store_id'=>$vo['id']))}" target="manFrame">修改</a>
-							<a href="{:U('store/delete', array('store_id'=>$vo['id']))}">删除</a>
+                            <a href="{:U('store/add', array('id'=>$vo['id']))}" >修改</a>
+							<a href="javascript:delSubbranch({$vo.id});">删除</a>
 						</td>
 					</tr>
                 </foreach>
@@ -33,3 +33,24 @@
         <div class="page">{$page}</div>
 	</div>
 </div>
+<script>
+function delSubbranch(sid)
+{
+	if(confirm('删除不可恢复，您确认要删除吗？')){
+		$.ajax({
+			url:'{:U("store/delete")}',
+			type:'post',
+			data:{'id':sid}, 
+			dataType:'json',
+			success:function(rel){
+				if(rel.msg){
+					alert(rel.msg);
+				}
+				if(rel.code == 1){
+					location.href = location.href;
+				}
+			}
+		});
+	}		
+}
+</script>
