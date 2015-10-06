@@ -42,6 +42,7 @@ class AdminController extends Controller {
 
         // 是否是超级管理员
         define('IS_ROOT',   is_administrator());
+        
 		// 检测访问权限
         $access =   $this->accessControl();
         if ( $access === false ) {

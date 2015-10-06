@@ -2,7 +2,8 @@
 <div class="main_title"><if condition="empty($uid)">增加<else/>修改</if>店员信息</div>
     <div class="main_content_box layout">
         <div class="table-box">
-            <form action="{:U('member/add')}" method="post" id="askForm" >
+            <form action="{:U('member/add')}" method="post" id="addForm" >
+            <div class="error">{$info}</div>
             <table width="100%" cellspacing= "1" cellpadding= "1" bgcolor="#eee">
                 <tbody>
                     <tr>
@@ -16,10 +17,10 @@
                             <label for="sex_woman"><input type="radio" name="sex" id="sex_woman" value="0" <if condition="$detail['sex'] eq 0">checked="true"</if> />女</label>&nbsp;&nbsp;
                             <label for="sex_man"></label><input type="radio" id="sex_man" name="sex" value="1" <if condition="$detail['sex'] eq 1">checked="true"</if>/>男</label>&nbsp;&nbsp;                            
                         </td>
-                        </tr>
+                    </tr>
                     <tr>
                         <th align="right">手机：</th>
-                        <td class="text_left"><input type="text" name="nickname" id="nickname" class="l-input" value="{$detail.nickname}" style="width:200px;" /> </td>
+                        <td class="text_left"><input type="text" name="mobile" id="mobile" class="l-input" value="{$detail.nickname}" style="width:200px;" /> </td>
                     </tr>
                     <tr>
                         <th align="right">邮箱：</th>
@@ -28,13 +29,20 @@
                     <tr>
                         <th align="right">职务：</th>
                         <td class="text_left">
-                            <select name="job">
-                            <foreach name="jobList" item="val">
-                                <option value="{$val}" <if condition="$val eq $detail.job">selected="true"</if>>{$val}</option>
-                            </foreach>
+                            <select name="group_type">
+                            	<option value="0">店员</option>
+                            	<option value="1">店长</option>
                             </select>
                         </td>
-                    </tr>                    
+                    </tr>
+                    <tr>
+                        <th align="right">密码：</th>
+                        <td class="text_left"><input type="password" id="password" name="password"  value="" class="l-input" style="width:200px;" /></td>
+                    </tr>  
+                    <tr>
+                        <th align="right">确认密码：</th>
+                        <td class="text_left"><input type="password" id="confirm_passwd" name="confirm_passwd"  value="" class="l-input" style="width:200px;" /></td>
+                    </tr>                     
                 </tbody>
             </table>
             <div class="btn_box layout">
@@ -45,30 +53,51 @@
         </div>
     </div>
 <script>
+//添加手机验证方法
+$.validator.addMethod("isPhone", function(value, element, param) {
+    return /^1\d{10}$/.test(value);
+}, "请输入有效的手机号码");  
+
 $(function(){
-	//表单验证
-    $('#askForm').submit(function(){
-    	var truename = trim($('#truename').val());
-    	if(truename == ''){
-    		alert('请填写姓名');
-    		return false;
-    	}
-    	
-    	var nickName = $('#nickname').val();
-    	var reg = /^1\d{10}/;
-    	if(!reg.test(nickName)){
-    		alert('请填写正确的手机号码');
-    		return  false;
-    	}
-    	
-    	var email = $('#email').val();
-    	var reg = /^[-0-9a-z]+@[-0-9a-z]+(\.[-0-9a-z]+)+$/i;
-    	if(!reg.test(email)){
-    		alert('请填写正确的邮箱');
-    		return false;
-    	}
-    	return true;
-   });
+	$('#addForm').validate({
+		rules:{
+			truename:{
+				required:true,
+				minlength:2
+			},
+			mobile:{
+				required:true,
+				isPhone:true,
+				remote:{
+					type:'post',
+					url:'{:U("member/checkMobile")}',
+					data:{mobile:function(){return $('#mobile').val();}}
+				}
+			},
+			email:{
+				required:true,
+				email:true
+			},
+			password:{
+				required:true,
+				rangelength:[6,32]
+			},
+			confirm_passwd:{
+				equalTo:'#password'
+			}
+		},
+		messages:{
+			truename:'请输入姓名',
+			mobile:{
+				required:'请输入手机号码',
+				remote:'您的手机号已被占用'
+			},
+			email:'请输入有效的邮箱地址',
+			password:'请输入6-32位的密码',
+			confirm_passwd:'两次输入的密码不一致'
+		},
+		debug: false
+	});	
 });
 </script>
 <include file="public/footer" />

@@ -28,7 +28,7 @@ class IndexController extends BaseController
      */
     public function tops()
     {
-        $this->assign('storeName', $this->user['storeName']);
+        $this->assign('storeName', $this->user['nickname']);
         $this->assign('userName', $this->user['email']);
         $this->display();
     }

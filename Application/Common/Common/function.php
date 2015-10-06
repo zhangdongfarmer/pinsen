@@ -37,7 +37,8 @@ function is_login(){
  */
 function is_administrator($uid = null){
     $uid = is_null($uid) ? is_login() : $uid;
-    return $uid && (intval($uid) === C('USER_ADMINISTRATOR'));
+    $user = session('user_auth');
+    return $uid && ($user['group_name'] == 'super_admin');
 }
 
 /**

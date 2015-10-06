@@ -23,11 +23,12 @@ class BaseController extends Controller
         parent::__construct();
         
         //判断是否登录
-        $this->user =session('store_auth');
-        if(empty($this->user['storeId'])){
+        $this->user = session('user_auth');
+        $adminArr = array('store_admin', 'super_admin');        
+        if(!in_array($this->user['group_name'], $adminArr) || empty($this->user['subbranch_id']) ){
             redirect(U('user/login'));
         }
-        
+        define('STORE_ID', $this->user['subbranch_id']);
     }
     
     /**

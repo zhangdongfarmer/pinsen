@@ -39,7 +39,7 @@
                     <foreach name="memberList['data']" item="val">
                         <tr>
                             <td class="text_left"><img src="{$val.head|default='__IMG__/admins_user.png'}" width="30" style="vertical-align: middle;margin-right:10px;"> {$val.truename}</td>
-                            <td >{$val.job}</td>
+                            <td ><eq name="val['group_type']" value="1">店长<else/>店员</eq></td>
                             <td >{$val.nickname}</td>
                             <td >{$val.email}</td>
                             <td><a href="{:U('member/add', array('uid'=>$val['uid']))}" target="manFrame">修改</a> 

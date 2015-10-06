@@ -13,7 +13,7 @@ html,body,input,textarea,select,legend {
 	/*全局默认文字颜色*/
 }
 a {
-	color: #7b66ab;
+	color: #0C5384;
 	/*全局默认链接颜色*/
 }
 a:hover{
@@ -215,7 +215,7 @@ select {
 /* 表头配色 */
 .data-table thead th {
 	color:#fff;
-    background-color: #4a4851;
+    background-color: #0C5384;
 }
 /* 隔行变色 行默认颜色 */
 .table-striped tbody tr {
@@ -238,7 +238,7 @@ select {
 /* 普通按钮 */
 .btn {
     color: #ffffff;
-	background-color: #7963df;
+	background-color: #E72847;
 }
 .btn:hover {
     color: #ffffff;
@@ -248,7 +248,7 @@ select {
 /* 表单提交按钮(确定,保存,提交) */
 .submit-btn {
 	color: #fff;
-    background-color: #7d61dd;
+    background-color: #E72847;
 	/*background-color: #df7003;*/
 }
 .submit-btn:hover {
@@ -266,7 +266,7 @@ select {
 /* 表单返回按钮 */
 .btn-return {
 	color: #fff;
-	background-color: #8893ae;
+	background-color: #999;
 }
 .btn-return:hover {
 	background-color: #8080FF;
@@ -306,7 +306,7 @@ select {
 
 /* 头部Logo,主导航*/
 .header {
-    background-color: #353535;
+    background:url(../images/login_background.png) no-repeat left top;
 }
 .header .logo {
     background: url(../images/blue_color/bg_icon.png) no-repeat 0 -45px;
@@ -322,7 +322,7 @@ select {
     background-color: #656565;
 }
 .main-nav .current a {
-    background-color: #7963df;
+    background-color: #3380D2;
 }
 
 /* 顶部右侧 用户bar */
@@ -345,7 +345,8 @@ select {
 ------------------------------------------ */
 .sidebar {
 	/* 左侧栏背景 */
-	background: url(../images/bg.png) repeat #4a4851;
+	background:#0C5384;
+	/*background: url(../images/bg.png) repeat #4a4851;*/
 }
 /* 子导航Group标题栏 */
 .subnav h3 {

@@ -13,7 +13,7 @@ use User\Model\UcenterMemberModel;
 
 //require_cache(dirname(__FILE__) . '/Api.class.php');
 
-class UserApi extends Api{
+class UserApi extends Api{    
 	/**
 	 * 构造方法，实例化操作模型
 	 */
@@ -111,6 +111,6 @@ class UserApi extends Api{
 			'1'	=> '店长',
 			'2'	=> '总经理'
 		);
-	}
+	}	
 
 }
