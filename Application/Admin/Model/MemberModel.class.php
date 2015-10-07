@@ -87,7 +87,7 @@ class MemberModel extends Model {
         $auth = array(
             'uid'             => $user['uid'],
             'group_name'      => $this->getGroupTypeName($user['group_type']),  //用户分组名称
-            'subbranch_id'    => 1,//$user['subbranch_id'],         //用户分组关系id
+            'subbranch_id'    => $user['subbranch_id'],         //用户分组关系id
             'username'        => $user['nickname'],
             'is_main_store'   => $user['is_main_store'],    //是否主店账号
             'last_login_time' => $user['last_login_time'],

@@ -2,7 +2,7 @@
 <div class="main_title"><if condition="empty($uid)">增加<else/>修改</if>店员信息</div>
     <div class="main_content_box layout">
         <div class="table-box">
-            <form action="{:U('member/add')}" method="post" id="addForm" >
+            <form action="{:U('member/add', array('id'=>$subbranch_id))}" method="post" id="addForm" >
             <div class="error">{$info}</div>
             <table width="100%" cellspacing= "1" cellpadding= "1" bgcolor="#eee">
                 <tbody>
@@ -25,7 +25,17 @@
                     <tr>
                         <th align="right">邮箱：</th>
                         <td class="text_left"><input type="text" id="email" name="email"  value="{$detail.email}" class="l-input" style="width:200px;" /></td>
-                    </tr>                    
+                    </tr>       
+                    <tr>
+                        <th align="right">分店：</th>
+                        <td class="text_left">
+                            <select name="subbranch_id">
+                                <foreach name="subbranchList" item="val">
+                                <option value="{$val.id}" <eq name="val['id']" value="$detail['subbranch_id']">selected</eq>>{$val.name}</option>
+                                </foreach>
+                            </select>
+                        </td>
+                    </tr>             
                     <tr>
                         <th align="right">职务：</th>
                         <td class="text_left">
@@ -48,7 +58,6 @@
             <div class="btn_box layout">
                 <input type="submit" class="green_btn" value="保 存" id="btlogin" name="btlogin">
             </div>    
-                <input type="hidden" name="uid" value="{$detail.uid}" />
             </form>      
         </div>
     </div>

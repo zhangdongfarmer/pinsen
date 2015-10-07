@@ -1,7 +1,7 @@
 <include file='Public/header' />
 <div class="main_title">店员管理
         <div class="btn_box fr">
-                <a href="{:U('member/add')}" class="green_btn_a">添加</a>
+                <a href="{:U('member/add', array('id'=>$id))}" class="green_btn_a">添加</a>
             </div>
     </div>
     <div class="main_content_box layout">
@@ -42,7 +42,7 @@
                             <td ><eq name="val['group_type']" value="1">店长<else/>店员</eq></td>
                             <td >{$val.nickname}</td>
                             <td >{$val.email}</td>
-                            <td><a href="{:U('member/add', array('uid'=>$val['uid']))}" target="manFrame">修改</a> 
+                            <td><a href="{:U('member/edit', array('uid'=>$val['uid']))}" target="manFrame">修改</a> 
                             <a href="javascript:void(0);" onclick="delMember({$val.uid});" target="manFrame">删除</a> 
                             <a href="javascript:void(0);" onclick="rebackPasswd({$val.uid});" target="manFrame">重置密码</a></td>
                         </tr>

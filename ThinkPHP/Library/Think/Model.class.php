@@ -1577,9 +1577,11 @@ class Model {
      */
     public function findPage($perPage=10)
     {
-        $total = $this->count();
+        $options = $this->_parseOptions();
+    	$total = $this->where($options['where'])->count();
+    	
         if($total){
-            $data = $this->page(intval($_REQUEST['p']), $perPage)->select();
+            $data = $this->page(intval($_REQUEST['p']), $perPage)->select($options);
             $page = new \COM\Page($total, $perPage, $REQUEST);
             if($total>$listRows){
                 $page->setConfig('theme','%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%');

@@ -34,8 +34,7 @@ class UserController extends Controller {
                 $Member = new MemberModel;
                 if($Member->login($uid)){ //登录用户
                     $userSession = session('user_auth');
-                    $adminArr = array('store_admin', 'super_admin');
-                    if(in_array($userSession['group_name'], $adminArr)){
+                    if($userSession['group_name']=='store_admin'){
                         //登录成功跳转到药店管理
                         redirect(U('index/index'));
                     }else{

@@ -89,6 +89,15 @@ class MemberController extends BaseController {
 	 */
 	public function add()
 	{		
+		//获取分店列表
+		$subbranchList = D('Subbranch')->field('id, name')
+		->where(['store_id'=>STORE_ID])
+		->order('id')->select();
+		
+		$id = intval(I('get.id'));
+		if(empty($id)){
+			$id = $subbranchList[0]['id'];
+		}
 		if($_POST){
 		    $mobile = I('post.mobile');
 		    $passwd = I('post.password');
@@ -102,35 +111,66 @@ class MemberController extends BaseController {
 
 		    $user = new UserApi();
 		    if($user->checkUsername($mobile) != 1){
-		        $this->error('用户手机号已被使用');
+		        $this->showTo('用户手机号已被使用', '', 2);
 		    }
 		    if($user->checkMobile($mobile) != 1){
-		        $this->error('手机号已被使用');
+		        $this->showTo('手机号已被使用', '', 2);		    
 		    }
 		    if($user->checkEmail($email) != 1){
-		        $this->error('邮箱已被使用');
+		        $this->showTo('邮箱已被使用', '', 2);
 		    }
 		    
-		    $result = $user->register($mobile, $passwd, $email, $mobile);
-		    if($result){
+		    $uid = $user->register($mobile, $passwd, $email, $mobile);
+		    $uid = intval($uid);
+		    if($uid){
 		        $data = array(
-		            'uid' => intval($result),
+		            'uid' => $uid,
 		            'nickname'    => $mobile,
 		            'truename'    => $trueName,
 		            'sex'         => intval(I('post.sex')),
 		            'reg_id'      => get_client_ip(1),
+		        	'email'		=> $email,
 		            'reg_time'    => time(),
 		            'status'      => 1,
 		            'group_type'  => intval(I('post.group_type')),
-		            'subbranch_id'   => STORE_ID
+		            'subbranch_id'   => intval(I('post.subbranch_id'))
 		        );
 		        $mem = M('member')->add($data);
-		        $this->success('店员添加成功', U('member/index'));
+		        $this->showTo('店员添加成功', U('member/index'), 1);
 		    }
 		    $this->error('店员添加失败');
 		    $this->assign('detail', $_POST);
 		}		
 		
+		$this->assign('subbranch_id', $id);
+		$this->assign('subbranchList', $subbranchList);
+		$this->display();
+	}
+	
+	/**
+	 * 编辑成员
+	 * 
+	 * @param int $uid 用户id
+	 */
+	public function edit($uid)
+	{
+		$user = new UserApi();
+		$userInfo = $user->info($uid);
+		if(empty($userInfo)){
+			$this->showTo('您编辑的用户不存在或已被锁定', U('member/index'), 2);
+		}
+		//获取用户数据详情
+		$detail = M('member')->field('uid, nickname, sex, truename, email, group_type, subbranch_id')
+		->where(['uid'=>intval($uid)])->find();
+		$detail = array_merge($detail, $userInfo);
+		
+		//获取分店列表
+		$subbranchList = D('Subbranch')->field('id, name')
+		->where(['store_id'=>STORE_ID])
+		->order('id')->select();
+		
+		$this->assign('detail', $detail);
+		$this->assign('subbranchList', $subbranchList);
 		$this->display();
 	}
 	
@@ -151,5 +191,21 @@ class MemberController extends BaseController {
 	        return false;
 	    }
 	    echo 'true';
+	}
+	
+	/**
+	 * 检查更新手机号
+	 * 
+	 * @param string $mobile 手机号码
+	 * @param int $uid 用户id
+	 */
+	public function checkUpdateMobile($mobile, $uid)
+	{
+		$detail = M('ucenterMember')->field('id')->where(['mobile'=>$mobile])->find();
+		if(isset($detail['id']) && $detail['id']!=$uid){
+			echo 'false';
+			return false;
+		}
+		echo 'true';
 	}
 }
