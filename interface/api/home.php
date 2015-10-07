@@ -10,15 +10,15 @@ class home extends base{
 	public function banner($param){
 		$map['is_index'] = 1;
 		$order = 'sort asc';
-		$field = 'id,title,ad_ico,content';
+		$field = 'id,title,ad_ico';
 		$limit = 3;
 		$data = M('advertise')->where($map)->order($order)->field($field)->limit($limit)->select();
 		foreach($data as $key => $val){
+			$data[$key]['url'] = 'http://www.pinsenqihang.com/index.php?s=/home/wap/advertise/id/'.$val['id'].'.html';
 			$id = intval($val['ad_ico']);
 			if($id){
 				$picture = M('Picture')->field('id, path, url')->where(['id'=>$id])->find();
 				$data[$key]['path'] = 'http://'.$_SERVER['SERVER_NAME'].$picture['path'];
-				$data[$key]['url'] = $picture['url'];
 				$data[$key]['picture_id'] = $id;
 			}
 		}
