@@ -23,13 +23,13 @@ class MemberController extends BaseController {
 		}
 		
 		//获取分店成员列表数据
-		$memberList = M('member')->field('uid, nickname, truename, head, job, qq, email')
+		$memberList = M('member')->field('uid, nickname, truename, head, group_type')
 		->where(['subbranch_id'=>$id])->findPage(20);
-				
 		foreach($memberList['data'] as $key => $val){
-		    $ucentMember = M('ucenterMember')->field('email')
+		    $ucentMember = M('ucenterMember')->field('email, phone')
 		    ->where(['id'=>$val['uid']])->find();
 		    $memberList['data'][$key]['email'] = $ucentMember['email'];
+		    $memberList['data'][$key]['phone'] = $ucentMember['phone'];
 		}
 				
 		$this->assign('id', $id);

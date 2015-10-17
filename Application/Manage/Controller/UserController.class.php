@@ -37,6 +37,9 @@ class UserController extends Controller {
                     if($userSession['group_name']=='store_admin'){
                         //登录成功跳转到药店管理
                         redirect(U('index/index'));
+                    }else if($userSession['group_name']=='super_admin'){
+                        //登录到超级管理员后台
+                        redirect(U('admin/course/index'));
                     }else{
                         $this->assign('errorMsg', '您没有权限访问管理后台');
                     }
@@ -57,7 +60,8 @@ class UserController extends Controller {
      */
     public function logout()
     {
-        D('DrugStore')->logout();
+        $member = new MemberModel();
+        $member->logout();
         echo json_encode(array(
             'code'  => 1,
             'msg'   => '退出成功'
