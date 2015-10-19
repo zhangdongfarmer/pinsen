@@ -90,3 +90,5 @@ body{font-family:"\5FAE\8F6F\96C5\9ED1","Microsoft YaHei";}
 /*公用头、底部样式*/
 
 .page{padding:5px; text-align:right; font-family:'微软雅黑';}
+
+.error{padding-left:5px; color:#f00;}

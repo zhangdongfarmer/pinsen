@@ -30,7 +30,7 @@ class AdminController extends Controller {
         // 获取当前用户ID
         define('UID',is_login());
         if( !UID ){// 还没登录 跳转到登录页面
-            $this->redirect('Public/login');
+            $this->redirect('Manage/user/login');
         }
         /* 读取数据库中的配置 */
 		$config	=	S('DB_CONFIG_DATA');
@@ -42,6 +42,7 @@ class AdminController extends Controller {
 
         // 是否是超级管理员
         define('IS_ROOT',   is_administrator());
+        
 		// 检测访问权限
         $access =   $this->accessControl();
         if ( $access === false ) {

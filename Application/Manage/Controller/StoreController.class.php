@@ -13,7 +13,7 @@ class StoreController extends BaseController {
      */
     public function index()
     {
-        $list = D('Subbranch')->getList($this->user['storeId'], 10);
+        $list = D('Subbranch')->getList(STORE_ID, 10);
         
         $this->assign('list', $list['data']);
         $this->assign('page', $list['html']);
@@ -36,14 +36,14 @@ class StoreController extends BaseController {
         	//如果存在id为编辑
         	if($id > 0){
         		$detail = D('Subbranch')->getById($id);
-        		if($detail['store_id'] == $this->user['storeId']){
+        		if($detail['store_id'] == STORE_ID){
         			$result = D('Subbranch')->where(['id'=>$id])->save($data);
         		}else{
         			$this->assign('errorMsg', '对不起你没有权限修改');
         		}
         	}else{	//插入分店信息
         		$data['create_time'] = time();
-        		$data['store_id'] = $this->user['storeId'];
+        		$data['store_id'] = STORE_ID;
         		$result = D('Subbranch')->add($data);
         	}
         	if($result){
@@ -68,7 +68,7 @@ class StoreController extends BaseController {
     public function delete()
     {
         $id = I('post.id');
-        $result = D('Subbranch')->deleteById($id, $this->user['storeId']);
+        $result = D('Subbranch')->deleteById($id, STORE_ID);
         if($result){
             return $this->showStatus(1, '删除ID为'.$id.'的分店数据成功');
         }
@@ -94,10 +94,10 @@ class StoreController extends BaseController {
     			}
     			$data['passwd'] = think_passwd_md5($_POST['passwd']);
     		}
-    		$result = D('DrugStore')->where(['id'=>$this->user['storeId']])->save($data);
+    		$result = D('DrugStore')->where(['id'=>STORE_ID])->save($data);
     		$this->assign('errorMsg', $result ? '更新成功' : '暂无更新或操作失败');
     	}
-        $detail = D('DrugStore')->where(['id'=>$this->user['storeId']])->find();
+        $detail = D('DrugStore')->where(['id'=>STORE_ID])->find();
         $this->assign('detail', $detail);
         $this->display();
     }

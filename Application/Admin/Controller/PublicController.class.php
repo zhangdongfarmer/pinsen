@@ -71,11 +71,9 @@ class PublicController extends \Think\Controller {
     public function logout(){
         if(is_login()){
             D('Member')->logout();
-			session('[destroy]');
-            $this->success('退出成功！', U('login'));
-        } else {
-            $this->redirect('login');
+			session('[destroy]');            
         }
+        redirect(U('Manage/user/login'));
     }
 
     public function verify(){
