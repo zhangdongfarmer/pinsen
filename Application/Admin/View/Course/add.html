@@ -16,7 +16,7 @@
 <div class="tab-wrap">
     <ul class="tab-nav nav">
         <li data-tab="tab1" class="current"><a href="javascript:void(0);">详情</a></li>
-        <li data-tab="tab2" ><a href="javascript:void(0);">试题</a></li>
+        <if condition="$id"><li ><a href="{:U('admin/exam/question', array('exam_id'=>$id))}">试题</a></li></if>
     </ul>
     <div class="tab-content">
     <!-- 表单 -->
@@ -200,21 +200,8 @@
                 <label class="item-label">药店：<span class="check-tips"></span></label>
                 <div class="controls">
                     <volist name="drug_store_list" key="key" id="vo">
-                        <input name="drug_store_id" type="checkbox" value="{$key}" <if condition="in_array($key, $drug_store_id)">checked</if>> {$vo}
+                        <label for="drug_{$vo}"<input name="drug_store_id" id="drug_{$vo}" type="checkbox" value="{$key}" <if condition="in_array($key, $drug_store_id)">checked</if>> {$vo}</label>&nbsp;&nbsp;&nbsp;
                     </volist>
-                </div>
-            </div>
-        </div>
-        
-        <div id="tab2" class="tab-pane in tab2 hide">
-            <div class="form-item cf">
-                <label class="item-label">添加试题：<span class="check-tips"></span></label>
-                <div class="controls">
-                    <select name="exam_id">
-                        <volist name="exam_list" key="key" id="vo">
-                            <option value="{$key}" <eq name="key" value="$exam_id">selected</eq>>{$vo}</option>
-                        </volist>
-                    </select>
                 </div>
             </div>
         </div>

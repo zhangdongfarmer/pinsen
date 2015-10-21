@@ -14,7 +14,7 @@
 	<!-- 按钮工具栏 -->
 	<div class="cf">
 		<div class="fl">
-			<a class="btn" href="{:U('Exam/addquest',array('exam_id'=>$exam_id))}">添加题目</a>
+			<a class="btn" href="javascript:void(0);" onclick="addRequestion({$exam_id});" data="{:U('Exam/addquest',array('exam_id'=>$exam_id))}">添加题目</a>
 		</div>
 
 		<!-- 高级搜索 -->
@@ -64,7 +64,57 @@
 	<!-- 分页 -->
     <div class="page">
         {$_page}
-    </div>
+    </div>    
+    
+</div>
+<!-- 试题添加弹窗 -->
+<style>
+    .alTable td{
+        padding:5px;
+    }
+    .answerList{margin-top:5px;}
+</style>
+<div style="width:500px;" id="addQuestion">
+    <table width="500" cellspacing="5" border="0" class="alTable">
+        <tr>
+            <td width="80" align="right">标题：</td>
+            <td>
+                <input type="text" name="title" id="title" value="" size="50"/>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">类型：</td>
+            <td id="questTypeRadio">
+                <label for="quest_type1"><input type="radio" name="quest_type" id="quest_type1" value="1" checked="true"/>单选</label>&nbsp;&nbsp;
+                <label for="quest_type2"><input type="radio" name="quest_type" id="quest_type2" value="2" />复选</label>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">选项：</td>
+            <td>
+                添加选项中，选中状态的为正确答案
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td id="question_list">
+                <div class="answerList">
+                    <input type="radio" name="answerChk" value="1" />
+                    <input type="text" name="answer[]" id="answer1" value="" />
+                </div>
+                <div class="answerList">
+                    <input type="radio" name="answerChk" value="2" />
+                    <input type="text" name="answer[]" id="answer1" value="" />
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td id="question_list">
+                <button id="addButtonGo" style="padding:0 10px;"> 添加 </button>
+            </td>
+        </tr>
+    </table>
 </div>
 
 </block>
@@ -131,5 +181,92 @@ $(function(){
     })
     
 })
+
+var contents = '<div id="workDiv">'+$('#addQuestion').html()+"</div>";
+$('#addQuestion').remove();
+
+//添加试题操作
+function addRequestion(exampId)
+{
+    //默认单选项
+    var defaultChked = 1; 
+    //弹窗
+    artDialog({
+        id:'addRequestionBox',
+        title:'添加试题',
+        content:contents,
+        ok:function(){
+            var datas = {
+              title:$('#workDiv #title').val(),  //试题标题
+              quest_type:$('#questTypeRadio input:radio:checked').val(),
+              dataList:[]
+            };
+            //计算选择题
+            var regex = /[^\s]+/;            
+            if(regex.test(datas.title) == false){
+                alert('请输入试题标题');
+                return false;
+            }         
+            
+            var hasAnswer = false;  //是否存在着答案
+            $('#question_list .answerList').each(function(i){
+                var inptVal = $(this).find('input:text').val();
+                if(regex.test(inptVal)){
+                    var isChecked = 0;
+                    if(defaultChked == 1 && $(this).find('input:radio').is(":checked")){
+                        isChecked = 1;
+                        hasAnswer = true;
+                    }else if(defaultChked == 2 && $(this).find('input:checkbox').is(":checked")){
+                        isChecked = 1;
+                        hasAnswer = true;
+                    }    
+                    datas.dataList[datas.dataList.length] = {opt_name:inptVal, is_checked:isChecked}
+                }
+            });
+            
+            if(hasAnswer == false){
+                alert('请选中试题的答案选项!');
+                return false;
+            }
+            
+            //提交试题
+            $.ajax({
+                
+            });
+            
+           return false;
+        },
+        cancel:function(){
+            return true;
+        }
+    });
+    
+    
+    //选择单选、多选事件注册
+    $('#questTypeRadio input:radio').click(function(){
+       var decVal = $(this).val() - 1 + 1;
+       if(defaultChked != decVal){
+           defaultChked = decVal;
+           $('#question_list .answerList').each(function(i){
+               if(defaultChked == 1){
+                   $(this).find('input:checkbox').remove();
+                   $(this).prepend('<input type="radio" name="answerChk" value="1" />');
+               }else{
+                   $(this).find('input:radio').remove();
+                   $(this).prepend('<input type="checkbox" name="answerChk[]" value="1" />');
+               }
+           });
+       } 
+    });
+    
+    //添加答案事件注册
+    $('#addButtonGo').click(function(){
+        var strObj = $('<div class="answerList"><input type="'+(defaultChked==1? 'radio':'checkbox')+'" name="answerChk" value="1" /> <input type="text" name="answer[]" value="" /> <button>删除</button></div>');
+        strObj.find('button').click(function(){
+            $(this).parent('.answerList').remove();
+        });
+        $('#question_list').append(strObj);
+    });
+}
 </script>
 </block>
