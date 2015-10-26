@@ -16,7 +16,7 @@
 <div class="tab-wrap">
     <ul class="tab-nav nav">
         <li data-tab="tab1" class="current"><a href="javascript:void(0);">详情</a></li>
-        <li data-tab="tab2" ><a href="javascript:void(0);">试题</a></li>
+        <if condition="$id"><li ><a href="{:U('admin/exam/question', array('exam_id'=>$id))}">试题</a></li></if>
     </ul>
     <div class="tab-content">
     <!-- 表单 -->
@@ -148,44 +148,43 @@
             <div class="form-item cf">
                 <label class="item-label">视频：<span class="check-tips"></span></label>
                 <div class="controls">
-                    <input type="file" id="upload_file_video_url">
+                    <div id="upload_file_video_url-button" class="uploadify-button " style="height: 30px; line-height: 30px; width: 120px;">
+                        <span class="uploadify-button-text">上传视频</span>
+                    </div>
+                    <span id="install_http_uploader"></span>
+
+                    <input type="hidden" id="upload_file_video_url" class="uploadify">
                     <input type="hidden" name="video_url" value="{$video_url|default=''}"/>
                     <div class="upload-img-box">
-                        <present name="$video_url">
-                            <div class="upload-pre-file"><span class="upload_icon_all"></span>{$video_url|default=''}</div>
-                        </present>
                     </div>
+                    <div id="upload-video-ui" style="background: #CCFF99;"></div>
                 </div>
+                <script type="text/javascript" src="__STATIC__/HttpUploader6/js/up6-single.js" charset="utf-8"></script>
                 <script type="text/javascript">
                     //上传图片
                     /* 初始化上传插件 */
-                    $("#upload_file_video_url").uploadify({
-                        "height"          : 30,
-                        "swf"             : "__STATIC__/uploadify/uploadify.swf",
-                        "fileObjName"     : "download",
-                        "buttonText"      : "上传视频",
-                        "uploader"        : "{:U('File/upload',array('session_id'=>session_id()))}",
-                        "width"           : 120,
-                        'removeTimeout'	  : 1,
-                        'fileTypeExts'	  : '*.flv; *.mp4; *.rmvb; *.rm; *.avi; *.swf;',
-                        "onUploadSuccess" : uploadVideoFile
+                    var fileMgr = new HttpUploaderMgr();
+                    fileMgr.Config.FileFilter = '<php>echo C('ALLOWED_VIDEO_EXT') ? C('ALLOWED_VIDEO_EXT') : '*'</php>';
+                    fileMgr.event.postComplete = function (obj) {
+                        var name = "video_url";
+                        var url = decodeURIComponent(obj.PathRel + obj.SvrName);
+                        $("input[name="+name+"]").val(url);
+                        setTimeout(function () {
+                            $('#upload-video-ui').html('<a target="_blank" href="'+url+'">'+decodeURIComponent(obj.PathLocal)+'</a>');
+                        }, 1500)
+                    };
+
+                    $(document).ready(function()
+                    {
+                        fileMgr.SetupCheck();
+                        fileMgr.Load();
+
+                        $("#upload_file_video_url-button").click(function()
+                        {
+                            fileMgr.postAuto("upload-video-ui"); //
+                        });
+
                     });
-                    function uploadVideoFile(file, data){
-                        var data = $.parseJSON(data);
-                        if(data.status){
-                            var name = "video_url";
-                            $("input[name="+name+"]").val(data.data);
-                            $("input[name="+name+"]").parent().find('.upload-img-box').html(
-                                "<div class=\"upload-pre-file\"><span class=\"upload_icon_all\"></span>" + data.info + "</div>"
-                            );
-                        } else {
-                            updateAlert(data.info);
-                            setTimeout(function(){
-                                $('#top-alert').find('button').click();
-                                $(that).removeClass('disabled').prop('disabled',false);
-                            },1500);
-                        }
-                    }
                 </script>
             </div>
             <div class="form-item cf">
@@ -200,21 +199,8 @@
                 <label class="item-label">药店：<span class="check-tips"></span></label>
                 <div class="controls">
                     <volist name="drug_store_list" key="key" id="vo">
-                        <input name="drug_store_id" type="checkbox" value="{$key}" <if condition="in_array($key, $drug_store_id)">checked</if>> {$vo}
+                        <label for="drug_{$vo}"<input name="drug_store_id" id="drug_{$vo}" type="checkbox" value="{$key}" <if condition="in_array($key, $drug_store_id)">checked</if>> {$vo}</label>&nbsp;&nbsp;&nbsp;
                     </volist>
-                </div>
-            </div>
-        </div>
-        
-        <div id="tab2" class="tab-pane in tab2 hide">
-            <div class="form-item cf">
-                <label class="item-label">添加试题：<span class="check-tips"></span></label>
-                <div class="controls">
-                    <select name="exam_id">
-                        <volist name="exam_list" key="key" id="vo">
-                            <option value="{$key}" <eq name="key" value="$exam_id">selected</eq>>{$vo}</option>
-                        </volist>
-                    </select>
                 </div>
             </div>
         </div>

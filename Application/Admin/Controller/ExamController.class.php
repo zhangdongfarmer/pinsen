@@ -158,20 +158,17 @@ class ExamController extends AdminController {
      */
     public function question(){
         $exam_id      =   I('get.exam_id');
-        
-        $exam = D('Exam');
-        $data = $exam->examDetail( $exam_id );
-        foreach ($data['data'] as $key=>$one){
-            if( $one['quest_type'] == 1){
-                $data['data'][$key]['type'] = '单选';
-            }else{
-                $data['data'][$key]['type'] = '多选';
-            }
+        $examQuestion = D('ExamQuestion')->where(['exam_id'=>intval($exam_id)])->select();
+        $examOptions = D('ExamOptions');
+        foreach($examQuestion as $key => $val){
+            $examQuestion[$key]['options'] = $examOptions->where(['quest_id'=>intval($val['quest_id'])])->select();
         }
-        $this->assign('_data', $data);
+        
+        $this->assign('examQuestion', $examQuestion);
         $this->assign('exam_id', $exam_id);
         $this->display();
     }
+    
     public function addExam(){
         if(IS_POST){
             $args['title']      =   I('post.title');
@@ -368,6 +365,30 @@ class ExamController extends AdminController {
         //获取草稿箱权限
         $show_draftbox = C('OPEN_DRAFTBOX');
         $this->assign('show_draftbox', IS_ROOT || $show_draftbox);
+    }
+    
+    /**
+     * 添加试题
+     */
+    public function addQuestion()
+    {
+        $examId = I('exam_id');
+        $title = I('title');
+        $questionType = I('quest_type');
+        $data = I('data_list'); //答题选项
+        
+        //添加试题
+        $questionId = D('ExamQuestion')->addQuestion($examId, $title, $questionType);
+        if($questionId){
+            //添加试题选项
+            $examOption = D('ExamOptions');
+            foreach($data as $val){
+                $examOption->addOption($examId, $questionId, $val['opt_name'], $val['is_checked']);
+            }
+            echo json_encode(['code'=>1, 'msg'=>'添加试题成功']);
+            return true;
+        }
+        echo json_encode(['code'=>2, 'msg'=>'添加试题失败']);
     }
     
 }

@@ -13,58 +13,81 @@
 	
 	<!-- 按钮工具栏 -->
 	<div class="cf">
-		<div class="fl">
-			<a class="btn" href="{:U('Exam/addquest',array('exam_id'=>$exam_id))}">添加题目</a>
+		<div class="fr">
+		<a class="btn" href="javascript:void(0);" onclick="addRequestion({$exam_id});" data="{:U('Exam/addquest',array('exam_id'=>$exam_id))}">添加题目</a>
 		</div>
-
-		<!-- 高级搜索 -->
-		<div class="search-form fr cf">
-			
-		</div>
-	</div>
-
+ <ul class="tab-nav nav">
+        <li data-tab="tab1"><a href="{:U('admin/course/add', array('id'=>$exam_id))}">课件</a></li>
+        <li class="current"><a href="{:U('admin/exam/question', array('exam_id'=>$id))}">试题</a></li>
+    </ul>
 
 	<!-- 数据表格 -->
     <div class="data-table">
-
-	<table class="">
-    <thead>
-        <tr>
-			<th class="">编号</th>
-			<th class="">排序</th>
-			<th class="">标题</th>
-			<th class="">类型</th>
-			<th class="">分值</th>
-			<th class="">操作</th>
-		</tr>
-    </thead>
-        <tbody>
-		<if condition="$_data.state gt '0'">
-			<volist name="_data.data" id="vo" key="i">
-			<tr>
-				<td>{$vo.quest_id}&nbsp;</td>
-				<td>{$vo.sort_no}</td>
-				<td>{$vo.title}</td>
-				<td>{$vo.type}</td>
-				<td>{$vo.max_value}</td>
-				
-				<td>
-					<a href="{:U('Exam/addquest','quest_id='.$vo['quest_id'].'&exam_id='.$exam_id )}">修改</a> 
-					<a href="{:U('Exam/delquest','quest_id='.$vo['quest_id'].'&exam_id='.$exam_id )}">删除</a>
-				</td>
-			</tr>
-			</volist>
-		<else/>
-			<td colspan="11" class="text-center"> aOh! 暂时还没有内容! </td>
-		</if>
-        
-    </tbody></table>
-	</div>
-
-	<!-- 分页 -->
-    <div class="page">
-        {$_page}
+        <foreach name="examQuestion" item="val">
+            <div class="examTitle" style="margin-top:10px; font-size:16px;">
+                {$val.quest_id}. {$val.title} 
+                <span style="font-size:14px;">&nbsp;&nbsp;&nbsp;&nbsp;[ 
+                    <a href="javascript:void(0);" onclick="editQuestion({$val.quest_id})">修改</a>&nbsp;&nbsp;
+                <a href="javascript:void(0);" onclick="delQuestion({$val.quest_id});">删除</a> ]</span>
+            </div>
+            <foreach name="val['options']" item="list">
+                <div class="fl margintop" style="margin-top:10px; margin-right:20px;">
+                    <input type="checkbox" onclick="return false" <eq name="list['opt_value']" value="1">checked="true"</eq> />
+                    {$list.opt_name}
+                </div>
+            </foreach>
+            <div style="clear:both; height:10px; overflow:hidden; border-bottom:1px dotted #ccc;"></div>
+        </foreach>
     </div>
+</div>
+<!-- 试题添加弹窗 -->
+<style>
+    .alTable td{
+        padding:5px;
+    }
+    .answerList{margin-top:5px;}
+</style>
+<div style="width:500px;" id="addQuestion">
+    <table width="500" cellspacing="5" border="0" class="alTable">
+        <tr>
+            <td width="80" align="right">标题：</td>
+            <td>
+                <input type="text" name="title" id="title" value="" size="50"/>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">类型：</td>
+            <td id="questTypeRadio">
+                <label for="quest_type1"><input type="radio" name="quest_type" id="quest_type1" value="1" checked="true"/>单选</label>&nbsp;&nbsp;
+                <label for="quest_type2"><input type="radio" name="quest_type" id="quest_type2" value="2" />复选</label>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">选项：</td>
+            <td>
+                添加选项中，选中状态的为正确答案
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td id="question_list">
+                <div class="answerList">
+                    <input type="radio" name="answerChk" value="1" />
+                    <input type="text" name="answer[]" id="answer1" value="" />
+                </div>
+                <div class="answerList">
+                    <input type="radio" name="answerChk" value="2" />
+                    <input type="text" name="answer[]" id="answer1" value="" />
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td id="question_list">
+                <button id="addButtonGo" style="padding:0 10px;"> 添加 </button>
+            </td>
+        </tr>
+    </table>
 </div>
 
 </block>
@@ -131,5 +154,128 @@ $(function(){
     })
     
 })
+
+
+var QuestionManage = function(setting){
+    return QuestionManage.prototype.init(setting);
+};
+QuestionManage.prototype = {
+    
+    
+    init: function(setting){
+        for(var i in setting){
+            this[i] = setting[i];
+        }
+        
+        this.eventInit();
+        return this;
+    },
+    eventInit: function() {
+        
+    }
+};
+QuestionManage.prototype.init.prototype = QuestionManage.prototype;
+
+var contents = '<div id="workDiv">'+$('#addQuestion').html()+"</div>";
+$('#addQuestion').remove();
+
+//添加试题操作
+function addRequestion(exampId)
+{
+    //默认单选项
+    var defaultChked = 1; 
+    //弹窗
+    artDialog({
+        id:'addRequestionBox',
+        title:'添加试题',
+        content:contents,
+        ok:function(){
+            var datas = {
+              exam_id:{$exam_id},
+              title:$('#workDiv #title').val(),  //试题标题
+              quest_type:$('#questTypeRadio input:radio:checked').val(),
+              data_list:[]
+            };
+            //计算选择题
+            var regex = /[^\s]+/;            
+            if(regex.test(datas.title) == false){
+                alert('请输入试题标题');
+                return false;
+            }         
+            
+            var hasAnswer = false;  //是否存在着答案
+            $('#question_list .answerList').each(function(i){
+                var inptVal = $(this).find('input:text').val();
+                if(regex.test(inptVal)){
+                    var isChecked = 0;
+                    if(defaultChked == 1 && $(this).find('input:radio').is(":checked")){
+                        isChecked = 1;
+                        hasAnswer = true;
+                    }else if(defaultChked == 2 && $(this).find('input:checkbox').is(":checked")){
+                        isChecked = 1;
+                        hasAnswer = true;
+                    }    
+                    datas.data_list[datas.data_list.length] = {opt_name:inptVal, is_checked:isChecked}
+                }
+            });
+            
+            if(hasAnswer == false){
+                alert('请选中试题的答案选项!');
+                return false;
+            }
+            
+            $result = false;
+            //提交试题
+            $.ajax({
+                type:'post',
+                dataType:'json',
+                url:'{:U("admin/exam/addQuestion")}',
+                data:datas,
+                async:false,
+                success:function(rel){
+                    if(rel.code == 1){
+                        location.href = location.href;
+                        $result = true;
+                    }else{
+                        alert(rel.msg);
+                        $result = false;
+                    }
+                }
+            });
+            
+           return false;
+        },
+        cancel:function(){
+            return true;
+        }
+    });
+    
+    
+    //选择单选、多选事件注册
+    $('#questTypeRadio input:radio').click(function(){
+       var decVal = $(this).val() - 1 + 1;
+       if(defaultChked != decVal){
+           defaultChked = decVal;
+           $('#question_list .answerList').each(function(i){
+               if(defaultChked == 1){
+                   $(this).find('input:checkbox').remove();
+                   $(this).prepend('<input type="radio" name="answerChk" value="1" />');
+               }else{
+                   $(this).find('input:radio').remove();
+                   $(this).prepend('<input type="checkbox" name="answerChk[]" value="1" />');
+               }
+           });
+       } 
+    });
+    
+    //添加答案事件注册
+    $('#addButtonGo').click(function(){
+        var strObj = $('<div class="answerList"><input type="'+(defaultChked==1? 'radio':'checkbox')+'" name="answerChk" value="1" /> <input type="text" name="answer[]" value="" /> <button>删除</button></div>');
+        strObj.find('button').click(function(){
+            $(this).parent('.answerList').remove();
+        });
+        $('#question_list').append(strObj);
+    });
+}
 </script>
 </block>
