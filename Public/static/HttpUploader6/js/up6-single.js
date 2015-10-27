@@ -88,11 +88,14 @@ function HttpUploaderMgr()
   };
 
   this.ActiveX = {
-    "Uploader"		: "Xproer.HttpUploader6"
+    "Droper": "ZSPS.HttpDroper6",
+    "Uploader": "ZSPS.HttpUploader6",
+    "Partition": "ZSPS.HttpPartition6"
+    /*"Uploader"		: "Xproer.HttpUploader6"
     , "Partition"	: "Xproer.HttpPartition6"
     //64bit
     , "Uploader64"	: "Xproer.HttpUploader6x64"
-    , "Partition64"	: "Xproer.HttpPartition6x64"
+    , "Partition64"	: "Xproer.HttpPartition6x64"*/
   };
 
   //附加参数
