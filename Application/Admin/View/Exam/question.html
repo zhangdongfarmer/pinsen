@@ -14,7 +14,7 @@
 	<!-- 按钮工具栏 -->
 	<div class="cf">
 		<div class="fr">
-		<a class="btn" href="javascript:void(0);" onclick="addRequestion({$exam_id});" data="{:U('Exam/addquest',array('exam_id'=>$exam_id))}">添加题目</a>
+		<a class="btn" href="javascript:void(0);" onclick="addQuestion({$exam_id});" data="{:U('Exam/addquest',array('exam_id'=>$exam_id))}">添加题目</a>
 		</div>
  <ul class="tab-nav nav">
         <li data-tab="tab1"><a href="{:U('admin/course/add', array('id'=>$exam_id))}">课件</a></li>
@@ -24,18 +24,20 @@
 	<!-- 数据表格 -->
     <div class="data-table">
         <foreach name="examQuestion" item="val">
+            <div id="question_{$val.quest_id}">
             <div class="examTitle" style="margin-top:10px; font-size:16px;">
-                {$val.quest_id}. {$val.title} 
+                {$val.quest_id}. <span class="question_title">{$val.title} </span>
                 <span style="font-size:14px;">&nbsp;&nbsp;&nbsp;&nbsp;[ 
-                    <a href="javascript:void(0);" onclick="editQuestion({$val.quest_id})">修改</a>&nbsp;&nbsp;
+                    <a href="javascript:void(0);" onclick="addQuestion({$exam_id}, {$val.quest_id})">修改</a>&nbsp;&nbsp;
                 <a href="javascript:void(0);" onclick="delQuestion({$val.quest_id});">删除</a> ]</span>
             </div>
             <foreach name="val['options']" item="list">
-                <div class="fl margintop" style="margin-top:10px; margin-right:20px;">
+                <div class="fl margintop item_list" style="margin-top:10px; margin-right:20px;">
                     <input type="checkbox" onclick="return false" <eq name="list['opt_value']" value="1">checked="true"</eq> />
-                    {$list.opt_name}
+                    <span class="item_val">{$list.opt_name}</span>
                 </div>
             </foreach>
+            </div>
             <div style="clear:both; height:10px; overflow:hidden; border-bottom:1px dotted #ccc;"></div>
         </foreach>
     </div>
@@ -72,11 +74,11 @@
             <td>&nbsp;</td>
             <td id="question_list">
                 <div class="answerList">
-                    <input type="radio" name="answerChk" value="1" />
+                    <input type="checkbox" name="answerChk[]" value="1" />
                     <input type="text" name="answer[]" id="answer1" value="" />
                 </div>
                 <div class="answerList">
-                    <input type="radio" name="answerChk" value="2" />
+                    <input type="checkbox" name="answerChk[]" value="1" />
                     <input type="text" name="answer[]" id="answer1" value="" />
                 </div>
             </td>
@@ -98,64 +100,6 @@
 <script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
 <script type="text/javascript">
-$(function(){
-	//搜索功能
-	$("#search").click(function(){
-		var url = $(this).attr('url');
-		var status = $("#sch-sort-txt").attr("data");
-        var query  = $('.search-form').find('input').serialize();
-        query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
-        query = query.replace(/^&/g,'');
-		if(status != ''){
-			query += 'status=' + status + "&" + query;
-        }
-        if( url.indexOf('?')>0 ){
-            url += '&' + query;
-        }else{
-            url += '?' + query;
-        }
-		window.location.href = url;
-	});
-
-	/* 状态搜索子菜单 */
-	$(".search-form").find(".drop-down").hover(function(){
-		$("#sub-sch-menu").removeClass("hidden");
-	},function(){
-		$("#sub-sch-menu").addClass("hidden");
-	});
-	$("#sub-sch-menu li").find("a").each(function(){
-		$(this).click(function(){
-			var text = $(this).text();
-			$("#sch-sort-txt").text(text).attr("data",$(this).attr("value"));
-			$("#sub-sch-menu").addClass("hidden");
-		})
-	});
-
-    //回车自动提交
-    $('.search-form').find('input').keyup(function(event){
-        if(event.keyCode===13){
-            $("#search").click();
-        }
-    });
-
-    $('#time-start').datetimepicker({
-        format: 'yyyy-mm-dd',
-        language:"zh-CN",
-	    minView:2,
-	    autoclose:true
-    });
-
-    $('#datetimepicker').datetimepicker({
-       format: 'yyyy-mm-dd',
-        language:"zh-CN",
-        minView:2,
-        autoclose:true,
-        pickerPosition:'bottom-left'
-    })
-    
-})
-
-
 var QuestionManage = function(setting){
     return QuestionManage.prototype.init(setting);
 };
@@ -176,14 +120,16 @@ QuestionManage.prototype = {
 };
 QuestionManage.prototype.init.prototype = QuestionManage.prototype;
 
+//添加/修改试题弹出窗
 var contents = '<div id="workDiv">'+$('#addQuestion').html()+"</div>";
 $('#addQuestion').remove();
 
 //添加试题操作
-function addRequestion(exampId)
+function addQuestion(exampId, questionId)
 {
     //默认单选项
     var defaultChked = 1; 
+    var questionId = questionId | 0
     //弹窗
     artDialog({
         id:'addRequestionBox',
@@ -192,6 +138,7 @@ function addRequestion(exampId)
         ok:function(){
             var datas = {
               exam_id:{$exam_id},
+              question_id:questionId,
               title:$('#workDiv #title').val(),  //试题标题
               quest_type:$('#questTypeRadio input:radio:checked').val(),
               data_list:[]
@@ -203,24 +150,26 @@ function addRequestion(exampId)
                 return false;
             }         
             
-            var hasAnswer = false;  //是否存在着答案
+            var hasAnswer = 0;  //是否存在着答案
             $('#question_list .answerList').each(function(i){
                 var inptVal = $(this).find('input:text').val();
                 if(regex.test(inptVal)){
                     var isChecked = 0;
-                    if(defaultChked == 1 && $(this).find('input:radio').is(":checked")){
+                    if($(this).find('input:checkbox').is(":checked")){
                         isChecked = 1;
-                        hasAnswer = true;
-                    }else if(defaultChked == 2 && $(this).find('input:checkbox').is(":checked")){
-                        isChecked = 1;
-                        hasAnswer = true;
+                        hasAnswer++;
                     }    
                     datas.data_list[datas.data_list.length] = {opt_name:inptVal, is_checked:isChecked}
                 }
             });
             
-            if(hasAnswer == false){
-                alert('请选中试题的答案选项!');
+            if(defaultChked == 1 && hasAnswer!=1){
+                alert('单选题请选中一个答案!');
+                return false;
+            }
+            
+            if(defaultChked == 2 && hasAnswer<2){
+                alert('多选必须选择中多个答案!');
                 return false;
             }
             
@@ -250,32 +199,68 @@ function addRequestion(exampId)
         }
     });
     
+    //如果是编辑试题，数据初始化填充
+    if(questionId){
+        var questObj = $('#question_'+questionId);
+        var titles = questObj.find('.question_title').eq(0).html();
+        $('#title').val(titles);
+        var checkedNum = questObj.find('input:checkbox:checked').size(); 
+        if(checkedNum > 1){
+            defaultChked = 2;
+            $('#quest_type2').attr('checked', true);
+        }else{
+            defaultChked = 1;
+            $('#quest_type1').attr('checked', true);
+        }
+        $('#question_list').html('');
+        questObj.find('.item_list').each(function(i){
+            var htmlStr = '<div class="answerList">';
+            var titleStr = $(this).find('.item_val').eq(0).html(); 
+            htmlStr += '<input type="checkbox" name="answerChk[]"'; 
+            if($(this).find('input:checkbox').is(":checked")){
+               htmlStr += ' checked="true" ';
+            }
+            htmlStr += ' value="1" />';            
+            htmlStr += ' <input type="text" name="answer[]" id="answer1" value="'+titleStr+'"/>';
+            if(i > 1){
+                htmlStr += ' <button>删除</button>';
+            }
+            htmlStr += '</div>';
+            $('#question_list').append(htmlStr);
+        });
+        $('#question_list').find('button').click(function(){
+            $(this).parent('.answerList').remove();
+        });
+    }
+    
     
     //选择单选、多选事件注册
     $('#questTypeRadio input:radio').click(function(){
-       var decVal = $(this).val() - 1 + 1;
-       if(defaultChked != decVal){
-           defaultChked = decVal;
-           $('#question_list .answerList').each(function(i){
-               if(defaultChked == 1){
-                   $(this).find('input:checkbox').remove();
-                   $(this).prepend('<input type="radio" name="answerChk" value="1" />');
-               }else{
-                   $(this).find('input:radio').remove();
-                   $(this).prepend('<input type="checkbox" name="answerChk[]" value="1" />');
-               }
-           });
-       } 
-    });
+       defaultChked = $(this).val() - 1 + 1;
+   });
     
     //添加答案事件注册
     $('#addButtonGo').click(function(){
-        var strObj = $('<div class="answerList"><input type="'+(defaultChked==1? 'radio':'checkbox')+'" name="answerChk" value="1" /> <input type="text" name="answer[]" value="" /> <button>删除</button></div>');
+        var strObj = $('<div class="answerList"><input type="checkbox" name="answerChk[]" value="1" /> <input type="text" name="answer[]" value="" /> <button>删除</button></div>');
         strObj.find('button').click(function(){
             $(this).parent('.answerList').remove();
         });
         $('#question_list').append(strObj);
     });
+}
+
+//删除试题
+function delQuestion(questionId)
+{
+    if(confirm('您确定要删除该试题吗？')){
+        $.get("{:U('admin/exam/delQuestion')}", {question_id:questionId}, function(rel){
+            if(rel == 'true'){
+                location.href = location.href;
+            }else{
+                alert('删除失败！');
+            }
+        });
+    }
 }
 </script>
 </block>

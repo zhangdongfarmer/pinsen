@@ -6,6 +6,7 @@
  * @author tangguosheng <tanggsh@163.com>
  */
 namespace Manage\Controller;
+use User\Api\UserApi as UserApi;
 
 class StoreController extends BaseController {
     /**
@@ -80,6 +81,7 @@ class StoreController extends BaseController {
      */
     public function baseinfo()
     {
+        print_r($this->user);
     	if($_POST){
     		$data = array(
     			'area_id'	=> intval($_POST['area'][2]),
@@ -92,11 +94,14 @@ class StoreController extends BaseController {
     			}else if($_POST['passwd'] != $_POST['passwd_confirm']){
     				$this->assign('errorMsg', '您两次输入的密码不一致');
     			}
-    			$data['passwd'] = think_passwd_md5($_POST['passwd']);
+                //更改用户密码
+    			$userApi = new UserApi();
+                $changResult = $userApi->changePassword($this->user['uid'], $_POST['passwd']);
     		}
     		$result = D('DrugStore')->where(['id'=>STORE_ID])->save($data);
     		$this->assign('errorMsg', $result ? '更新成功' : '暂无更新或操作失败');
     	}
+        
         $detail = D('DrugStore')->where(['id'=>STORE_ID])->find();
         $this->assign('detail', $detail);
         $this->display();

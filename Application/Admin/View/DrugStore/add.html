@@ -30,9 +30,7 @@
             </div>
             <div class="form-item cf">
                 <label class="item-label">地区：<span class="check-tips"></span></label>
-                <div class="controls">
-                    {:hook('J_China_City', array('province'=>$region[0], 'city'=>$region[1], 'district'=>$region[2], 'community'=>$region[3]))}
-                </div>
+                <div class="controls" area_id="{$area_id}"  id="areaBox"></div>
             </div>
             <div class="form-item cf">
                 <label class="item-label">详细地址：<span class="check-tips"></span></label>
@@ -53,12 +51,6 @@
                 </div>
             </div>
             <div class="form-item cf">
-                <label class="item-label">联系电话：<span class="check-tips"></span></label>
-                <div class="controls">
-                    <input type="text" class="text input-large" name="phone" value="{$phone}">
-                </div>
-            </div>
-            <div class="form-item cf">
                 <label class="item-label">门店数量：<span class="check-tips"></span></label>
                 <div class="controls">
                     <input type="text" class="text input-large" name="subbranch_count" value="{$subbranch_count}">
@@ -70,9 +62,22 @@
                     <input type="text" class="text input-large" name="employee_count" value="{$employee_count}">
                 </div>
             </div>
-        </div>
-
+        </div>        
         <div class="form-item cf">
+            <label class="item-label">手机：<span class="check-tips"></span></label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="phone" value="{$phone}">
+                <span class="check-tips">同时为药店管理后台的登录帐号</span>
+            </div>
+        </div>
+        <div class="form-item cf">
+            <label class="item-label">密码：<span class="check-tips"></span></label>
+            <div class="controls">
+                <input type="password" class="text input-large" name="passwd" value="">
+                <span class="check-tips">输入6-30个字符的密码</span>
+            </div>
+        </div>
+        <div class="form-item cf ml-lab mt2">
             <button class="btn submit-btn ajax-post hidden" id="submit" type="submit" target-form="form-horizontal">确 定</button>
             <a class="btn btn-return" href="{:U('index')}">返 回</a>
             <input type="hidden" name="id" value="{$id|default=''}"/>
@@ -89,6 +94,14 @@
 <script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
 <script type="text/javascript">
+var obj = areaSelect({
+    initAreaId:$('#areaBox').attr('area_id'),	//初始化区域id
+    initUrl:'{:U("manage/user/getAreaSelectPath")}',	//区域初始化数据请求地址
+    getChildrenUrl:'{:U("manage/user/getChildrenArea")}',	//子区域请求地址
+    selectBoxObj:$('#areaBox'),	//存放区域select的jQuery对象
+    selectArrName:'area',	//区域选择select表单name的值数组
+    classNames:'card_word gray'
+});
 
 Think.setValue("type", {$info.type|default='""'});
 Think.setValue("display", {$info.display|default=0});

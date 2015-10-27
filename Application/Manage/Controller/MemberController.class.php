@@ -128,7 +128,7 @@ class MemberController extends BaseController {
 		            'nickname'    => $mobile,
 		            'truename'    => $trueName,
 		            'sex'         => intval(I('post.sex')),
-		            'reg_id'      => get_client_ip(1),
+		            'reg_ip'      => get_client_ip(1),
 		        	'email'		=> $email,
 		            'reg_time'    => time(),
 		            'status'      => 1,

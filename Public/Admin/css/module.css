@@ -7,7 +7,11 @@
 
 /* = 表单
 ------------------------------------------ */
+
 /* 表单组件 */
+.ml-lab{margin-left:150px;}
+.mt2{margin-top:20px;}
+
 .text,.textarea {
 	padding: 4px;
 	border: 1px solid #eeeeee;
@@ -59,7 +63,10 @@ select {
 	margin-bottom: 5px;
 }
 .form-horizontal .item-label {
+    float:left;
 	display: block;
+    width:150px;
+    text-align:right;
 	margin-right: 5px;
 	height: 30px;
 	line-height: 30px;

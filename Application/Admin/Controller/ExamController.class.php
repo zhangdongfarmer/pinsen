@@ -161,12 +161,25 @@ class ExamController extends AdminController {
         $examQuestion = D('ExamQuestion')->where(['exam_id'=>intval($exam_id)])->select();
         $examOptions = D('ExamOptions');
         foreach($examQuestion as $key => $val){
-            $examQuestion[$key]['options'] = $examOptions->where(['quest_id'=>intval($val['quest_id'])])->select();
+            $examQuestion[$key]['options'] = $examOptions->where(['quest_id'=>intval($val['quest_id'])])->order('opt_id asc')->select();
         }
         
         $this->assign('examQuestion', $examQuestion);
         $this->assign('exam_id', $exam_id);
         $this->display();
+    }
+    
+    /**
+     * 删除指定试题
+     * 
+     * @param int $question_id 题id
+     */
+    public function delQuestion($question_id)
+    {
+        $result = D('ExamQuestion')->where(['quest_id'=>intval($question_id)])->delete();
+        if($result){
+            echo 'true';
+        }
     }
     
     public function addExam(){
@@ -372,16 +385,26 @@ class ExamController extends AdminController {
      */
     public function addQuestion()
     {
-        $examId = I('exam_id');
-        $title = I('title');
-        $questionType = I('quest_type');
-        $data = I('data_list'); //答题选项
+        $examId = I('post.exam_id');
+        $questionId = I('post.question_id');
+        $title = I('post.title');
+        $questionType = I('post.quest_type');
+        $data = I('post.data_list'); //答题选项
+        $examOption = D('ExamOptions');
         
         //添加试题
-        $questionId = D('ExamQuestion')->addQuestion($examId, $title, $questionType);
+        if($questionId){
+            $saveData = [
+                'title' => $title,
+                'quest_type' => intval($questionType)
+            ];
+            D('ExamQuestion')->where(['quest_id'=>intval($questionId)])->save($saveData);
+            $examOption->where(array('quest_id'=>intval($questionId)))->delete();
+        }else{
+            $questionId = D('ExamQuestion')->addQuestion($examId, $title, $questionType);
+        }
         if($questionId){
             //添加试题选项
-            $examOption = D('ExamOptions');
             foreach($data as $val){
                 $examOption->addOption($examId, $questionId, $val['opt_name'], $val['is_checked']);
             }
