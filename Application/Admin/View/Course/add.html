@@ -199,7 +199,7 @@
                 <label class="item-label">药店：<span class="check-tips"></span></label>
                 <div class="controls">
                     <volist name="drug_store_list" key="key" id="vo">
-                        <label for="drug_{$vo}"><input name="drug_store_id[]" id="drug_{$vo.id}" type="checkbox" value="{$key}" <if condition="in_array($key, $drug_store_id)">checked="true"</if>> {$vo}</label>&nbsp;&nbsp;&nbsp;
+                        <label for="drug_{$vo}"><input name="drug_store_id[]" id="drug_{$vo.id}" type="checkbox" value="{$key}" <if condition="in_array($key, $storeIds)">checked="true"</if>> {$vo}</label>&nbsp;&nbsp;&nbsp;
                     </volist>
                 </div>
             </div>

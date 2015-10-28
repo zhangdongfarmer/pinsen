@@ -61,6 +61,12 @@ class CourseController extends \Admin\Controller\AdminController {
             $course_info['drug_store_id'] = explode(',', $course_info['drug_store_id']);
             $course_info['create_time'] = date('Y-m-d H:i', $course_info['create_time']);
             $course_info['expire_time'] = date('Y-m-d H:i', $course_info['expire_time']);
+            $courseStore = D('CourseStore')->field('store_id')->where(array('course_id'=>intval($id)))->select();
+            $storeIds = array();
+            foreach($courseStore as $val){
+                $storeIds[$val['store_id']] = $val['store_id'];
+            }
+            $this->assign('storeIds', $storeIds);
             $this->assign($course_info);
             $this->meta_title = '修改课件';
         }else{
@@ -84,11 +90,14 @@ class CourseController extends \Admin\Controller\AdminController {
             }
             D('Course')->where(array('id'=>$id))->save(array('exam_id'=>$id));
         } else { //更新数据
+            $id = I('post.id');
             $status = D('Course')->save(); //更新基础内容
             if(false === $status){
                 $this->error('更新课件出错！');
             }
         }
+        
+        D('CourseStore')->changeCourseRealise($id, $_POST['drug_store_id']);
         
         $jumpUrl = U('Admin/Course/index');
         $this->success('更新成功！', $jumpUrl);
