@@ -23,6 +23,8 @@ class HomeController extends Controller {
 	// TODO: 为了调试方便，暂时注释
 
     protected function _initialize(){
+        redirect(U('manage/user/login'));
+        
         /* 读取站点配置 */
         $config = D('Config')->lists();
         C($config); //添加配置

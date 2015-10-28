@@ -33,9 +33,9 @@
                 <label class="item-label">类型：<span class="check-tips"></span></label>
                 <div class="controls">
                     <select name="type">
-                        <volist name="course_type" key="key" id="vo">
+                        <foreach name="course_type" key="key" item="vo">
                             <option value="{$key}" <eq name="key" value="$type">selected</eq>>{$vo}</option>
-                        </volist>
+                        </foreach>
                     </select>
                 </div>
             </div>
@@ -53,8 +53,8 @@
                 <label class="item-label">药品：<span class="check-tips"></span></label>
                 <div class="controls">
                     <select name="drug_id">
-                        <volist name="drug_list[$pharma_id]"  id="vo">
-                            <option value="{$vo.id}" <eq name="$vo.id" value="$drug_id">selected</eq>>{$vo.title}</option>
+                        <volist name="drug_list"  id="vo">
+                            <option value="{$vo.id}" <eq name="vo.id" value="$drug_id">selected</eq>>{$vo.title}</option>
                         </volist>
                     </select>
                 </div>
@@ -199,7 +199,7 @@
                 <label class="item-label">药店：<span class="check-tips"></span></label>
                 <div class="controls">
                     <volist name="drug_store_list" key="key" id="vo">
-                        <label for="drug_{$vo}"<input name="drug_store_id" id="drug_{$vo}" type="checkbox" value="{$key}" <if condition="in_array($key, $drug_store_id)">checked</if>> {$vo}</label>&nbsp;&nbsp;&nbsp;
+                        <label for="drug_{$vo}"><input name="drug_store_id[]" id="drug_{$vo.id}" type="checkbox" value="{$key}" <if condition="in_array($key, $drug_store_id)">checked="true"</if>> {$vo}</label>&nbsp;&nbsp;&nbsp;
                     </volist>
                 </div>
             </div>

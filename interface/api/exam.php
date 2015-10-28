@@ -22,10 +22,10 @@ class exam extends base{
 				$data['course_type'] = $this->course_types[$data['type']];
 				unset($data['type']);
 				
-				$exam_id = intval($data['exam_id']);
-				$question_data = M('exam_question')->field('count(1) as num,sum(max_value) as total_value')->where('exam_id='.$exam_id)->find();
+				$exam_id = $course_id;
+				$question_data = M('exam_question')->field('count(1) as num')->where('exam_id='.$exam_id)->find();
 				$data['question_count'] = intval($question_data['num']);
-				$data['total_value'] = intval($question_data['total_value']);
+				$data['total_value'] = 100;
 				$rate = intval($data['rate']);
 				$data['pass_value'] = $data['total_value']*$rate/10;
 				

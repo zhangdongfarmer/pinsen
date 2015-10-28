@@ -261,5 +261,19 @@ class UcenterMemberModel extends Model{
 		}
 		return false;
 	}
+    
+    /**
+     * 修改用户密码
+     * 
+     * @param int $uid 用户id
+     * @param string $password 用户密码
+     */
+    public function changePassword($uid, $password)
+    {
+        $saveData = array(
+            'password'  => think_ucenter_md5($password_in, UC_AUTH_KEY)
+        );
+        return $this->where(array('id'=>intval($uid)))->save($saveData);
+    }
 
 }
