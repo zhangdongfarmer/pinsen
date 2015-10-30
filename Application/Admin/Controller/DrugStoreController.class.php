@@ -62,15 +62,15 @@ class DrugStoreController extends \Admin\Controller\AdminController {
 
         //判断是否存在对应的手机号，如果已经存在，则需要重新判断
         $existed_store = $drug_store->where(array('phone'=>$phone))->field('id,uid')->find();
-        if ($existed_store && $existed_store['id'] != $storeId) {
+        if ($existed_store && intval($existed_store['id']) != intval($storeId)) {
             $this->error('系统中已经存在本号码绑定的药店，请核实或者变更号码后重新设置');
         }
 
         //继续向用户中心接口请求检测是否存在手机号使用过
         $userApi = new \User\Api\UserApi();
         $existed_user = $userApi->infoByMobile($phone);
-        if ($existed_user && $existed_user['id'] != $existed_store['uid']) {
-            $this->error('本手机号已经注册过本系统，请核实或者变更号码后重新设置');
+        if ($existed_user && intval($existed_user['id']) != intval($existed_store['uid'])) {
+            $this->error('本手机号已经注册过本系统，请核实或者变更号码后重新设置'. $existed_user['id']);
         }
         
         /* 添加或新增基础内容 */
@@ -106,7 +106,7 @@ class DrugStoreController extends \Admin\Controller\AdminController {
                 //修改member的值
                 $data = array(
                     'nickname'    => $store['phone'],
-                    'truename'    => $store['user_name'],
+                    'truename'    => $store['phone'],
                     'email'       => $store['email'],
                     'status'      => 1
                 );
@@ -119,7 +119,7 @@ class DrugStoreController extends \Admin\Controller\AdminController {
                     $data = array(
                         'uid' => $uid,
                         'nickname'    => $store['phone'],
-                        'truename'    => $store['user_name'],
+                        'truename'    => $store['phone'],
                         'reg_ip'      => get_client_ip(1),
                         'email'       => $store['email'],
                         'reg_time'    => time(),
@@ -129,9 +129,13 @@ class DrugStoreController extends \Admin\Controller\AdminController {
                     );
                     $addResult = M('member')->add($data);	    
                 } else {
-                    $this->error('添加店铺帐号时失败');
+                    $this->error('添加店铺帐号时失败'.$uid);
                 }
             }
+        }
+
+        if ($addResult === false) {
+            $this->error('更新店铺成员失败');
         }
         
         $jumpUrl = U('Admin/DrugStore/index');
