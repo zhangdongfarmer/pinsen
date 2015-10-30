@@ -400,9 +400,9 @@ where ".$map.' order by gr.time desc';
 	 * 兑换礼品
 	 */
 	public function gift($param){
-		if($param['uid'] && $param['oid']){
-			$uid = intval($param['uid']);
-			$oid = intval($param['oid']);
+		$uid = intval($param['uid']);
+		$oid = intval($param['oid']);
+		if($uid && $oid){
 			$gift_score = intval($param['score']);
 			$gift_type = intval($param['gift_type']) ? intval($param['gift_type']) : 1;
 			$pay_type = intval($param['pay_type']) ? intval($param['pay_type']) : 1;
