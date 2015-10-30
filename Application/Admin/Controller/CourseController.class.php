@@ -34,6 +34,10 @@ class CourseController extends \Admin\Controller\AdminController {
     public function index(){
         $this->assign('course_type', $this->course_types);
         $list = $this->lists('Course');
+        foreach($list as $key => $val){
+            $pharma = M('pharma')->field('id, title')->where(['id'=>$val['pharma_id']])->find();
+            $list[$key]['pharma_name'] = $pharma['title'];
+        }
         $this->assign('list', $list);
         $this->meta_title = '课件管理';
         $this->display();
@@ -42,22 +46,26 @@ class CourseController extends \Admin\Controller\AdminController {
         $id = I('get.id','');
         
         $this->assign('course_type', $this->course_types);
-        $pharma_list = M('pharma')->getField('id,title');
+        $pharma_list = M('pharma')->Field('id,title')->select();
         $this->assign('pharma_list', $pharma_list);
         $drug_store_list = M('drug_store')->getField('id,name');
-        $this->assign('drug_store_list', $drug_store_list);
+        $this->assign('drug_store_list', $drug_store_list);        
+        $course_info = D('Course')->find($id);
+        $pharma_id = intval($course_info['pharma_id']);
+        if(empty($pharma_id)){
+            $pharma_id = intval($pharma_list[0]['id']);
+        }
         
-        $drugs = M('drug')->field('id,pharma_id,title')->select();
+        $this->assign('pharma_id', $pharma_id);
+        
+        $drugs = M('drug')->field('id,pharma_id,title')->where(array('pharma_id'=>$pharma_id))->select();
         $drug_list = array();
         $this->assign('drug_list', $drugs);
-        
-        $this->assign('pharma_id', key($pharma_list));
         
         $exam_list = M('Exam')->getField('exam_id, title');
         $this->assign('exam_list', $exam_list);
         
         if($id){
-            $course_info = D('Course')->find($id);
             $course_info['drug_store_id'] = explode(',', $course_info['drug_store_id']);
             $course_info['create_time'] = date('Y-m-d H:i', $course_info['create_time']);
             $course_info['expire_time'] = date('Y-m-d H:i', $course_info['expire_time']);
@@ -80,6 +88,10 @@ class CourseController extends \Admin\Controller\AdminController {
         $data = D('Course')->create($data);
         if(empty($data)){
             return false;
+        }
+        
+        if(strtotime($_POST['expire_time']) <= strtotime($_POST['create_time'])){
+            return $this->error('有效时间不能小于创建时间');
         }
 
         /* 添加或新增基础内容 */
@@ -214,5 +226,17 @@ class CourseController extends \Admin\Controller\AdminController {
         //获取草稿箱权限
         $show_draftbox = C('OPEN_DRAFTBOX');
         $this->assign('show_draftbox', IS_ROOT || $show_draftbox);
+    }
+    
+    //通过药店id获取药品
+    public function getDrug($pharma_id)
+    {
+        $data = M('drug')->field('id, title')->where(array('pharma_id'=>intval($pharma_id)))->select();
+        if($data){
+           echo json_encode(array('code'=>1, 'msg'=>'success', 'data'=>$data)); 
+        }else{
+            echo json_encode(array('code'=>2, 'msg'=>'no data'));
+        }
+        
     }
 }
