@@ -455,6 +455,58 @@ class user extends base{
 			$this->getResponse('', '999');
 		}
 	}
+
+
+	/**
+	 * 兑换礼品
+	 */
+	public function gold2score($param){
+		if($param['uid'] && $param['gold_num']){
+			$uid = intval($param['uid']);
+			$gold_num = intval($param['gold_num']);
+
+			$user_info = D('Member')->info($uid,'score,gold');
+			if($user_info){
+				$user_score = intval($user_info['score']);
+				$user_gold = intval($user_info['gold']);
+
+				//1个金币换10个积分
+				if ($user_gold < $gold_num) {
+					$this->getResponse('', '金币不足', true);
+				}
+
+				$affected_score = $gold_num * 10;
+
+				//记录交易记录
+				$add['uid'] = $uid;
+				$add['oid'] = -1;
+				$add['score'] = $affected_score;
+				$add['gold'] = $gold_num;
+				$add['pay_type'] = 2;
+				$add['gift_type'] = -1;//兑换积分
+				$add['time'] = time();
+				$rs = M('gift_record')->add($add);
+				if (!$rs) {
+					$this->getResponse('', '记录兑换失败', true);
+				}
+
+				//修改金币积分并返回
+				$save['score'] = array('exp',"`score`+{$affected_score}");
+				$save['gold'] = array('exp',"`gold`-{$gold_num}");
+				$res = M('member')->where('uid='.$uid)->save($save);
+
+				if (!$res) {
+					$this->getResponse('', '更新积分失败', true);
+				}
+				$this->getResponse(array('score'=>$user_score + $affected_score, 'gold'=>$user_gold - $gold_num), '0');
+			}else{
+				$this->getResponse('', '301');
+			}
+
+		}else{
+			$this->getResponse('', '999');
+		}
+	}
 	
 	/**
 	 * 帮助反馈
