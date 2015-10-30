@@ -83,38 +83,38 @@ class exam extends base{
 			
 			$exam_info = M('exam')->where('exam_id='.$exam_id)->field('rate')->find();
 			$rate = intval($exam_info['rate'])/10;
-			$quest_info = M('exam_question')->where('exam_id='.$exam_id)->field('sum(max_value) as total_value')->find();
+			$quest_info = M('exam_question')->where('exam_id='.$exam_id)->field('sum(max_value) as total_value, count(*) as cnt')->find();
 			$pass_value = intval($quest_info['total_value'])*$rate;
 			//$submit_info = M('exam_options')->where("opt_id in ({$param['opt_ids']})")->field('sum(opt_value) as submit_value')->find();
 			//$submit_value = intval($submit_info['submit_value']);
 			
 			$submit_value = 0;
+            $totalQuestion = intval($quest_info['cnt']);
 			$result = json_decode($result,true);
 			foreach($result as $val){
 				$quest_id = intval($val['quest_id']);
 				$opt_ids = trim($val['opt_ids']);
 				$opt_arr = explode(',',$opt_ids);
 				$opt_num = count($opt_arr);
-				$quest = M('exam_question')->where("quest_id={$quest_id}")->find();
-				
-				if($quest['quest_type'] == 1 ){ //单选
-					if($opt_num > 1){
-						continue;
-					}else{
-						$option = M('exam_options')->where("opt_id={$opt_ids}")->field('opt_value')->find();
-						if($option['opt_value'] > 0){
-							$submit_value += intval($option['opt_value']);
-						}
-					}
-				}else{ //多选
-					$option = M('exam_options')->where("opt_id in ({$opt_ids}) and opt_value>0")->field("sum(opt_value) as submit_value,count(1) as num")->find();
-					if($option['num'] == $opt_num){
-						$submit_value += intval($option['submit_value']);
-					}
-				}
+				//$quest = M('exam_question')->where(array("quest_id"=>intval($quest_id)))->find();
+				$wh = array(
+                    'quest_id'  =>  $quest_id,
+                    'opt_value' => 1
+                );
+                $option = M('exam_options')->where($wh)->field("opt_id")->select();
+                if(count($opt_arr) == count($option)){
+                    $trueFlog = 1;
+                    foreach($option as $val){
+                        if(!in_array($val['opt_id'], $opt_arr)){
+                            $trueFlog = 0;
+                            break;
+                        }
+                    }
+                    $submit_value += $trueFlog;
+                }
 			}
 			
-			if($submit_value >= $pass_value){
+			if($submit_value>0 && $submit_value/$totalQuestion >= 0.8){
 				$course_info = M('course')->where('id='.$course_id)->field('type,gold')->find();
 				if($course_info['type'] == 1){
 					$data['gold'] = $course_info['gold'];
