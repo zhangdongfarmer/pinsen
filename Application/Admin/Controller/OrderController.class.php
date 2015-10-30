@@ -61,7 +61,7 @@ class OrderController extends \Admin\Controller\AdminController
         if(empty($_POST['id'])){ //新增数据
             $id = M('order')->add($data); //添加基础内容
             if(!$id){
-                $this->error('添加礼品出错！');
+                $this->error('添加礼品出错！'.M('order')->getLastSql());
             }
         } else { //更新数据
         	$id = intval($_POST['id']);

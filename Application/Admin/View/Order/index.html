@@ -2,14 +2,14 @@
 
 <!-- 子导航 -->
 <block name="sidebar">
-    <include file="sidemenu" />
+    <include file="Public/sidemenu" />
 </block>
 
 <block name="body">
 	<!-- 标题 -->
 	<div class="main-title">
 		<h2>
-		分店管理
+		礼品管理
 		</h2>
 	</div>
 
@@ -21,12 +21,15 @@
                                     <a class="btn" href="{:U('Order/add')}">新 增</a>
 				</if>
 			</div>
+			<!--
             <button class="btn ajax-post" target-form="ids" url="{:U("Order/setStatus",array("status"=>1))}">启 用</button>
 			<button class="btn ajax-post" target-form="ids" url="{:U("Order/setStatus",array("status"=>0))}">禁 用</button>
 			<button class="btn ajax-post confirm" target-form="ids" url="{:U("Order/setStatus",array("status"=>-1))}">删 除</button>
+			-->
 		</div>
 
 		<!-- 高级搜索 -->
+		<!--
 		<div class="search-form fr cf">
 			<div class="sleft">
 				<div class="drop-down">
@@ -57,6 +60,8 @@
                 </div>
             </div>
 		</div>
+
+		-->
 	</div>
 
 	<!-- 数据表格 -->
@@ -87,7 +92,7 @@
                         <td>{$data['id']}</td>
                         <td>{$data['name']}</td>
                         <td>{$data['score']}</td>
-                        <td><img src="{$data['ico']}" onload="javascript:DrawImage(this,44,44);$(this).show();" /></td>
+                        <td><img height="40" src="{$data['ico']}" onload="javascript:DrawImage(this,44,44);$(this).show();" /></td>
                         <td>{$data['type']}</td>
                         <td>{$data['sort']}</td>
                         <td>{$data['is_hide']}</td>
