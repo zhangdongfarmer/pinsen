@@ -81,13 +81,17 @@ class course extends base{
 			$map['id'] = $course_id;
 			$field = 'id,title,type,course_ico,comment_count,play_count,create_time,expire_time,describe,score,gold,video_url';
 			$course = $course_model->where($map)->field($field)->find();
+            if(!$course){
+                return $this->getResponse('','999');
+            }
 			$course['create_time'] = date('Y-m-d',$course['create_time']);
 			$course['expire_time'] = date('Y-m-d',$course['expire_time']);
+            
             if(intval($course['course_ico'])){
-                $picture = M('Picture')->field('path')->where(array('id'=>intval($course['course_ico'])))->find();
-                $course['course_ico'] = IMG_HOST . $course['course_ico'];
-            }else{                
+                $picture = M('Picture')->field('path')->where(array('id'=>intval($course['course_ico'])))->find();var_dump($picture);
                 $course['course_ico'] = IMG_HOST . $picture['path'];
+            }else{                
+                $course['course_ico'] = IMG_HOST . $course['course_ico'];
             }
             
 			//查询用户视频学习状态
