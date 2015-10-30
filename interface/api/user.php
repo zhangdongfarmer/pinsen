@@ -102,7 +102,7 @@ class user extends base{
 	public function info($param){
 		if($param['uid']){
 			$uid = intval($param['uid']);
-			$field = 'a.uid,a.head,a.truename,b.mobile as phone,a.sex,a.job,a.subbranch_id';
+			$field = 'a.uid,a.head,a.truename,b.mobile as phone,a.sex,a.job,a.subbranch_id, a.score, a.gold';
 			$info = M()->table(C('DB_PREFIX').'member a')->join(C('DB_PREFIX').'ucenter_member b on a.uid=b.id')
 			           ->field($field)->where('uid='.$uid)->find();
 			if($info){
@@ -286,6 +286,11 @@ where ".$map.' order by gr.time desc';
 			$gift_record = M('gift_record')->query($sql);
 			//$gift_record = $this->format_record($gift_record,'gift',1);
 
+			foreach($gift_record as &$v){
+				$path = M('picture')->where('id='.$v['order_ico'])->find();
+				$v['order_ico'] =  "http://".$_SERVER['HTTP_HOST'].'/'.$path['path'];
+			}
+
 			//根据时间倒序对数组重新排序
 			$this->getResponse($gift_record, '0');
 		}else{
@@ -386,7 +391,7 @@ where ".$map.' order by gr.time desc';
 		$data = M('order')->where($map)->field($field)->order($order)->page($page)->limit($page_size)->select();
 		foreach($data as &$v){
 			$path = M('picture')->where('id='.$v['order_ico'])->find();
-	        $v['order_ico'] = __ROOT__.$path['path'];
+			$v['order_ico'] =  "http://".$_SERVER['HTTP_HOST'].'/'.$path['path'];
 		}
 		$this->getResponse($data?$data:array(), '0');
 	}
