@@ -42,9 +42,9 @@
             <div class="form-item cf">
                 <label class="item-label">活动药厂：<span class="check-tips"></span></label>
                 <div class="controls">
-                    <select name="pharma_id">
+                    <select name="pharma_id" id="pharm_id">
                         <volist name="pharma_list" key="key" id="vo">
-                            <option value="{$key}" <eq name="key" value="$pharma_id">selected</eq>>{$vo}</option>
+                            <option value="{$vo.id}" <eq name="vo['id']" value="$pharma_id">selected</eq>>{$vo.title}</option>
                         </volist>
                     </select>
                 </div>
@@ -52,11 +52,17 @@
             <div class="form-item cf">
                 <label class="item-label">药品：<span class="check-tips"></span></label>
                 <div class="controls">
-                    <select name="drug_id">
+                    <select name="drug_id" id="drug_id">
                         <volist name="drug_list"  id="vo">
                             <option value="{$vo.id}" <eq name="vo.id" value="$drug_id">selected</eq>>{$vo.title}</option>
                         </volist>
                     </select>
+                </div>
+            </div>
+            <div class="form-item cf">
+                <label class="item-label">播放时长：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <input type="text" class="text input-large" name="play_length" value="{$play_length}">
                 </div>
             </div>
             <div class="form-item cf">
@@ -201,9 +207,11 @@
             <div class="form-item cf">
                 <label class="item-label">药店：<span class="check-tips"></span></label>
                 <div class="controls">
+                    <select name="drug_store_list">
                     <volist name="drug_store_list" key="key" id="vo">
-                        <label for="drug_{$vo}"><input name="drug_store_id[]" id="drug_{$vo.id}" type="checkbox" value="{$key}" <if condition="in_array($key, $storeIds)">checked="true"</if>> {$vo}</label>&nbsp;&nbsp;&nbsp;
+                       <option value="{$key}" <if condition="in_array($key, $storeIds)">selected="true"</if>> {$vo}</option>
                     </volist>
+                    </select>
                 </div>
             </div>
         </div>
@@ -225,6 +233,28 @@
 <script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
 <script type="text/javascript">
+$(function(){
+    $('#pharm_id').change(function(){
+        var pharId = $(this).val() - 1 + 1 ;
+        $.ajax({
+            url:'{:U("admin/course/getDrug")}',
+            type:'get',
+            dataType:'json',
+            data:{'pharma_id':pharId},
+            success:function(rel){                
+                $('#drug_id option').remove();
+                if(rel.code == 1){                    
+                    for( var i in rel.data){
+                        if(rel.data[i].id){
+                         $('#drug_id').append('<option value="'+rel.data[i].id+'">'+rel.data[i].title+'</option>');
+                        }
+                    }
+                }
+            }
+        });
+    });
+});
+    
 
 Think.setValue("type", {$info.type|default='""'});
 Think.setValue("display", {$info.display|default=0});

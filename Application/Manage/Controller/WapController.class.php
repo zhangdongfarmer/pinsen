@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Home\Controller;
+namespace Manage\Controller;
 use Think\Controller;
 
 class WapController extends Controller {

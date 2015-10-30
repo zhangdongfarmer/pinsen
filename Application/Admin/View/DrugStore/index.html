@@ -9,7 +9,7 @@
 	<!-- 标题 -->
 	<div class="main-title">
 		<h2>
-		课件管理
+		药店管理
 		</h2>
 	</div>
 
@@ -68,7 +68,8 @@
                     </th>
                     <th>ID</th>
                     <th>标题</th>
-                    <th>显示</th>
+                    <th>联系人</th>
+                    <th>手机</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -80,7 +81,8 @@
                         <td><input class="ids" type="checkbox" value="{$data['id']}" name="ids[]"></td>
                         <td>{$data['id']}</td>
                         <td>{$data['name']}</td>
-                        <td>{$data['is_hide'] ? '否' : '是'}</td>
+                        <td>{$data['contacts']}</td>
+                        <td>{$data['phone']}</td>
                         <td>
                             <a href="{:U('add', array('id'=>$data['id']))}">修改</a> 
                             <a href="{:U('delete', array('id'=>$data['id']))}">删除</a>

@@ -52,10 +52,7 @@ class PharmaController extends \Admin\Controller\AdminController {
          /* 获取数据对象 */
         $pharma = D('Pharma');
         $data = $pharma->create();
-        I('post.province','') && $data['region'] = I('post.province','');
-        I('post.city','') && $data['region'] .= ',' . I('post.city','');
-        I('post.district','') && $data['region'] .= ',' . I('post.district','');
-        I('post.community','') && $data['region'] .= ',' . I('post.community','');
+        $data['region'] = intval(intval($_POST['area'][2]));
         
         if(empty($data)){
             return false;

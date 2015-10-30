@@ -68,9 +68,9 @@
                     </th>
                     <th>ID</th>
                     <th>类型</th>
-                    <th>标题</th>
-                    <th>显示</th>
-                    <th>排序</th>
+                    <th>课件名称</th>
+                    <th>厂商</th>
+                    <th>截止日期</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -83,8 +83,8 @@
                         <td>{$data['id']}</td>
                         <td>{$course_type[$data['type']]}</td>
                         <td>{$data['title']}</td>
-                        <td>{$data['is_hide'] ? '否' : '是'}</td>
-                        <td>{$data['sort']}</td>
+                        <td>{$data.pharma_name}</td>
+                        <td>{:date('Y-m-d', $data['expire_time'])}</td>
                         <td>
                             <a href="{:U('add', array('id'=>$data['id']))}">修改</a> 
                             <a href="javascript:void(0);" onclick="delCourse('{:U('delete', array('id'=>$data['id']))}')" class="del_course">删除</a>  

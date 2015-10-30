@@ -9,7 +9,7 @@
 	<!-- 标题 -->
 	<div class="main-title">
 		<h2>
-		课件管理
+		药品管理
 		</h2>
 	</div>
 
@@ -68,6 +68,8 @@
                     </th>
                     <th>ID</th>
                     <th>药品名</th>
+                    <th>规格</td>
+                    <th>药厂</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -79,6 +81,8 @@
                         <td><input class="ids" type="checkbox" value="{$data['id']}" name="ids[]"></td>
                         <td>{$data['id']}</td>
                         <td>{$data['title']}</td>
+                        <td>{$data.gui_ge}</td>
+                        <td>{$data.pharma_title}</td>
                         <td>
                             <a href="{:U('add', array('id'=>$data['id']))}">修改</a> 
                             <a href="{:U('delete', array('id'=>$data['id']))}">删除</a>

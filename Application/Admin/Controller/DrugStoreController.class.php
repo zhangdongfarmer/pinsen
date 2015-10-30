@@ -69,10 +69,8 @@ class DrugStoreController extends \Admin\Controller\AdminController {
         //继续向用户中心接口请求检测是否存在手机号使用过
         $userApi = new \User\Api\UserApi();
         $existed_user = $userApi->infoByMobile($phone);
-        if ($existed_user) {
-            if ($existed_user['id'] != $existed_store['uid']) {
-                $this->error('本手机号已经注册过本系统，请核实或者变更号码后重新设置');
-            }
+        if ($existed_user && $existed_user['id'] != $existed_store['uid']) {
+            $this->error('本手机号已经注册过本系统，请核实或者变更号码后重新设置');
         }
         
         /* 添加或新增基础内容 */
@@ -82,6 +80,14 @@ class DrugStoreController extends \Admin\Controller\AdminController {
                 $this->error('新增药店出错！');
             }   
         } else { //更新数据
+            $existed_store_update =  $drug_store->where(array('id'=>$data['id']))->field('id,uid,phone')->find();
+            if (!$existed_store_update) {
+                $this->error('修改的药店不存在');
+            }
+            if ($existed_store_update['phone'] != $phone && $existed_store_update['uid'] && !$passwd) {
+                //绑定过手机号且绑定过用户的必须带入密码
+                $this->error('已经绑定过用户的药店变更手机时必须填写密码');
+            }
             $status = $drug_store->save($data); //更新基础内容
             if(false === $status){
                 $this->error('更新药店出错！');
@@ -93,10 +99,18 @@ class DrugStoreController extends \Admin\Controller\AdminController {
         if($passwd){
             $store = $drug_store->field('id, phone, email, uid')->where(array('id'=>$storeId))->find();
             if($store['uid']){
-                $result = $userApi->changePassword($store['uid'], $passwd);
-                if (!$result) {
+                $result = $userApi->changePassword($store['uid'], $passwd, $store['phone']);
+                if ($result === false) {
                     return $this->error('修改密码时失败');
                 }
+                //修改member的值
+                $data = array(
+                    'nickname'    => $store['phone'],
+                    'truename'    => $store['user_name'],
+                    'email'       => $store['email'],
+                    'status'      => 1
+                );
+                $addResult = M('member')->where(array('subbranch_id'=>$storeId, 'uid'=>$store['uid']))->save($data);
             }else{
                 //帐号不存在，新增帐号
                 $uid = $userApi->register($store['phone'], $passwd, $store['email'], $store['phone']);

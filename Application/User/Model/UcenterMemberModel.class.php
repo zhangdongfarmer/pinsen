@@ -285,11 +285,14 @@ class UcenterMemberModel extends Model{
      * @param int $uid 用户id
      * @param string $password 用户密码
      */
-    public function changePassword($uid, $password)
+    public function changePassword($uid, $password, $phone)
     {
         $saveData = array(
-            'password'  => think_ucenter_md5($password, UC_AUTH_KEY)
+            'password'  => think_ucenter_md5($password, UC_AUTH_KEY),
+            'username'     => $phone,
+            'mobile'       => $phone
         );
+        
         return $this->where(array('id'=>intval($uid)))->save($saveData);
     }
 
