@@ -23,10 +23,23 @@ class DrugController extends \Admin\Controller\AdminController {
         $this->getMenu();
     }
     /**
-     * 列表
+     * 列表    array (size=6)
+      'id' => string '2' (length=1)
+      'pharma_id' => string '2' (length=1)
+      'title' => string '思密达(蒙脱石散)' (length=23)
+      'gui_ge' => string '' (length=0)
+      'bar_code' => string '222222' (length=6)
+      'create_time' => string '0' (length=1)
+  2 => 
+    array (size=6)
      */
     public function index(){
         $list = $this->lists('Drug');
+        foreach($list as $key => $val){
+            $pharma = M('pharma')->where(array('id'=>$val['pharma_id']))->find();
+            $list[$key]['pharma_title'] = $pharma['title'];
+        }
+        //var_dump($list);
         $this->assign('list', $list);
         $this->meta_title = '药品管理';
         $this->display();
