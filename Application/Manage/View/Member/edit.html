@@ -2,7 +2,7 @@
 <div class="main_title"><if condition="empty($uid)">增加<else/>修改</if>店员信息</div>
     <div class="main_content_box layout">
         <div class="table-box">
-            <form action="{:U('member/add', array('id'=>$subbranch_id))}" method="post" id="addForm" >
+            <form action="{:U('member/edit', array('id'=>$subbranch_id))}" method="post" id="addForm" >
             <div class="error">{$info}</div>
             <table width="100%" cellspacing= "1" cellpadding= "1" bgcolor="#eee">
                 <tbody>
