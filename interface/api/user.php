@@ -362,10 +362,10 @@ class user extends base{
 		$page = intval($param['page']) ? intval($param['page']) : 1;
 		$page_size = intval($param['page_size']) ? intval($param['page_size']) : 5;
 		$data = M('order')->where($map)->field($field)->order($order)->page($page)->limit($page_size)->select();
-		/*foreach($data as &$v){
+		foreach($data as &$v){
 			$path = M('picture')->where('id='.$v['order_ico'])->find();
 	        $v['order_ico'] = __ROOT__.$path['path'];
-		}*/
+		}
 		$this->getResponse($data?$data:array(), '0');
 	}
 	
