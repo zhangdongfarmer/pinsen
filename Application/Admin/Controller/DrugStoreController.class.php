@@ -144,7 +144,7 @@ class DrugStoreController extends \Admin\Controller\AdminController {
     }
     
     public function delete(){
-        $ids = I('post.id');
+        $ids = I('id');
         D('DrugStore')->delete($ids);
         $err = D('DrugStore')->getError();
         if($err){
