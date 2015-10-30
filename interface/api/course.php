@@ -57,7 +57,7 @@ class course extends base{
                     $picture = M('picture')->field('path')->where(array('id'=>$v['course_ico']))->find();
                     $data[$key]['course_ico'] = IMG_HOST . $picture['path'];
                 }else{
-                    $data[$key]['course_ico'] = IMG_HOST . $v['course_icon'];
+                    $data[$key]['course_ico'] = IMG_HOST . $v['course_ico'];
                 }
 				$data[$key]['create_time'] = date('Y-m-d',$v['create_time']);
 			}
