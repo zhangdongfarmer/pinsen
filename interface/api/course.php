@@ -50,9 +50,18 @@ class course extends base{
 		$order = $order_map[$order_by].' '.$order_seq;
 		$field = 'id,title,course_ico,comment_count,play_count,create_time,is_recom';
 		$data = M('course')->where($map)->field($field)->order($order)->page($page)->limit($page_size)->select();
+        
 		if($data){
-			foreach($data as &$v){
-				$v['create_time'] = date('Y-m-d',$v['create_time']);
+			foreach($data as $key => $v){
+                if(intval($v['course_ico'])){
+                    $picture = M('picture')->field('path')->where(array('id'=>$v['course_ico']))->find();
+                    if($picture){
+                        $data[$key]['course_icon'] = IMG_HOST . $picture['path'];
+                    }
+                }else{
+                    $data[$key]['course_icon'] = IMG_HOST . $v['course_icon'];
+                }
+				$data[$key]['create_time'] = date('Y-m-d',$v['create_time']);
 			}
 		}
 		$this->getResponse($data?$data:array(),'0');

@@ -36,7 +36,7 @@ class PictureModel extends Model{
      */
     public function upload($files, $setting, $driver = 'Local', $config = null){
         /* 上传文件 */
-        $setting['callback'] = array($this, 'isFile');
+        //$setting['callback'] = array($this, 'isFile');
         $Upload = new Upload($setting, $driver, $config);
         $info   = $Upload->upload($files);
 

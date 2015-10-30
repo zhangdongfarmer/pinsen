@@ -4,6 +4,7 @@ header('content-type:text/html;charset=utf-8');
 define('IsInterface',1);
 define('ENTERPRISE',1);//企业产品培训
 define('PLATFORM',2);//平台视频
+define('IMG_HOST', 'http://www.pinsenqihang.com/');
 require dirname(__FILE__).'/../index.php';
 
 $method = trim($_REQUEST['method']);
