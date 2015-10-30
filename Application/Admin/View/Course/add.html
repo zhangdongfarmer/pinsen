@@ -151,13 +151,16 @@
                     <div id="upload_file_video_url-button" class="uploadify-button " style="height: 30px; line-height: 30px; width: 120px;">
                         <span class="uploadify-button-text">上传视频</span>
                     </div>
+                    <div><?php if ($video_url) {?>原视频：<a target="_blank" href="<?php echo urldecode($video_url)?>"><?php echo $video_url?></a><?php }?></div>
                     <span id="install_http_uploader"></span>
 
                     <input type="hidden" id="upload_file_video_url" class="uploadify">
                     <input type="hidden" name="video_url" value="{$video_url|default=''}"/>
                     <div class="upload-img-box">
+
                     </div>
-                    <div id="upload-video-ui" style="background: #CCFF99;"></div>
+                    <div id="upload-video-ui" style="background: #CCFF99;">
+                    </div>
                 </div>
                 <script type="text/javascript" src="__STATIC__/HttpUploader6/js/up6-single.js" charset="utf-8"></script>
                 <script type="text/javascript">
