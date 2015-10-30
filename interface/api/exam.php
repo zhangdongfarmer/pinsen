@@ -14,9 +14,12 @@ class exam extends base{
 			
 			$map['a.id'] = $course_id;
 			$map['b.state'] = 1;
-			$field = 'a.title as course_title,a.type,a.gold,b.rate,b.exam_id,b.title as exam_title,b.e_time';
-			$data = M()->table(C('DB_PREFIX').'course a')->join(C('DB_PREFIX').'exam b on a.exam_id=b.exam_id')
-			           ->field($field)->where($map)->find();
+			//$field = 'a.title as course_title,a.type,a.gold,b.rate,b.exam_id,b.title as exam_title,b.e_time';
+			$data = M('course')->where(array('id'=>$course_id))->find();
+            $data['course_title'] = $data['exam_title'] = $data['title'];
+            $data['e_time'] = 30; //分钟
+            $data['exam_id'] = $course_id;
+            $data['rate'] = 6;
 			if(!empty($data)){
 				$data['course_level'] = $data['type'] == 1 ? ENTERPRISE : PLATFORM;
 				$data['course_type'] = $this->course_types[$data['type']];
@@ -59,7 +62,7 @@ class exam extends base{
 				$data[$k]['title'] = trim($v['title']);
 				$data[$k]['quest_type'] = intval($v['quest_type']);
 				$data[$k]['max_value'] = intval($v['max_value']);
-				$options = M('exam_options')->where('quest_id='.$quest_id)->field('opt_id,opt_name,opt_value')->order('sort_no asc,opt_id desc')->select();
+				$options = M('exam_options')->where('quest_id='.$quest_id)->field('opt_id,opt_name,opt_value')->order('opt_id asc')->select();
 				$data[$k]['options'] = $options ? $options : array();
 			}
 			$this->getResponse($data,'0');

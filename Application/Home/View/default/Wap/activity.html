@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>{$detail.title}</title>
+</head>
+<body style="margin:0px; padding:5px; line-height:2; font-size:14px; font-family:'微软雅黑'">
+<div style="padding:10px 0px; font-weight:bold; font-size:18px;">{$detail.title}</div>
+
+<if condition="$detail.act_ico">
+<img src="{$detail.act_ico}" title="$detail.title" />
+</if>
+<div>
+{$detail.content}
+</div>
+
+<div style="padding:10px 5px; background:#e3e3e3; border:1px solid #ccc;">
+<div>
+活动开始时间：{:date('Y-m-d', $detail['start_time'])} <br/>
+活动结束时间： {:date('Y-m-d', $detail['end_time'])}</div>
+<if condition="$store">
+<div >
+参加活动经销商：{$store.name}
+</div>
+</if>
+<if condition="$subbranchList">
+<foreach name="$subbranchList" item="val">
+<div>{$val.name}</div>
+</foreach>
+</if>
+</div>
+</body>
+</html>

@@ -48,11 +48,19 @@ class course extends base{
 		$order_map = array('default'=>'id','time'=>'create_time','score'=>'comment_count','play'=>'play_count');
 		$order_seq = $param['order_seq'] == '2' ? 'asc' : 'desc';
 		$order = $order_map[$order_by].' '.$order_seq;
-		$field = 'id,title,course_ico,comment_count,play_count,create_time,is_recom';
+		$field = 'id,title,course_ico,comment_count,play_count,create_time,is_recom,expire_time,gold,score';
 		$data = M('course')->where($map)->field($field)->order($order)->page($page)->limit($page_size)->select();
+        
 		if($data){
-			foreach($data as &$v){
-				$v['create_time'] = date('Y-m-d',$v['create_time']);
+			foreach($data as $key => $v){
+                if(intval($v['course_ico'])){
+                    $picture = M('picture')->field('path')->where(array('id'=>$v['course_ico']))->find();
+                    $data[$key]['course_ico'] = IMG_HOST . $picture['path'];
+                }else{
+                    $data[$key]['course_ico'] = IMG_HOST . $v['course_ico'];
+                }
+				$data[$key]['create_time'] = date('Y-m-d',$v['create_time']);
+                $data[$key]['expire_time'] = date('Y-m-d', $v['expire_time']);
 			}
 		}
 		$this->getResponse($data?$data:array(),'0');
@@ -74,10 +82,19 @@ class course extends base{
 			$map['id'] = $course_id;
 			$field = 'id,title,type,course_ico,comment_count,play_count,create_time,expire_time,describe,score,gold,video_url';
 			$course = $course_model->where($map)->field($field)->find();
+            if(!$course){
+                return $this->getResponse('','999');
+            }
 			$course['create_time'] = date('Y-m-d',$course['create_time']);
 			$course['expire_time'] = date('Y-m-d',$course['expire_time']);
-			$course['course_ico'] = $course['course_ico'];
-			$course['video_url'] = $course['video_url'];
+            
+            if(intval($course['course_ico'])){
+                $picture = M('Picture')->field('path')->where(array('id'=>intval($course['course_ico'])))->find();
+                $course['course_ico'] = IMG_HOST . $picture['path'];
+            }else{                
+                $course['course_ico'] = IMG_HOST . $course['course_ico'];
+            }
+            
 			//查询用户视频学习状态
 			$status_map = array(0=>'未看过',1=>'未考试',2=>'未通过',3=>'已通过');
 			$course['status'] = 0;

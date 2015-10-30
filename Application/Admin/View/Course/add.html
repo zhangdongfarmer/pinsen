@@ -86,13 +86,13 @@
             <div class="form-item cf">
                 <label class="item-label">发布日期：<span class="check-tips"></span></label>
                 <div class="controls">
-                    <input type="text" class="text input-large time" placeholder="请选择时间" name="create_time" value="{$create_time|default=date('Y-m-d H:i:s')}">
+                    <input type="text" class="text input-large time" placeholder="请选择时间" name="create_time" value="{$create_time|default=date('Y-m-d')}">
                 </div>
             </div>
             <div class="form-item cf">
                 <label class="item-label">有效日期：<span class="check-tips"></span></label>
                 <div class="controls">
-                    <input type="text" class="text input-large time" placeholder="请选择时间" name="expire_time" value="{$expire_time}">
+                    <input type="text" class="text input-large time" placeholder="请选择时间" name="expire_time" value="{$expire_time|default=date('Y-m-d', strtotime('+3 month'))}">
                 </div>
             </div>
             <div class="form-item cf">
@@ -108,7 +108,7 @@
                     <input type="hidden" name="course_ico" id="cover_id_course_ico" value="{$course_ico|default=''}"/>
                     <div class="upload-img-box">
                     <notempty name="course_ico">
-                        <div class="upload-pre-item"><img src="{$course_ico|get_cover='path'}"/></div>
+                        <div class="upload-pre-item"><img src="{$course_ico}" width="120" /></div>
                     </notempty>
                     </div>
                 </div>
@@ -130,8 +130,8 @@
                         var data = $.parseJSON(data);
                         var src = '';
                         if(data.status){
-                            $("#cover_id_course_ico").val(data.id);
-                            src = data.url || '__ROOT__' + data.path
+                            src = data.url || '__ROOT__' + data.path;
+                            $("#cover_id_course_ico").val(src);
                             $("#cover_id_course_ico").parent().find('.upload-img-box').html(
                                 '<div class="upload-pre-item"><img src="__ROOT__' + src + '"/></div>'
                             );
@@ -199,7 +199,7 @@
                 <label class="item-label">药店：<span class="check-tips"></span></label>
                 <div class="controls">
                     <volist name="drug_store_list" key="key" id="vo">
-                        <label for="drug_{$vo}"><input name="drug_store_id[]" id="drug_{$vo.id}" type="checkbox" value="{$key}" <if condition="in_array($key, $drug_store_id)">checked="true"</if>> {$vo}</label>&nbsp;&nbsp;&nbsp;
+                        <label for="drug_{$vo}"><input name="drug_store_id[]" id="drug_{$vo.id}" type="checkbox" value="{$key}" <if condition="in_array($key, $storeIds)">checked="true"</if>> {$vo}</label>&nbsp;&nbsp;&nbsp;
                     </volist>
                 </div>
             </div>
