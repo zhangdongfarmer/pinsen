@@ -83,8 +83,13 @@ class course extends base{
 			$course = $course_model->where($map)->field($field)->find();
 			$course['create_time'] = date('Y-m-d',$course['create_time']);
 			$course['expire_time'] = date('Y-m-d',$course['expire_time']);
-			$course['course_ico'] = $course['course_ico'];
-			$course['video_url'] = $course['video_url'];
+            if(intval($course['course_ico'])){
+                $picture = M('Picture')->field('path')->where(array('id'=>intval($course['course_ico'])))->find();
+                $course['course_ico'] = IMG_HOST . $course['course_ico'];
+            }else{                
+                $course['course_ico'] = IMG_HOST . $picture['path'];
+            }
+            
 			//查询用户视频学习状态
 			$status_map = array(0=>'未看过',1=>'未考试',2=>'未通过',3=>'已通过');
 			$course['status'] = 0;
