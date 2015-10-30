@@ -16,7 +16,7 @@ class exam extends base{
 			$map['b.state'] = 1;
 			//$field = 'a.title as course_title,a.type,a.gold,b.rate,b.exam_id,b.title as exam_title,b.e_time';
 			$data = M('course')->where(array('id'=>$course_id))->find();
-            $data['exam_title'] = $data['title'];
+            $data['course_title'] = $data['exam_title'] = $data['title'];
             $data['e_time'] = 30; //分钟
             $data['exam_id'] = $course_id;
             $data['rate'] = 6;
