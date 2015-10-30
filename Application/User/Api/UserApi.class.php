@@ -99,4 +99,9 @@ class UserApi extends Api{
 		return $return;
 	}
 	
+    
+    public function changePassword($uid, $password)
+    {
+        return $this->model->changePassword($uid, $password);
+    }
 }

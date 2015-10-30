@@ -42,7 +42,7 @@ function HttpUploaderMgr()
   this.Config = {
     "EncodeType"		: "utf-8"
     , "Company"			: "荆门泽优软件有限公司"
-    , "Version"			: "2,7,100,31354"
+    , "Version"			: "2,7,100,31474"
     , "License"			: ""
     , "Authenticate"	: ""//域验证方式：basic,ntlm
     , "AuthName"		: ""//域帐号
@@ -67,32 +67,35 @@ function HttpUploaderMgr()
      , "UrlList"			: ""
      , "UrlDel"			: ""*/
     //x86
-    , "ClsidDroper"		: "0868BADD-C17E-4819-81DE-1D60E5E734A6"
-    , "ClsidUploader"	: "3F154995-5C50-4159-9049-524675A101C5"
-    , "ClsidPartition"	: "BA0B719E-F4B7-464b-A664-6FC02126B652"
-    , "CabPath"			: "http://www.pinsenqihang.com/Public/static/HttpUploader/HttpUploader6.cab"
+    , "ClsidDroper"		: "0A1FC315-D29F-47DD-B56D-32747A65DE49"
+    , "ClsidUploader"	: "30059ABD-89E2-402B-A212-1723C475D6EC"
+    , "ClsidPartition"	: "88D17C26-8771-407F-9EBD-D961ED2A6B54"
+    , "CabPath"			: "http://www.ncmem.com/download/HttpUploader6/HttpUploader6.cab"
     //x64
     , "ClsidDroper64"	: "7B9F1B50-A7B9-4665-A6D1-0406E643A856"
     , "ClsidUploader64"	: "FD5955CA-4003-4CD8-9CB0-9475C81A9BE9"
     , "ClsidPartition64": "307DE0A1-5384-4CD0-8FA8-500F0FFEA388"
-    , "CabPath64"		: "http://www.pinsenqihang.com/Public/static/HttpUploader/HttpUploader64.cab"
+    , "CabPath64"		: "http://www.ncmem.com/download/HttpUploader6/HttpUploader64.cab"
     //Firefox
     , "XpiType"		    : "application/npHttpUploader6"
-    , "XpiPath"	        : "http://www.pinsenqihang.com/Public/static/HttpUploader/HttpUploader6.xpi"
+    , "XpiPath"	        : "http://www.ncmem.com/download/HttpUploader6/HttpUploader6.xpi"
     //Chrome
     , "CrxName"			: "npHttpUploader6"
     , "CrxType"		    : "application/npHttpUploader6"
-    , "CrxPath"	        : "http://www.pinsenqihang.com/Public/static/HttpUploader/HttpUploader6.crx"
+    , "CrxPath"	        : "http://www.ncmem.com/download/HttpUploader6/HttpUploader6.crx"
     , "SetupPath"		: ""
-    , "ExePath"			: "http://www.pinsenqihang.com/Public/static/HttpUploader/HttpUploader6.exe"
+    , "ExePath"			: "http://www.ncmem.com/download/HttpUploader6/HttpUploader6.exe"
   };
 
   this.ActiveX = {
-    "Uploader"		: "Xproer.HttpUploader6"
+    "Droper": "ZSPS.HttpDroper6",
+    "Uploader": "ZSPS.HttpUploader6",
+    "Partition": "ZSPS.HttpPartition6"
+    /*"Uploader"		: "Xproer.HttpUploader6"
     , "Partition"	: "Xproer.HttpPartition6"
     //64bit
     , "Uploader64"	: "Xproer.HttpUploader6x64"
-    , "Partition64"	: "Xproer.HttpPartition6x64"
+    , "Partition64"	: "Xproer.HttpPartition6x64"*/
   };
 
   //附加参数

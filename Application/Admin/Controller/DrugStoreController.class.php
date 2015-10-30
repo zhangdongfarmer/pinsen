@@ -51,25 +51,52 @@ class DrugStoreController extends \Admin\Controller\AdminController {
     public function doadd(){
          /* 获取数据对象 */
         $drug_store = D('DrugStore');
+        $storeId = intval(I('post.id'));
         $data = $drug_store->create($data);
-        I('post.province','') && $data['region'] = I('post.province','');
-        I('post.city','') && $data['region'] .= ',' . I('post.city','');
-        I('post.district','') && $data['region'] .= ',' . I('post.district','');
-        I('post.community','') && $data['region'] .= ',' . I('post.community','');
+        $data['area_id'] = intval(intval($_POST['area'][2]));
+        $passwd = I('post.passwd');
         if(empty($data)){
             return false;
         }
-
+        
         /* 添加或新增基础内容 */
         if(empty($data['id'])){ //新增数据
-            $id = $drug_store->add($data); //添加基础内容
-            if(!$id){
+            $storeId = $drug_store->add($data); //添加基础内容
+            if(!$storeId){
                 $this->error('新增药店出错！');
-            }
+            }   
         } else { //更新数据
             $status = $drug_store->save($data); //更新基础内容
             if(false === $status){
                 $this->error('更新药店出错！');
+            }
+            
+        }
+        
+        //密码设置
+        if($passwd){
+            $store = $drug_store->field('id, phone, email, user_name, uid')->where(array('id'=>$storeId))->find();
+            $userApi = new \User\Api\UserApi();
+            if($store['uid']){
+                $userApi->changePassword($store['uid'], $passwd);
+            }else{
+                //帐号不存在，新增帐号
+                $uid = $userApi->register($store['phone'], $passwd, $store['email'], $store['phone']);
+                if(intval($uid) > 0){
+                    $drug_store->where(array('id'=>$store['id']))->save(array('uid'=>$uid));
+                    $data = array(
+                        'uid' => $uid,
+                        'nickname'    => $store['phone'],
+                        'truename'    => $store['user_name'],
+                        'reg_ip'      => get_client_ip(1),
+                        'email'       => $store['email'],
+                        'reg_time'    => time(),
+                        'status'      => 1,
+                        'group_type'  => 1,
+                        'subbranch_id'=> $storeId
+                    );
+                    $addResult = M('member')->add($data);	    
+                }
             }
         }
         
