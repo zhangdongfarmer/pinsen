@@ -130,8 +130,8 @@
                         var data = $.parseJSON(data);
                         var src = '';
                         if(data.status){
-                            $("#cover_id_course_ico").val(data.id);
-                            src = data.url || '__ROOT__' + data.path
+                            src = data.url || '__ROOT__' + data.path;
+                            $("#cover_id_course_ico").val(src);
                             $("#cover_id_course_ico").parent().find('.upload-img-box').html(
                                 '<div class="upload-pre-item"><img src="__ROOT__' + src + '"/></div>'
                             );

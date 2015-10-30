@@ -155,12 +155,12 @@ class MemberController extends BaseController {
 	public function edit($uid)
 	{
 		$user = new UserApi();
-		$userInfo = $user->info($uid);
+		$userInfo = M('ucenterMember')->field('id,username,email,mobile,status')->where(array('uid'=>$uid))->find();
 		if(empty($userInfo)){
 			$this->showTo('您编辑的用户不存在或已被锁定', U('member/index'), 2);
 		}
 		//获取用户数据详情
-		$detail = M('member')->field('uid, nickname, sex, truename, email, group_type, subbranch_id')
+		$detail = M('member')->field('uid, nickname, sex, truename, group_type, subbranch_id')
 		->where(['uid'=>intval($uid)])->find();
 		$detail = array_merge($detail, $userInfo);
 		

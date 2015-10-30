@@ -16,7 +16,12 @@ use Think\Controller;
 class HttpUploaderController extends Controller
 {
 
-    private $_http_uploader_path = APP_PATH . '../Public/static/HttpUploader6/db/';
+    private $_http_uploader_path;
+
+    public function __construct() {
+        parent::__construct();
+        $this->_http_uploader_path = APP_PATH . '../Public/static/HttpUploader6/db/';
+    }
 
     /**
      * 断点上传创建
