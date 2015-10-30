@@ -55,11 +55,9 @@ class course extends base{
 			foreach($data as $key => $v){
                 if(intval($v['course_ico'])){
                     $picture = M('picture')->field('path')->where(array('id'=>$v['course_ico']))->find();
-                    if($picture){
-                        $data[$key]['course_icon'] = IMG_HOST . $picture['path'];
-                    }
+                    $data[$key]['course_ico'] = IMG_HOST . $picture['path'];
                 }else{
-                    $data[$key]['course_icon'] = IMG_HOST . $v['course_icon'];
+                    $data[$key]['course_ico'] = IMG_HOST . $v['course_icon'];
                 }
 				$data[$key]['create_time'] = date('Y-m-d',$v['create_time']);
 			}
