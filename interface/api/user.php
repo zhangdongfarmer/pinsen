@@ -270,6 +270,25 @@ class user extends base{
 	        $this->getResponse('', '999');
 	    }
 	}
+
+	/**
+	 * 我的积分
+	 */
+	public function gift_record($param){
+		if($param['uid']){
+			$uid = intval($param['uid']);
+
+			/** 获得记录 **/
+			$map = 'uid='.$uid.' and gift_type > 0';
+			$gift_record = M('gift_record')->where($map)->field('oid,time,gold,score,gift_type,pay_type')->order('time desc')->select();
+			$gift_record = $this->format_record($gift_record,'gift',1);
+
+			//根据时间倒序对数组重新排序
+			$this->getResponse($gift_record, '0');
+		}else{
+			$this->getResponse('', '999');
+		}
+	}
 	
 	/**
 	 * 私有方法-格式化金币积分记录统一方法
