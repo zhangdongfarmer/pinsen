@@ -129,7 +129,7 @@ class DrugStoreController extends \Admin\Controller\AdminController {
                     );
                     $addResult = M('member')->add($data);	    
                 } else {
-                    $this->error('添加店铺帐号时失败'.$uid);
+                    $this->error('添加店铺帐号时失败，请变更邮箱或者手机号码');
                 }
             }
         }
