@@ -507,6 +507,24 @@ class user extends base{
 			$this->getResponse('', '999');
 		}
 	}
+
+	/**
+	 * 我的金币兑换积分记录
+	 */
+	public function gold2score_record($param){
+		if($param['uid']){
+			$uid = intval($param['uid']);
+			//获得金币记录：考试通过一类课程
+			$map['uid'] = $uid;
+			$map['gift_type'] = -1;
+			$map['oid'] = -1;
+			$gift_record = M('gift_record')->where($map)->field('oid, score, gold,time, gift_type, pay_type')->order('time desc')->select();
+
+			$this->getResponse($gift_record, '0');
+		}else{
+			$this->getResponse('', '999');
+		}
+	}
 	
 	/**
 	 * 帮助反馈
