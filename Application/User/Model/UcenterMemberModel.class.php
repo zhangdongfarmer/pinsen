@@ -271,7 +271,7 @@ class UcenterMemberModel extends Model{
     public function changePassword($uid, $password)
     {
         $saveData = array(
-            'password'  => think_ucenter_md5($password_in, UC_AUTH_KEY)
+            'password'  => think_ucenter_md5($password, UC_AUTH_KEY)
         );
         return $this->where(array('id'=>intval($uid)))->save($saveData);
     }
