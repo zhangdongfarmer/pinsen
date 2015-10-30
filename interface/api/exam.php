@@ -62,7 +62,7 @@ class exam extends base{
 				$data[$k]['title'] = trim($v['title']);
 				$data[$k]['quest_type'] = intval($v['quest_type']);
 				$data[$k]['max_value'] = intval($v['max_value']);
-				$options = M('exam_options')->where('quest_id='.$quest_id)->field('opt_id,opt_name,opt_value')->order('sort_no asc,opt_id desc')->select();
+				$options = M('exam_options')->where('quest_id='.$quest_id)->field('opt_id,opt_name,opt_value')->order('opt_id asc')->select();
 				$data[$k]['options'] = $options ? $options : array();
 			}
 			$this->getResponse($data,'0');
