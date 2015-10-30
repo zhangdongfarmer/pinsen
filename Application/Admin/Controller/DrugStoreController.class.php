@@ -55,14 +55,24 @@ class DrugStoreController extends \Admin\Controller\AdminController {
         $data = $drug_store->create($data);
         $data['area_id'] = intval(intval($_POST['area'][2]));
         $passwd = I('post.passwd');
+        $phone = I('post.phone');
         if(empty($data)){
             return false;
         }
 
         //判断是否存在对应的手机号，如果已经存在，则需要重新判断
-        $existed_store = $drug_store->where(array('phone'=>I('post.phone')))->field('id')->find();
+        $existed_store = $drug_store->where(array('phone'=>$phone))->field('id,uid')->find();
         if ($existed_store && $existed_store['id'] != $storeId) {
             $this->error('系统中已经存在本号码绑定的药店，请核实或者变更号码后重新设置');
+        }
+
+        //继续向用户中心接口请求检测是否存在手机号使用过
+        $userApi = new \User\Api\UserApi();
+        $existed_user = $userApi->infoByMobile($phone);
+        if ($existed_user) {
+            if ($existed_user['id'] != $existed_store['uid']) {
+                $this->error('本手机号已经注册过本系统，请核实或者变更号码后重新设置');
+            }
         }
         
         /* 添加或新增基础内容 */
@@ -82,9 +92,11 @@ class DrugStoreController extends \Admin\Controller\AdminController {
         //密码设置
         if($passwd){
             $store = $drug_store->field('id, phone, email, uid')->where(array('id'=>$storeId))->find();
-            $userApi = new \User\Api\UserApi();
             if($store['uid']){
                 $result = $userApi->changePassword($store['uid'], $passwd);
+                if (!$result) {
+                    return $this->error('修改密码时失败');
+                }
             }else{
                 //帐号不存在，新增帐号
                 $uid = $userApi->register($store['phone'], $passwd, $store['email'], $store['phone']);
@@ -102,6 +114,8 @@ class DrugStoreController extends \Admin\Controller\AdminController {
                         'subbranch_id'=> $storeId
                     );
                     $addResult = M('member')->add($data);	    
+                } else {
+                    $this->error('添加店铺帐号时失败');
                 }
             }
         }

@@ -55,6 +55,15 @@ class UserApi extends Api{
 	}
 
 	/**
+	 * 获取用户信息
+	 * @param  string  $mobile        用户ID或用户名
+	 * @return array                用户信息
+	 */
+	public function infoByMobile($mobile){
+		return $this->model->infoByMobile($mobile);
+	}
+
+	/**
 	 * 检测用户名
 	 * @param  string  $field  用户名
 	 * @return integer         错误编号

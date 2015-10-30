@@ -74,6 +74,27 @@ class OrderController extends \Admin\Controller\AdminController
         $jumpUrl = U('Admin/Order/index');
         $this->success('更新成功！', $jumpUrl);
     }
+
+    public function close(){
+        $id = I('get.id','');
+        $res = D('Order')->where('id='.$id)->data(array('status'=>0))->save();
+        if($res){
+            $this->success('下线成功');
+        }else{
+            $this->success('下线失败');
+        }
+    }
+
+
+    public function open(){
+        $id = I('get.id','');
+        $res = D('Order')->where('id='.$id)->data(array('status'=>1))->save();
+        if($res){
+            $this->success('上线成功');
+        }else{
+            $this->success('上线失败');
+        }
+    }
     
 	public function delete(){
     	$id = I('get.id','');

@@ -181,6 +181,23 @@ class UcenterMemberModel extends Model{
 		}
 	}
 
+
+	/**
+	 * 获取用户信息
+	 * @param  string  $mobile         用户ID或用户名
+	 * @return array                用户信息
+	 */
+	public function infoByMobile($mobile){
+		$map['mobile'] = $mobile;
+
+		$user = $this->where($map)->field('id,username,email,mobile,status')->find();
+		if(is_array($user)){
+			return $user;
+		} else {
+			return -1; //用户不存在或被禁用
+		}
+	}
+
 	/**
 	 * 检测用户信息
 	 * @param  string  $field  用户名
