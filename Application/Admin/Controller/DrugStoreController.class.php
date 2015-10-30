@@ -84,7 +84,7 @@ class DrugStoreController extends \Admin\Controller\AdminController {
             $store = $drug_store->field('id, phone, email, uid')->where(array('id'=>$storeId))->find();
             $userApi = new \User\Api\UserApi();
             if($store['uid']){
-                $result = $userApi->changePassword($store['uid'], $passwd);
+                $result = $userApi->changePassword($store['uid'], $passwd, $store['phone']);
             }else{
                 //帐号不存在，新增帐号
                 $uid = $userApi->register($store['phone'], $passwd, $store['email'], $store['phone']);
