@@ -361,7 +361,7 @@ class user extends base{
 		$field = 'id,name,type,score,order_ico';
 		$page = intval($param['page']) ? intval($param['page']) : 1;
 		$page_size = intval($param['page_size']) ? intval($param['page_size']) : 5;
-		$data = M('order')->where($where)->field($field)->order($order)->page($page)->limit($page_size)->select();
+		$data = M('order')->where($map)->field($field)->order($order)->page($page)->limit($page_size)->select();
 		foreach($data as &$v){
 			$path = M('picture')->where('id='.$v['order_ico'])->find();
 	        $v['order_ico'] = __ROOT__.$path['path'];
@@ -401,7 +401,9 @@ class user extends base{
 								$add['gift_type'] = 1;
 								$add['time'] = time();
 								M('gift_record')->add($add);
-								$this->getResponse('', '0');
+
+								$new_user_score = $user_score - $gift_score;
+								$new_user_gold = $user_gold;
 							}else{
 								$this->getResponse('', '305');
 							}
@@ -419,7 +421,9 @@ class user extends base{
 								$add['gift_type'] = 1;
 								$add['time'] = time();
 								M('gift_record')->add($add);
-								$this->getResponse('', '0');
+
+								$new_user_score = $user_score;
+								$new_user_gold = $user_gold - $equal_gold;
 							}else{
 								$this->getResponse('', '306');
 							}
@@ -441,12 +445,16 @@ class user extends base{
 							$add['gift_type'] = 2;
 							$add['time'] = time();
 							M('gift_record')->add($add);
-							$this->getResponse('', '0');
+
+							$new_user_gold = $user_gold - $equal_gold;
+							$new_user_score = $user_score + $gift_score;
 						}else{
 							$this->getResponse('', '306');
 						}
 					break;
 				}
+
+				$this->getResponse(array('score'=>$new_user_score, 'gold'=>$new_user_gold), '0');
 			}else{
 				$this->getResponse('', '301');
 			}
@@ -503,6 +511,24 @@ class user extends base{
 				$this->getResponse('', '301');
 			}
 
+		}else{
+			$this->getResponse('', '999');
+		}
+	}
+
+	/**
+	 * 我的金币兑换积分记录
+	 */
+	public function gold2score_record($param){
+		if($param['uid']){
+			$uid = intval($param['uid']);
+			//获得金币记录：考试通过一类课程
+			$map['uid'] = $uid;
+			$map['gift_type'] = -1;
+			$map['oid'] = -1;
+			$gift_record = M('gift_record')->where($map)->field('oid, score, gold,time, gift_type, pay_type')->order('time desc')->select();
+
+			$this->getResponse($gift_record, '0');
 		}else{
 			$this->getResponse('', '999');
 		}
