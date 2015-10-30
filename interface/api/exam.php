@@ -90,7 +90,7 @@ class exam extends base{
 			
 			$submit_value = 0;
             $totalQuestion = intval($quest_info['cnt']);
-			$result = json_decode($result,true);
+			$result = json_decode($result,true);var_dump($result);
 			foreach($result as $val){
 				$quest_id = intval($val['quest_id']);
 				$opt_ids = trim($val['opt_ids']);

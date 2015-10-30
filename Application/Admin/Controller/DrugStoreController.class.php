@@ -75,7 +75,7 @@ class DrugStoreController extends \Admin\Controller\AdminController {
         
         //密码设置
         if($passwd){
-            $store = $drug_store->field('id, phone, email, user_name, uid')->where(array('id'=>$storeId))->find();
+            $store = $drug_store->field('id, phone, email, uid')->where(array('id'=>$storeId))->find();
             $userApi = new \User\Api\UserApi();
             if($store['uid']){
                 $userApi->changePassword($store['uid'], $passwd);
