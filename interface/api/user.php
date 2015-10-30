@@ -286,6 +286,11 @@ where ".$map.' order by gr.time desc';
 			$gift_record = M('gift_record')->query($sql);
 			//$gift_record = $this->format_record($gift_record,'gift',1);
 
+			foreach($gift_record as &$v){
+				$path = M('picture')->where('id='.$v['order_ico'])->find();
+				$v['order_ico'] =  "http://".$_SERVER['HTTP_HOST'].'/'.$path['path'];
+			}
+
 			//根据时间倒序对数组重新排序
 			$this->getResponse($gift_record, '0');
 		}else{
@@ -386,7 +391,7 @@ where ".$map.' order by gr.time desc';
 		$data = M('order')->where($map)->field($field)->order($order)->page($page)->limit($page_size)->select();
 		foreach($data as &$v){
 			$path = M('picture')->where('id='.$v['order_ico'])->find();
-	        $v['order_ico'] = __ROOT__.$path['path'];
+			$v['order_ico'] =  "http://".$_SERVER['HTTP_HOST'].'/'.$path['path'];
 		}
 		$this->getResponse($data?$data:array(), '0');
 	}
