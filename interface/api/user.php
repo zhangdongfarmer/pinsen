@@ -401,7 +401,9 @@ class user extends base{
 								$add['gift_type'] = 1;
 								$add['time'] = time();
 								M('gift_record')->add($add);
-								$this->getResponse('', '0');
+
+								$new_user_score = $user_score - $gift_score;
+								$new_user_gold = $user_gold;
 							}else{
 								$this->getResponse('', '305');
 							}
@@ -419,7 +421,9 @@ class user extends base{
 								$add['gift_type'] = 1;
 								$add['time'] = time();
 								M('gift_record')->add($add);
-								$this->getResponse('', '0');
+
+								$new_user_score = $user_score;
+								$new_user_gold = $user_gold - $equal_gold;
 							}else{
 								$this->getResponse('', '306');
 							}
@@ -441,12 +445,16 @@ class user extends base{
 							$add['gift_type'] = 2;
 							$add['time'] = time();
 							M('gift_record')->add($add);
-							$this->getResponse('', '0');
+
+							$new_user_gold = $user_gold - $equal_gold;
+							$new_user_score = $user_score + $gift_score;
 						}else{
 							$this->getResponse('', '306');
 						}
 					break;
 				}
+
+				$this->getResponse(array('score'=>$new_user_score, 'gold'=>$new_user_gold), '0');
 			}else{
 				$this->getResponse('', '301');
 			}
