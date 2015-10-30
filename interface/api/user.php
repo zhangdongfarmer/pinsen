@@ -102,7 +102,7 @@ class user extends base{
 	public function info($param){
 		if($param['uid']){
 			$uid = intval($param['uid']);
-			$field = 'a.uid,a.head,a.truename,b.mobile as phone,a.sex,a.job,a.subbranch_id';
+			$field = 'a.uid,a.head,a.truename,b.mobile as phone,a.sex,a.job,a.subbranch_id, a.score, a.gold';
 			$info = M()->table(C('DB_PREFIX').'member a')->join(C('DB_PREFIX').'ucenter_member b on a.uid=b.id')
 			           ->field($field)->where('uid='.$uid)->find();
 			if($info){
