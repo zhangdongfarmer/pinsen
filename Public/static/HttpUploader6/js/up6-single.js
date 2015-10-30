@@ -70,7 +70,7 @@ function HttpUploaderMgr()
     , "ClsidDroper"		: "0A1FC315-D29F-47DD-B56D-32747A65DE49"
     , "ClsidUploader"	: "30059ABD-89E2-402B-A212-1723C475D6EC"
     , "ClsidPartition"	: "88D17C26-8771-407F-9EBD-D961ED2A6B54"
-    , "CabPath"			: "http://www.ncmem.com/download/HttpUploader6/HttpUploader6.cab"
+    , "CabPath"			: "http://www.pinsenqihang.com/Public/static/HttpUploader/HttpUploader6.cab"
     //x64
     , "ClsidDroper64"	: "7B9F1B50-A7B9-4665-A6D1-0406E643A856"
     , "ClsidUploader64"	: "FD5955CA-4003-4CD8-9CB0-9475C81A9BE9"
