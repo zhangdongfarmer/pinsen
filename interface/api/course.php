@@ -48,7 +48,7 @@ class course extends base{
 		$order_map = array('default'=>'id','time'=>'create_time','score'=>'comment_count','play'=>'play_count');
 		$order_seq = $param['order_seq'] == '2' ? 'asc' : 'desc';
 		$order = $order_map[$order_by].' '.$order_seq;
-		$field = 'id,title,course_ico,comment_count,play_count,create_time,is_recom,expire_time,gold,score';
+		$field = 'id,title,course_ico,comment_count, play_length,play_count,create_time,is_recom,expire_time,gold,score';
 		$data = M('course')->where($map)->field($field)->order($order)->page($page)->limit($page_size)->select();
         
 		if($data){
@@ -80,7 +80,7 @@ class course extends base{
 			$uid = intval($param['uid']);
 			$course_id = intval($param['course_id']);
 			$map['id'] = $course_id;
-			$field = 'id,title,type,course_ico,comment_count,play_count,create_time,expire_time,describe,score,gold,video_url';
+			$field = 'id,title,type,course_ico,comment_count,play_count,play_length,create_time,expire_time,describe,score,gold,video_url';
 			$course = $course_model->where($map)->field($field)->find();
             if(!$course){
                 return $this->getResponse('','999');
