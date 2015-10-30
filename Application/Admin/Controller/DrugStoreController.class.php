@@ -58,6 +58,12 @@ class DrugStoreController extends \Admin\Controller\AdminController {
         if(empty($data)){
             return false;
         }
+
+        //判断是否存在对应的手机号，如果已经存在，则需要重新判断
+        $existed_store = $drug_store->where(array('phone'=>I('post.phone')))->field('id')->find();
+        if ($existed_store && $existed_store['id'] != $storeId) {
+            $this->error('系统中已经存在本号码绑定的药店，请核实或者变更号码后重新设置');
+        }
         
         /* 添加或新增基础内容 */
         if(empty($data['id'])){ //新增数据
