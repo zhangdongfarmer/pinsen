@@ -130,7 +130,7 @@ class exam extends base{
 				$data['submit_value'] = $submit_value;
 			}else{
 				$data['is_pass'] = '0';
-				$data['submit_value'] = $submit_value;
+				$data['submit_value'] = ($submit_value/$totalQuestion)*100;
 				
 				$save['status'] = 2;
 				$save['update_time'] = time();
