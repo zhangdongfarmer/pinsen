@@ -406,7 +406,9 @@ where ".$map.' order by gr.time desc';
 			$gift_score = intval($param['score']);
 			$gift_type = intval($param['gift_type']) ? intval($param['gift_type']) : 1;
 			$pay_type = intval($param['pay_type']) ? intval($param['pay_type']) : 1;
-			
+
+			$gift_type = 1;
+
 			$user_info = D('Member')->info($uid,'score,gold');
 			if($user_info){
 				$user_score = intval($user_info['score']);
@@ -458,7 +460,7 @@ where ".$map.' order by gr.time desc';
 					break;
 					//金币礼品
 					case 2:
-						$equal_gold = ceil($gift_score/10);//积分转换为金币
+						$equal_gold = ceil($gift_score/10);//金币转换为积分
 						if($user_gold >= $equal_gold){
 							$save['score'] = array('exp',"`score`+{$gift_score}");
 							$save['gold'] = array('exp',"`gold`-{$equal_gold}");
