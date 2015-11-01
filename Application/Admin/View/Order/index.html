@@ -98,9 +98,9 @@
                         <td>{$data['is_hide']}</td>
                         <td>
 							<?php if ($data['status'] == 1) {?>
-							<a href="<?php echo U('close', array('id'=>$data['id'])) ?>">下线</a>
+							<a style="color: red" href="<?php echo U('close', array('id'=>$data['id'])) ?>">下线</a>
 							<?php } else {?>
-							<a href="<?php echo U('open', array('id'=>$data['id'])) ?>">上线</a>
+							<a style="color: green" href="<?php echo U('open', array('id'=>$data['id'])) ?>">上线</a>
 							<?php }?>
                             <a href="{:U('delete', array('id'=>$data['id']))}">删除</a>  
                             <a href="{:U('add', array('id'=>$data['id']))}">修改</a>
