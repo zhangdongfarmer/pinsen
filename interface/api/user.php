@@ -437,7 +437,7 @@ where ".$map.' order by gr.time desc';
 								$this->getResponse('', '305');
 							}
 						}else{ //使用金币支付
-							$equal_gold = ceil($gift_score/10);
+							$equal_gold = $gift_score;//ceil($gift_score/10);
 							if($user_gold >= $equal_gold){
 								$save['gold'] = array('exp',"`gold`-{$equal_gold}");
 								$res = M('member')->where('uid='.$uid)->save($save);
