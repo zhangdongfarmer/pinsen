@@ -484,7 +484,7 @@ where ".$map.' order by gr.time desc';
 					break;
 				}
 
-				$this->getResponse(array('score'=>$new_user_score, 'gold'=>$new_user_gold), '0');
+				$this->getResponse(array('score'=>(string)$new_user_score, 'gold'=>(string)$new_user_gold), '0');
 			}else{
 				$this->getResponse('', '301');
 			}
