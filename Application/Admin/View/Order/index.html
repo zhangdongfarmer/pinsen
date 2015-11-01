@@ -75,7 +75,7 @@
                     </th>
                     <th>ID</th>
                     <th>名称</th>
-                    <th>积分</th>
+                    <th>消耗</th>
                     <th>图片</th>
                     <th>类型</th>
                     <th>排序</th>
@@ -97,9 +97,13 @@
                         <td>{$data['sort']}</td>
                         <td>{$data['is_hide']}</td>
                         <td>
+							<?php if ($data['status'] == 1) {?>
+							<a href="<?php echo U('close', array('id'=>$data['id'])) ?>">下线</a>
+							<?php } else {?>
+							<a href="<?php echo U('open', array('id'=>$data['id'])) ?>">上线</a>
+							<?php }?>
                             <a href="{:U('delete', array('id'=>$data['id']))}">删除</a>  
-                            <a href="{:U('add', array('id'=>$data['id']))}">修改</a>  
-                            <a href="{:U('delete', array('id'=>$data['id']))}">下线</a>
+                            <a href="{:U('add', array('id'=>$data['id']))}">修改</a>
                         </td>
                     </tr>
                 </volist>

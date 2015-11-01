@@ -384,6 +384,7 @@ where ".$map.' order by gr.time desc';
 	 */
 	public function shop($param){
 		$map['is_hide'] = 0;
+		$map['status'] = 1;
 		$order = 'sort asc,id desc';
 		$field = 'id,name,type,score,order_ico';
 		$page = intval($param['page']) ? intval($param['page']) : 1;
