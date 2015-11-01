@@ -42,24 +42,24 @@
                 </div>
             </div>
             -->
-            
+
             <div class="form-item cf">
-                <div class="form-item cf">
-	                <label class="item-label">礼品积分：<span class="check-tips"></span></label>
-	                <div class="controls">
-	                   <input type="text" class="text input-large" name="score" value="{$score}">
-	                </div>
+                <label class="item-label">礼品类型：<span class="check-tips"></span></label>
+                <div class="controls">
+                    <select class="w110" name="type">
+                        <option value=''>--请选择--</option>
+                        <option value='1' <if condition="$type eq 1">selected='selected'</if>>普通礼品</option>
+                        <option value='2' <if condition="$type eq 2">selected='selected'</if>>金币礼品</option>
+                    </select>
                 </div>
             </div>
             
             <div class="form-item cf">
-                <label class="item-label">礼品类型：<span class="check-tips"></span></label>
-                <div class="controls">
-			            <select class="w110" name="type">
-			            	<option value=''>--请选择--</option>
-			            	<option value='1' <if condition="$type eq 1">selected='selected'</if>>普通礼品</option>
-			            	<option value='2' <if condition="$type eq 2">selected='selected'</if>>金币礼品</option>
-			          	</select>
+                <div class="form-item cf">
+	                <label class="item-label">消耗：<span class="check-tips"></span></label>
+	                <div class="controls">
+	                   <input type="text" class="text input-large" name="score" value="{$score}">
+	                </div>
                 </div>
             </div>
             
