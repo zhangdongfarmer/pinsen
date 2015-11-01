@@ -536,7 +536,7 @@ where ".$map.' order by gr.time desc';
 				if (!$res) {
 					$this->getResponse('', '更新积分失败', true);
 				}
-				$this->getResponse(array('score'=>$user_score + $affected_score, 'gold'=>$user_gold - $gold_num), '0');
+				$this->getResponse(array('score'=>strval($user_score + $affected_score), 'gold'=>strval($user_gold - $gold_num)), '0');
 			}else{
 				$this->getResponse('', '301');
 			}
